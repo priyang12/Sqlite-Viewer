@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
-import "./App.css";
-import InputDB from "./Components/InputDB/InputDB";
-import useGetDB from "./Hooks/useGetDB";
+import { useDefaultGetDB } from "./Hooks/useDefaultGetDB";
 import { SqlValue } from "sql.js";
 
 function App() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [tables, setTables] = useState<SqlValue[]>();
-  const { db } = useGetDB(selectedFile);
-
+  const { db } = useDefaultGetDB();
   useEffect(() => {
     if (db) {
       const query = "SELECT name FROM sqlite_master WHERE type='table'";
@@ -18,19 +14,40 @@ function App() {
     }
   }, [db]);
 
-  const handleFileSelect = (file: File | null) => {
-    setSelectedFile(file);
-    // You can perform additional actions with the selected file here
-  };
-
   return (
     <>
-      <h1>Vite + React</h1>
-      <div>
-        <h1>SQLite Database Input</h1>
-        <InputDB onFileSelect={handleFileSelect} />
-        {selectedFile && <p>Selected File: {selectedFile.name}</p>}
-        {tables ? tables.map((item) => <div>{item}</div>) : null}
+      <div className="bg-gray-500 flex justify-center min-h-lvh">
+        <div>
+          <h1 className="text-3xl font-bold underline">SQLite Database</h1>
+          <table className="table-auto">
+            <thead>
+              <tr>
+                {tables
+                  ? tables.map((item) => (
+                      <th key={item?.toString()}>{item?.toString()}</th>
+                    ))
+                  : null}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
+                <td>Malcolm Lockyer</td>
+                <td>1961</td>
+              </tr>
+              <tr>
+                <td>Witchy Woman</td>
+                <td>The Eagles</td>
+                <td>1972</td>
+              </tr>
+              <tr>
+                <td>Shining Star</td>
+                <td>Earth, Wind, and Fire</td>
+                <td>1975</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );
