@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useDefaultGetDB } from "./Hooks/useDefaultGetDB";
-import { SqlValue } from "sql.js";
+import { useGetDBContext } from "./Context/DBContext";
+import type { SqlValue } from "sql.js";
 
 function App() {
   const [tables, setTables] = useState<SqlValue[]>();
-  const { db } = useDefaultGetDB();
+  const { db } = useGetDBContext();
+
   useEffect(() => {
     if (db) {
       const query = "SELECT name FROM sqlite_master WHERE type='table'";
