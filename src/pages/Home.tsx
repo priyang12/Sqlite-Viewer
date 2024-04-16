@@ -1,24 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useGetUserDBs } from "../Hooks/useGetUserDBs";
 import { useGetDBContext } from "../Context/DBContext";
-import type { SqlValue } from "sql.js";
-import { openDB } from "idb";
 import InputDB from "../Components/InputDB/InputDB";
 
 const Home = () => {
-  const [tables, setTables] = useState<SqlValue[]>();
   const [loading, setLoading] = useState(false);
-  const { db, indexedDB } = useGetDBContext();
-
-  useEffect(() => {
-    if (db) {
-      const query = "SELECT name FROM sqlite_master WHERE type='table'";
-      const result = db.exec(query);
-      const tables = result[0].values.map((row) => row[0]);
-      setTables(tables);
-    }
-  }, [db]);
-
-  const createDB = async () => {};
+  const { indexedDB } = useGetDBContext();
+  const { storedDBs } = useGetUserDBs();
 
   const onSelectFile = async (file: File | null) => {
     if (indexedDB && file) {
@@ -37,40 +25,16 @@ const Home = () => {
 
   return (
     <div className="dark:bg-gray-800 bg-gray-200 flex justify-center min-h-lvh">
-      <div>
-        <h1 className="text-3xl font-bold underline">SQLite Database</h1>
-        {/* <table className="table-auto">
-          <thead>
-            <tr>
-              {tables
-                ? tables.map((item) => (
-                    <th key={item?.toString()}>{item?.toString()}</th>
-                  ))
-                : null}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
-              <td>Malcolm Lockyer</td>
-              <td>1961</td>
-            </tr>
-            <tr>
-              <td>Witchy Woman</td>
-              <td>The Eagles</td>
-              <td>1972</td>
-            </tr>
-            <tr>
-              <td>Shining Star</td>
-              <td>Earth, Wind, and Fire</td>
-              <td>1975</td>
-            </tr>
-          </tbody>
-        </table> */}
+      <div className="flex flex-col">
+        <div className="my-5">
+          <h1 className="text-5xl font-bold">Your Databases</h1>
+          {storedDBs
+            ? storedDBs.map((item) => (
+                <h2 key={item.toString()}>{item.toString()}</h2>
+              ))
+            : null}
+        </div>
         <InputDB onFileSelect={onSelectFile} />
-        <button className="btn" onClick={createDB}>
-          Click
-        </button>
       </div>
     </div>
   );
