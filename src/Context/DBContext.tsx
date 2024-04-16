@@ -2,13 +2,20 @@ import React from "react";
 import { createContext, useContext } from "react";
 import { useDefaultGetDB } from "../Hooks/useDefaultGetDB";
 import type { Database } from "sql.js";
+import type { IDBPDatabase } from "idb";
+import { useIndexedDB } from "../Hooks/useIndexedDB";
 
 // Create a context object for managing the database connection
-const DbContext = createContext<{ db: Database | undefined }>({
+const DbContext = createContext<{
+  db: Database | undefined;
+  indexedDB: IDBPDatabase | undefined;
+}>({
   db: undefined, // Default context value with an undefined database connection
+  indexedDB: undefined, // Default value
 });
 
 // Custom hook to easily access the database context
+// eslint-disable-next-line react-refresh/only-export-components
 export const useGetDBContext = () => useContext(DbContext);
 
 /**
@@ -27,6 +34,10 @@ export const DBProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   // Retrieve the database connection using a custom hook (useDefaultGetDB)
   const { db } = useDefaultGetDB();
-
-  return <DbContext.Provider value={{ db }}>{children}</DbContext.Provider>;
+  const { indexedDB } = useIndexedDB();
+  return (
+    <DbContext.Provider value={{ db, indexedDB }}>
+      {children}
+    </DbContext.Provider>
+  );
 };

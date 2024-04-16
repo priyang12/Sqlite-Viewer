@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useGetDBContext } from "../Context/DBContext";
 import type { SqlValue } from "sql.js";
+import { openDB } from "idb";
+import InputDB from "../Components/InputDB/InputDB";
 
 const Home = () => {
   const [tables, setTables] = useState<SqlValue[]>();
-  const { db } = useGetDBContext();
+  const [loading, setLoading] = useState(false);
+  const { db, indexedDB } = useGetDBContext();
 
   useEffect(() => {
     if (db) {
@@ -15,11 +18,28 @@ const Home = () => {
     }
   }, [db]);
 
+  const createDB = async () => {};
+
+  const onSelectFile = async (file: File | null) => {
+    if (indexedDB && file) {
+      setLoading(true);
+      const transaction = indexedDB.transaction("DBFiles", "readwrite");
+      const store = transaction.objectStore("DBFiles");
+      await store.add(file, file.name);
+      setLoading(false);
+    }
+  };
+
+  if (loading)
+    return (
+      <span className="loading loading-spinner loading-lg text-primary"></span>
+    );
+
   return (
     <div className="dark:bg-gray-800 bg-gray-200 flex justify-center min-h-lvh">
       <div>
         <h1 className="text-3xl font-bold underline">SQLite Database</h1>
-        <table className="table-auto">
+        {/* <table className="table-auto">
           <thead>
             <tr>
               {tables
@@ -46,7 +66,11 @@ const Home = () => {
               <td>1975</td>
             </tr>
           </tbody>
-        </table>
+        </table> */}
+        <InputDB onFileSelect={onSelectFile} />
+        <button className="btn" onClick={createDB}>
+          Click
+        </button>
       </div>
     </div>
   );
