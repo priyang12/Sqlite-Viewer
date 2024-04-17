@@ -1,9 +1,9 @@
 import React from "react";
 import { createContext, useContext } from "react";
 import { useDefaultGetDB } from "../Hooks/useDefaultGetDB";
+import { useIndexedDB } from "../Hooks/useIndexedDB";
 import type { Database } from "sql.js";
 import type { IDBPDatabase } from "idb";
-import { useIndexedDB } from "../Hooks/useIndexedDB";
 
 export type DBContextType = {
   db: Database | undefined;
