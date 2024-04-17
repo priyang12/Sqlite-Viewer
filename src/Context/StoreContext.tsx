@@ -70,7 +70,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         if (indexedDB) {
           const result = await insertDB(indexedDB, file);
           if (result) {
-            setStoredDBs([...storedDBs, result]);
+            setStoredDBs((current) => [...current, result]);
           }
         }
       } catch (error) {
@@ -79,7 +79,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoading(false);
       }
     },
-    [indexedDB]
+    [indexedDB, setStoredDBs]
   );
 
   const removeUserDB = useCallback(
@@ -102,7 +102,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoading(false);
       }
     },
-    [indexedDB]
+    [indexedDB, setStoredDBs]
   );
 
   return (

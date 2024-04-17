@@ -1,4 +1,5 @@
 import type { IDBPDatabase } from "idb";
+import { getDBKey } from "./dateUtils";
 
 /**
  * Inserts a file into the IndexedDB database.
@@ -19,18 +20,12 @@ import type { IDBPDatabase } from "idb";
 export const insertDB = async (
   indexedDB: IDBPDatabase,
   file: File
-): Promise<any> => {
-  try {
-    const transaction = indexedDB.transaction("DBFiles", "readwrite");
-    const store = transaction.objectStore("DBFiles");
-    const lastModifiedDate = new Date(file.lastModified);
-    const dbKey = file.name + "-" + lastModifiedDate.toISOString();
-    const result = await store.add(file, dbKey);
-    await transaction.done;
-    return result;
-  } catch (error) {
-    throw new Error(String(error));
-  }
+): Promise<IDBValidKey> => {
+  const transaction = indexedDB.transaction("DBFiles", "readwrite");
+  const store = transaction.objectStore("DBFiles");
+  const result = await store.add(file, getDBKey(file));
+  await transaction.done;
+  return result;
 };
 
 /**
@@ -58,13 +53,9 @@ export const removeDb = async (
   indexedDB: IDBPDatabase,
   indexKey: string
 ): Promise<boolean> => {
-  try {
-    const transaction = indexedDB.transaction("DBFiles", "readwrite");
-    const store = transaction.objectStore("DBFiles");
-    await store.delete(indexKey);
-    await transaction.done;
-    return true;
-  } catch (error) {
-    throw new Error(String(error));
-  }
+  const transaction = indexedDB.transaction("DBFiles", "readwrite");
+  const store = transaction.objectStore("DBFiles");
+  await store.delete(indexKey);
+  await transaction.done;
+  return true;
 };
