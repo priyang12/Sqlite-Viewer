@@ -5,11 +5,13 @@ import type { Database } from "sql.js";
 import type { IDBPDatabase } from "idb";
 import { useIndexedDB } from "../Hooks/useIndexedDB";
 
-// Create a context object for managing the database connection
-const DbContext = createContext<{
+export type DBContextType = {
   db: Database | undefined;
   indexedDB: IDBPDatabase | undefined;
-}>({
+};
+
+// Create a context object for managing the database connection
+const DbContext = createContext<DBContextType>({
   db: undefined, // Default context value with an undefined database connection
   indexedDB: undefined, // Default value
 });

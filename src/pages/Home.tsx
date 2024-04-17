@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useGetUserDBs } from "../Hooks/useGetUserDBs";
 import { useGetDBContext } from "../Context/DBContext";
 import InputDB from "../Components/InputDB/InputDB";
+import { insertDB, removeDb } from "../Utils/indexDBUtils";
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
@@ -11,10 +12,16 @@ const Home = () => {
   const onSelectFile = async (file: File | null) => {
     if (indexedDB && file) {
       setLoading(true);
-      const transaction = indexedDB.transaction("DBFiles", "readwrite");
-      const store = transaction.objectStore("DBFiles");
-      await store.add(file, file.name);
+
+      insertDB(indexedDB, file);
       setLoading(false);
+    }
+  };
+
+  const remove = async (fileName: string) => {
+    if (indexedDB) {
+      const result = await removeDb(indexedDB, fileName);
+      if (result) alert(`The DB ${fileName} has been removed`);
     }
   };
 
@@ -30,7 +37,12 @@ const Home = () => {
           <h1 className="text-5xl font-bold">Your Databases</h1>
           {storedDBs
             ? storedDBs.map((item) => (
-                <h2 key={item.toString()}>{item.toString()}</h2>
+                <div className="flex justify-between" key={item.toString()}>
+                  <h2>{item.toString()}</h2>
+                  <button onClick={() => remove(item.toString())}>
+                    remove
+                  </button>
+                </div>
               ))
             : null}
         </div>
