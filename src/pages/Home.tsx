@@ -1,33 +1,20 @@
-import { useState } from "react";
-import { useGetUserDBs } from "../Hooks/useGetUserDBs";
-import { useGetDBContext } from "../Context/DBContext";
 import InputDB from "../Components/InputDB/InputDB";
-import { insertDB, removeDb } from "../Utils/indexDBUtils";
+import { useStoreContext } from "../Context/StoreContext";
 
 const Home = () => {
-  const [loading, setLoading] = useState(false);
-  const { indexedDB } = useGetDBContext();
-  const { storedDBs } = useGetUserDBs();
+  const { Loading, storedDBs, insertUserDB, removeUserDB } = useStoreContext();
 
   const onSelectFile = async (file: File | null) => {
-    if (indexedDB && file) {
-      setLoading(true);
-
-      insertDB(indexedDB, file);
-      setLoading(false);
+    if (file) {
+      insertUserDB(file);
     }
   };
 
-  const remove = async (fileName: string) => {
-    if (indexedDB) {
-      const result = await removeDb(indexedDB, fileName);
-      if (result) alert(`The DB ${fileName} has been removed`);
-    }
-  };
-
-  if (loading)
+  if (Loading)
     return (
-      <span className="loading loading-spinner loading-lg text-primary"></span>
+      <div className="flex justify-center min-h-lvh">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
     );
 
   return (
@@ -35,11 +22,11 @@ const Home = () => {
       <div className="flex flex-col">
         <div className="my-5">
           <h1 className="text-5xl font-bold">Your Databases</h1>
-          {storedDBs
+          {storedDBs.length > 0
             ? storedDBs.map((item) => (
                 <div className="flex justify-between" key={item.toString()}>
-                  <h2>{item.toString()}</h2>
-                  <button onClick={() => remove(item.toString())}>
+                  <h2 className="truncate w-1/2">{item.toString()}</h2>
+                  <button onClick={() => removeUserDB(item.toString())}>
                     remove
                   </button>
                 </div>

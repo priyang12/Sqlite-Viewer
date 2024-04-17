@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useGetDBContext } from "../Context/DBContext";
+import { DBContextType } from "../Context/DBContext";
+
+export type storedKeysType = IDBValidKey[] | [];
 
 /**
  * useGetUserDBs is a custom hook that retrieves the keys of databases stored in the "DBFiles" store.
- * @returns {{ storedDBs: IDBValidKey[] | undefined }} - Returns an object containing an array of database keys or undefined if not initialized yet.
+ * @returns {{ storedDBs: storedKeysType, setStoredDBs: React.Dispatch<React.SetStateAction<storedKeysType>> }} - Returns an object containing an array of database keys or undefined if not initialized yet.
  * @example
  * // Example usage:
  * const { storedDBs } = useGetUserDBs();
@@ -11,19 +13,21 @@ import { useGetDBContext } from "../Context/DBContext";
  *   // Access the array of database keys
  * }
  */
-export const useGetUserDBs = () => {
-  const [storedDBs, setStoredDBs] = useState<IDBValidKey[]>();
-  const { indexedDB } = useGetDBContext();
+export const useGetUserDBs = (indexedDB: DBContextType["indexedDB"]) => {
+  const [storedDBs, setStoredDBs] = useState<storedKeysType>([]);
 
   useEffect(() => {
-    (async () => {
-      const dbs = await indexedDB?.getAllKeys("DBFiles");
-      if (dbs) setStoredDBs(dbs);
-    })();
-    () => setStoredDBs(undefined);
+    if (indexedDB) {
+      (async () => {
+        const dbs = await indexedDB.getAllKeys("DBFiles");
+        if (dbs) setStoredDBs(dbs);
+      })();
+    }
+    () => setStoredDBs([]);
   }, [indexedDB]);
 
   return {
     storedDBs,
+    setStoredDBs,
   };
 };
