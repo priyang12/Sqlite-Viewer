@@ -15,7 +15,12 @@ const InputDB: React.FC<Props> = ({ onFileSelect }) => {
 
   return (
     <div>
-      <input type="file" onChange={handleFileChange} />
+      <input
+        type="file"
+        className="file-input file-input-bordered file-input-md w-full max-w-xs"
+        accept=".db"
+        onChange={handleFileChange}
+      />
       {selectedFile && <p>Selected File: {selectedFile.name}</p>}
     </div>
   );
