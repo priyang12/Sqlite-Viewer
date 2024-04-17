@@ -17,6 +17,8 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] remove the db from indexedDB.
 - [x] make context for interactive CRUD operation with indexedDB.
 - [x] setup vitest.
+- [x] test contexts.
+- [x] test hooks.
 
 ## Creator
 

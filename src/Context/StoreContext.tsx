@@ -19,37 +19,15 @@ const StoreContext = createContext<storeContextType>({
   removeUserDB: async () => {}, // Placeholder function
 });
 
-// Custom hook to easily access the database context
+// Custom hook to easily access the store context
 // eslint-disable-next-line react-refresh/only-export-components
 export const useStoreContext = () => useContext(StoreContext);
 
-// type storeState = {
-//   storedDBs: storedKeysType;
-// };
-
-// function storeReducer(
-//   state: storeState,
-//   action: { type: string; payload: any }
-// ) {
-//   switch (action.type) {
-//     case "add": {
-//       const array = new Array(state.storedDBs);
-//       return {
-//         ...state,
-//       };
-//     }
-//     case "remove": {
-//     }
-//   }
-
-//   throw Error("Unknown action: " + action.type);
-// }
-
 /**
  * StoreProvider is a component that provides a database context to its children.
- * @param {Object} props - Props for the DBProvider component.
- * @param {React.ReactNode} props.children - The children components that need access to the database context.
- * @returns {JSX.Element} - Returns JSX for the DBProvider component.
+ * @param {Object} props - Props for the StoreProvider component.
+ * @param {React.ReactNode} props.children - The children components that need access to the indexed store.
+ * @returns {JSX.Element} - Returns JSX for the StoreProvider component.
  * @example
  * // Example usage:
  * <StoreProvider>
