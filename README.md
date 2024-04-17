@@ -9,7 +9,14 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 ## Roadmap
 
 - [x] make a readme file.
-- [ ] make sure of .db extension can send the file.
+
+### User database
+
+- [x] make sure of .db extension can send the file.
+- [x] remove the db from indexDB.
+- [x] remove the db from indexedDB.
+- [x] make context for interactive CRUD operation with indexedDB.
+- [x] setup vitest.
 
 ## Creator
 
