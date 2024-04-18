@@ -2,7 +2,16 @@ import { useState, useEffect } from "react";
 import initSqlJs from "sql.js";
 import sqlWasm from "sql.js/dist/sql-wasm.wasm?url";
 
-const useGetDB = (file: File | null) => {
+/**
+ * useGetDB is a custom hook to load a SQLite database file.
+ * @param {File | null} file - The SQLite database file to load.
+ * @returns {object} - Returns an object containing the loaded database.
+ * @example
+ * // Example usage:
+ * const file = ... // Provide the SQLite database file
+ * const { db } = useGetDB(file);
+ */
+export const useGetDB = (file: File | null) => {
   const [db, setDb] = useState<initSqlJs.Database>();
 
   useEffect(() => {
@@ -16,7 +25,7 @@ const useGetDB = (file: File | null) => {
         const db = new SQL.Database(new Uint8Array(arrayBuffer));
         setDb(db);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
     loadDatabase();
@@ -26,5 +35,3 @@ const useGetDB = (file: File | null) => {
   }, [file]);
   return { db };
 };
-
-export default useGetDB;
