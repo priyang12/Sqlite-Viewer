@@ -1,52 +1,49 @@
-import { useEffect, useState } from "react";
-import { useGetDBContext } from "../Context/DBContext";
-import type { SqlValue } from "sql.js";
+import { useEffect } from "react";
+import InputDB from "../Components/InputDB/InputDB";
+import { useStoreContext } from "../Context/StoreContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const [tables, setTables] = useState<SqlValue[]>();
-  const { db } = useGetDBContext();
+  const { Loading, storedDBs, insertUserDB, removeUserDB } = useStoreContext();
 
+  // temporary push it to default DB.
+  let navigate = useNavigate();
   useEffect(() => {
-    if (db) {
-      const query = "SELECT name FROM sqlite_master WHERE type='table'";
-      const result = db.exec(query);
-      const tables = result[0].values.map((row) => row[0]);
-      setTables(tables);
+    if (true) {
+      return navigate("/db/default");
     }
-  }, [db]);
+  }, []);
+
+  const onSelectFile = async (file: File | null) => {
+    if (file) {
+      insertUserDB(file);
+    }
+  };
+
+  if (Loading)
+    return (
+      <div className="flex justify-center min-h-lvh">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
 
   return (
     <div className="dark:bg-gray-800 bg-gray-200 flex justify-center min-h-lvh">
-      <div>
-        <h1 className="text-3xl font-bold underline">SQLite Database</h1>
-        <table className="table-auto">
-          <thead>
-            <tr>
-              {tables
-                ? tables.map((item) => (
-                    <th key={item?.toString()}>{item?.toString()}</th>
-                  ))
-                : null}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
-              <td>Malcolm Lockyer</td>
-              <td>1961</td>
-            </tr>
-            <tr>
-              <td>Witchy Woman</td>
-              <td>The Eagles</td>
-              <td>1972</td>
-            </tr>
-            <tr>
-              <td>Shining Star</td>
-              <td>Earth, Wind, and Fire</td>
-              <td>1975</td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="flex flex-col">
+        <div className="my-5">
+          <h1 className="text-5xl font-bold">Your Databases</h1>
+          {storedDBs.length > 0
+            ? storedDBs.map((item) => (
+                <div className="flex justify-between" key={item.toString()}>
+                  <h2 className="truncate w-1/2">{item.toString()}</h2>
+                  <button onClick={() => removeUserDB(item.toString())}>
+                    remove
+                  </button>
+                </div>
+              ))
+            : null}
+        </div>
+        <InputDB onFileSelect={onSelectFile} />
       </div>
     </div>
   );
