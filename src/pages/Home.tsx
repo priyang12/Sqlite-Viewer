@@ -1,8 +1,18 @@
+import { useEffect } from "react";
 import InputDB from "../Components/InputDB/InputDB";
 import { useStoreContext } from "../Context/StoreContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { Loading, storedDBs, insertUserDB, removeUserDB } = useStoreContext();
+
+  // temporary push it to default DB.
+  let navigate = useNavigate();
+  useEffect(() => {
+    if (true) {
+      return navigate("/db/default");
+    }
+  }, []);
 
   const onSelectFile = async (file: File | null) => {
     if (file) {
