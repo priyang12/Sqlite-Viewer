@@ -10,10 +10,15 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 
 - [x] make a readme file.
 
-### UI dev
+### User database
 
-- [x] Redirect Home to the Tables page.
-- [x] display all the tables.
+- [x] make sure of .db extension can send the file.
+- [x] remove the db from indexDB.
+- [x] remove the db from indexedDB.
+- [x] make context for interactive CRUD operation with indexedDB.
+- [x] setup vitest.
+- [x] test contexts.
+- [x] test hooks.
 
 ## Creator
 
