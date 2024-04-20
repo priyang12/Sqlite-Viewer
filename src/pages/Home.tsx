@@ -3,12 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   // temporary push it to default DB.
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
-    if (true) {
-      return navigate("/db/default");
-    }
-  }, []);
+    return navigate("/db/default");
+  }, [navigate]);
 
   return (
     <div className="dark:bg-gray-800 bg-gray-200 flex justify-center min-h-lvh">
