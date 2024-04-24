@@ -24,16 +24,10 @@ export const useGetData = (query: string) => {
     if (db) {
       try {
         setLoading(true);
-        console.log(db);
-
         const result = db.exec(query);
-
         const columns = result[0].columns;
-        setColumns(columns);
         const rows = result[0].values.map((row) => row[0]);
-
-        console.log(rows + "here");
-
+        setColumns(columns);
         setRow(rows);
       } catch (error) {
         console.error(error);
