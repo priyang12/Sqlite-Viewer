@@ -16,7 +16,7 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] display all the tables.
 - [x] sidebar for tables and main for Content.
 - [x] GetData Hook and test.
-- [ ] make a Search Component.
+- [x] make a Search Component.
 
 ## Creator
 

@@ -20,7 +20,7 @@ const SearchTable = ({
 
   return (
     <>
-      <label className="input input-bordered flex items-center gap-2">
+      <label className="mx-5 input input-bordered flex items-center gap-2 bg-base-300">
         <input
           type="text"
           className="grow"
