@@ -9,7 +9,7 @@ const Home = () => {
   }, [navigate]);
 
   return (
-    <div className="dark:bg-gray-800 bg-gray-200 flex justify-center min-h-lvh">
+    <div className="flex min-h-lvh justify-center bg-gray-200 dark:bg-gray-800">
       <div className="flex flex-col">
         <div className="my-5">
           <h1 className="text-5xl font-bold">Your Databases</h1>

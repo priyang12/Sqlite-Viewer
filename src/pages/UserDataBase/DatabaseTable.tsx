@@ -3,8 +3,8 @@ import { useParams } from "react-router-dom";
 const DatabaseTable = () => {
   const { table } = useParams();
   return (
-    <div className="flex flex-col items-center mx-16 gap-5 box-content">
-      <h2 className="text-xl my-5 self-start">Table : {table}</h2>
+    <div className="mx-16 box-content flex flex-col items-center gap-5">
+      <h2 className="my-5 self-start text-xl">Table : {table}</h2>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur
         recusandae deleniti, blanditiis totam dolorem suscipit cupiditate

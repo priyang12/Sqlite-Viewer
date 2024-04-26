@@ -1,8 +1,8 @@
 const Overview = () => {
   return (
-    <div className="flex flex-col items-center mx-16 gap-5 box-content">
-      <h2 className="text-4xl my-5">Overview</h2>
-      <h3 className="text-info text-2xl">
+    <div className="mx-16 box-content flex flex-col items-center gap-5">
+      <h2 className="my-5 text-4xl">Overview</h2>
+      <h3 className="text-2xl text-info">
         Serach for your Tables in DB and change at your need.
       </h3>
       <p>

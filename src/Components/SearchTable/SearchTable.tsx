@@ -12,7 +12,7 @@ const SearchTable = ({
     const searchTerm = e.target.value.toLowerCase(); // Get the search term
     if (DBtables) {
       const filteredTables = DBtables.filter((table) =>
-        table?.toString().toLowerCase().includes(searchTerm)
+        table?.toString().toLowerCase().includes(searchTerm),
       );
       setTables(filteredTables);
     }
@@ -20,7 +20,7 @@ const SearchTable = ({
 
   return (
     <>
-      <label className="mx-5 input input-bordered flex items-center gap-2 bg-base-300">
+      <label className="input input-bordered mx-5 flex items-center gap-2 bg-base-300">
         <input
           type="text"
           className="grow"
@@ -31,7 +31,7 @@ const SearchTable = ({
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
           fill="currentColor"
-          className="w-4 h-4 opacity-70"
+          className="h-4 w-4 opacity-70"
         >
           <path
             fillRule="evenodd"

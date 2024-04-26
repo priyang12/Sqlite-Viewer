@@ -10,7 +10,7 @@ export const useDefaultGetDB = () => {
       try {
         // const arrayBuffer = await file.arrayBuffer();
         const arrayBuffer = await fetch(databaseFile).then((res) =>
-          res.arrayBuffer()
+          res.arrayBuffer(),
         );
 
         const SQL = await initSqlJs({

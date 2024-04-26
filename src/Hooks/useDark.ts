@@ -13,7 +13,7 @@ const useDark = (): { isDarkMode: boolean } => {
     // Initialize with the result of the dark mode media query
     () =>
       window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
+      window.matchMedia("(prefers-color-scheme: dark)").matches,
   );
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const useDark = (): { isDarkMode: boolean } => {
 
     // Media query for dark mode preference
     const darkModeMediaQuery = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      "(prefers-color-scheme: dark)",
     );
 
     // Add event listener for changes in dark mode preference

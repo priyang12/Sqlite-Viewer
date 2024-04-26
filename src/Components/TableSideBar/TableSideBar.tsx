@@ -15,7 +15,7 @@ function TableSideBar() {
 
   if (loading) {
     return (
-      <div className="flex m-10 min-h-[40vh]">
+      <div className="m-10 flex min-h-[40vh]">
         <span
           className="loading loading-spinner loading-lg"
           data-testid="loading-spinner"
@@ -26,20 +26,20 @@ function TableSideBar() {
 
   return (
     <div>
-      <section className="flex flex-col bg-base-300  p-5 rounded gap-5 w-full h-full">
+      <section className="flex h-full w-full  flex-col gap-5 rounded bg-base-300 p-5">
         <h2 className="mx-6 mt-6 text-xl font-bold">Tables </h2>
         <SearchTable setTables={setTables} DBtables={DBtables} />
-        <ul className="mx-5 py-5 bg-base-200 text-base-content rounded-lg shadow-lg">
+        <ul className="mx-5 rounded-lg bg-base-200 py-5 text-base-content shadow-lg">
           {tables ? (
             tables.length > 0 ? (
               tables.map((item, index) => (
                 <li
                   key={index}
-                  className="py-2 px-4 hover:bg-primary-darker transition-colors duration-300"
+                  className="hover:bg-primary-darker px-4 py-2 transition-colors duration-300"
                 >
                   <Link
                     to={`${item?.toString()}`}
-                    className="text-primary-dark hover:text-white transition-colors duration-300"
+                    className="text-primary-dark transition-colors duration-300 hover:text-white"
                   >
                     {item?.toString()}
                   </Link>
