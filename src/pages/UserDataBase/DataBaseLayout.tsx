@@ -9,7 +9,7 @@ const DataBaseLayout = () => {
       <header className="my-5 flex justify-center">
         <h1 className="text-5xl font-thin">DataBase : {name}</h1>
       </header>
-      <main className="m-5 flex min-h-[80vh] bg-base-200">
+      <main className="m-5 flex min-h-[90vh] bg-base-200">
         <TableSideBar />
         <section className="w-full">
           <Outlet />

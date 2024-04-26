@@ -15,9 +15,11 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] Redirect Home to the Tables page.
 - [x] display all the tables.
 - [x] sidebar for tables and main for Content.
-- [x] GetData Hook and test.
+- [x] GetData Hook and test cases.
 - [x] make a Search Component.
 - [x] nested Database layout and nested routes for tables and overview.
+- [x] getTableData Hook and test cases.
+- [x] display table in UserDatabase.
 
 ## Creator
 
