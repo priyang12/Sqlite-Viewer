@@ -23,3 +23,25 @@ export function createObject(
   });
   return obj;
 }
+
+/**
+ * Generates a SQL query to retrieve data from a specified table with column name substrings.
+ *
+ * @param {string} tableName - The name of the table.
+ * @returns {string} The SQL query to retrieve data with column name substrings.
+ * @example
+ * // Example usage:
+ * const tableName = "example_table";
+ * const query = getTableQuery(tableName);
+ * // 'query' contains the SQL query to retrieve data from 'example_table' with column name substrings
+ */
+export function getTableQuery(tableName: string) {
+  const query = `WITH columns AS (
+        SELECT name
+        FROM pragma_table_info('${tableName}')
+      )
+      SELECT 
+        'SELECT ' || GROUP_CONCAT('substr(' || name || ', 1, 100) AS ' || name) AS query
+      FROM columns;`;
+  return query;
+}

@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { useGetTableData } from "../../Hooks/useGetTableData";
 import { createObject } from "../../Utils/tableUtils";
+import { useGetSubStrQuery } from "../../Hooks/useGetSubStrQuery";
 import Loading from "../../Components/Loading";
 
 function TableComponent({ columns, data }: { columns: any; data: any }) {
@@ -73,14 +74,8 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
 
 const columnHelper = createColumnHelper<any>();
 
-const DatabaseTable = () => {
-  const { table: tableName } = useParams();
-  const {
-    columns: DBhead,
-    row: DBrow,
-    loading,
-  } = useGetTableData(`SELECT * FROM ${tableName};`);
-
+function Table({ querySubstr }: { querySubstr: string }) {
+  const { columns: DBhead, row: DBrow, loading } = useGetTableData(querySubstr);
   const tableData = DBrow?.map((row) => createObject(row, DBhead));
   const tableColumns = DBhead?.map((item) =>
     columnHelper.accessor(item.toString(), {
@@ -88,14 +83,27 @@ const DatabaseTable = () => {
     }),
   );
 
+  if (!querySubstr) return null;
+
   if (loading) {
     return <Loading />;
   }
 
   return (
+    <>
+      <TableComponent columns={tableColumns} data={tableData} />
+    </>
+  );
+}
+
+const DatabaseTable = () => {
+  const { table: tableName } = useParams();
+  const { querySubstr } = useGetSubStrQuery(tableName);
+
+  return (
     <div className="mx-16 flex flex-col items-center gap-5">
       <h2 className="my-5 self-start text-xl">Table : {tableName}</h2>
-      <TableComponent columns={tableColumns} data={tableData} />
+      <Table querySubstr={querySubstr ? querySubstr : ""} />
     </div>
   );
 };
