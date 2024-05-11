@@ -14,14 +14,14 @@ import { SqlValue } from "sql.js";
  * // 'columns' contains the column names of the fetched data
  * // 'loading' indicates whether the data is currently being fetched
  */
-export const useGetTableData = (query: string) => {
+export const useGetTableData = (query: string | undefined) => {
   const { db } = useDefaultGetDB();
   const [loading, setLoading] = useState(false);
   const [columns, setColumns] = useState<string[]>();
   const [row, setRow] = useState<SqlValue[][]>();
 
   useEffect(() => {
-    if (db) {
+    if (db && query) {
       try {
         setLoading(true);
         const result = db.exec(query);
