@@ -1,6 +1,6 @@
 import { createObject, getTableQuery } from "../tableUtils";
 
-describe.skip("createObject function", () => {
+describe("createObject function", () => {
   it("should return an object with properties based on tableHead and corresponding values from row", () => {
     const row = ["John", 30, "New York"];
     const tableHead = ["Name", "Age", "Location"];

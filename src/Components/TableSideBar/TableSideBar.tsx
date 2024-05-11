@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useGetData } from "../../Hooks/useGetData";
-import SearchTable from "../SearchTable";
 import { Link } from "react-router-dom";
+import SearchTable from "../SearchTable";
 
 const tableQuery = "SELECT name FROM sqlite_master WHERE type='table'";
 
