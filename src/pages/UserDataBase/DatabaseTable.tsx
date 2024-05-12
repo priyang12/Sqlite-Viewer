@@ -10,6 +10,8 @@ import {
   ColumnFiltersState,
   Column,
   getFilteredRowModel,
+  SortingState,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import { useGetTableData } from "../../Hooks/useGetTableData";
 import { createObject } from "../../Utils/tableUtils";
@@ -79,22 +81,26 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data: data,
-    debugTable: true,
+    // debugTable: true,
     columns: columns,
     filterFns: {},
     state: {
       columnFilters: columnFilters,
       pagination: pagination,
+      sorting: sorting,
     },
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(), //client
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
-    // autoResetPageIndex: false, // turn off page index reset when sorting or filtering
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    // isMultiSortEvent: (e) => true, //Make all clicks multi-sort - default requires `shift` key
   });
 
   if (!columns || !data) {
@@ -111,10 +117,32 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
                 <th key={header.id}>
                   {header.isPlaceholder ? null : (
                     <>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      <div
+                        className={
+                          header.column.getCanSort()
+                            ? "cursor-pointer select-none"
+                            : ""
+                        }
+                        onClick={header.column.getToggleSortingHandler()}
+                        title={
+                          header.column.getCanSort()
+                            ? header.column.getNextSortingOrder() === "asc"
+                              ? "Sort ascending"
+                              : header.column.getNextSortingOrder() === "desc"
+                                ? "Sort descending"
+                                : "Clear sort"
+                            : undefined
+                        }
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                        {{
+                          asc: " 🔼",
+                          desc: " 🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
                       {header.column.getCanFilter() ? (
                         <div>
                           <Filter column={header.column} />
@@ -229,6 +257,8 @@ function Table({ querySubstr }: { querySubstr: string | undefined }) {
   const tableColumns = DBhead?.map((item) =>
     columnHelper.accessor(item.toString(), {
       cell: (info) => info.getValue(),
+      sortUndefined: "last",
+      sortDescFirst: false,
     }),
   );
 
