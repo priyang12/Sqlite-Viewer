@@ -1,1 +1,1 @@
-export { default } from "./DeFerredInput";
+export { default } from "./DeferredInput";
