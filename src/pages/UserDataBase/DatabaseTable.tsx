@@ -8,7 +8,6 @@ import {
   getPaginationRowModel,
   PaginationState,
   ColumnFiltersState,
-  Column,
   getFilteredRowModel,
   SortingState,
   getSortedRowModel,
@@ -16,72 +15,17 @@ import {
 import { useGetTableData } from "../../Hooks/useGetTableData";
 import { createObject } from "../../Utils/tableUtils";
 import { useGetSubStrQuery } from "../../Hooks/useGetSubStrQuery";
-import Loading from "../../Components/Loading";
-import DebouncedInput from "../../Components/DeferredInput";
 import {
   FaAngleRight,
   FaAngleDoubleRight,
   FaAngleLeft,
   FaAngleDoubleLeft,
 } from "react-icons/fa";
+import Loading from "../../Components/Loading";
+import TableHead from "../../Components/TableHead";
+import TableBody from "../../Components/TableBody";
 
 const pageSizes = [10, 20, 30, 40, 50];
-
-function Filter({ column }: { column: Column<any, unknown> }) {
-  const columnFilterValue = column.getFilterValue();
-  const { filterVariant } = (column.columnDef.meta ?? {}) as {
-    filterVariant: string;
-  };
-
-  return filterVariant === "range" ? (
-    <div>
-      <div className="flex space-x-2">
-        {/* See faceted column filters example for min max values functionality */}
-        <DebouncedInput
-          type="number"
-          value={(columnFilterValue as [number, number])?.[0] ?? ""}
-          onChange={(value) =>
-            column.setFilterValue((old: [number, number]) => [value, old?.[1]])
-          }
-          placeholder={`Min`}
-          className="w-24 rounded border shadow"
-        />
-        <DebouncedInput
-          type="number"
-          value={(columnFilterValue as [number, number])?.[1] ?? ""}
-          onChange={(value) =>
-            column.setFilterValue((old: [number, number]) => [old?.[0], value])
-          }
-          placeholder={`Max`}
-          className="w-24 rounded border shadow"
-        />
-      </div>
-      <div className="h-1" />
-    </div>
-  ) : filterVariant === "select" ? (
-    <select
-      onChange={(e) => column.setFilterValue(e.target.value)}
-      value={columnFilterValue?.toString()}
-    >
-      {/* See faceted column filters example for dynamic select options */}
-      <option value="">All</option>
-      <option value="complicated">complicated</option>
-      <option value="relationship">relationship</option>
-      <option value="single">single</option>
-    </select>
-  ) : (
-    <DebouncedInput
-      className="w-36 rounded border shadow"
-      onChange={(value) => {
-        column.setFilterValue(value);
-      }}
-      placeholder={`Search...`}
-      type="text"
-      value={(columnFilterValue ?? "") as string}
-    />
-    // See faceted column filters example for datalist search suggestions
-  );
-}
 
 function TableComponent({ columns, data }: { columns: any; data: any }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -101,6 +45,7 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
       pagination: pagination,
       sorting: sorting,
     },
+    columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
@@ -118,64 +63,10 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
   return (
     <>
       <div className="w-max-96 relative h-[80vh] overflow-x-auto">
-        <table className="table table-pin-rows table-pin-cols table-fixed">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder ? null : (
-                      <>
-                        <div
-                          className={
-                            header.column.getCanSort()
-                              ? "cursor-pointer select-none"
-                              : ""
-                          }
-                          onClick={header.column.getToggleSortingHandler()}
-                          title={
-                            header.column.getCanSort()
-                              ? header.column.getNextSortingOrder() === "asc"
-                                ? "Sort ascending"
-                                : header.column.getNextSortingOrder() === "desc"
-                                  ? "Sort descending"
-                                  : "Clear sort"
-                              : undefined
-                          }
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {{
-                            asc: " 🔼",
-                            desc: " 🔽",
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                        {header.column.getCanFilter() ? (
-                          <div>
-                            <Filter column={header.column} />
-                          </div>
-                        ) : null}
-                      </>
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
+        <table className="table table-pin-rows table-pin-cols w-full table-fixed">
+          <TableHead table={table} />
+          <TableBody table={table} />
+          {/* <tfoot>
             {table.getFooterGroups().map((footerGroup) => (
               <tr key={footerGroup.id}>
                 {footerGroup.headers.map((header) => (
@@ -190,7 +81,7 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
                 ))}
               </tr>
             ))}
-          </tfoot>
+          </tfoot> */}
         </table>
       </div>
       <div className="flex w-full flex-col items-center gap-3 rounded-lg bg-base-300 p-5">
@@ -281,6 +172,7 @@ function Table({ querySubstr }: { querySubstr: string | undefined }) {
   const tableColumns = DBhead?.map((item) =>
     columnHelper.accessor(item.toString(), {
       cell: (info) => info.getValue(),
+      // footer: (props) => props.column.id,
       sortUndefined: "last",
       sortDescFirst: false,
     }),
@@ -304,7 +196,7 @@ const DatabaseTable = () => {
   const { querySubstr } = useGetSubStrQuery(tableName);
 
   return (
-    <div className="mx-14 flex flex-col items-center gap-5">
+    <div className="mx-5 flex flex-col items-center gap-5">
       <h2 className="my-5 self-start text-xl">Table : {tableName}</h2>
       <Table querySubstr={querySubstr} />
     </div>
