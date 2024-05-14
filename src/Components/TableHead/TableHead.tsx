@@ -1,59 +1,118 @@
 import { Table, flexRender } from "@tanstack/react-table";
 import Filter from "./Filter";
 import { FaSortAlphaUp, FaSortAlphaDown, FaSort } from "react-icons/fa";
-import "./index.css";
+
+import { generateMockData } from "../../Utils/tableUtils";
+
+const numRows = 10;
+const numCols = 10;
+const { headers } = generateMockData(numRows, numCols);
 
 const TableHead = ({ table, ...props }: { table: Table<unknown> }) => {
   return (
-    <thead className="flex w-full" {...props}>
-      {table.getHeaderGroups().map((headerGroup) => (
+    <thead className="" {...props}>
+      {/* {table.getHeaderGroups().map((headerGroup) => (
         <tr
           key={headerGroup.id}
-          className="flex rounded-lg border-2 border-primary px-5"
+          className="flex rounded-lg border-2 border-primary"
         >
           {headerGroup.headers.map((header) => (
             <>
               <th
                 key={header.id}
-                className="flex flex-col items-center justify-center gap-5 px-0"
+                colSpan={header.colSpan}
+                style={{
+                  width: header.getSize(),
+                }}
+                className="relative border-2 border-primary text-center font-bold"
               >
-                {header.isPlaceholder ? null : (
-                  <>
-                    <div
-                      className={`flex  items-center gap-5 text-base 
+                <div className="flex gap-5">
+                  <div className="flex flex-col items-center justify-center gap-5 px-0">
+                    {header.isPlaceholder ? null : (
+                      <>
+                        <div
+                          className={`flex items-center gap-5 truncate text-base
                         ${header.column.getCanSort() ? "cursor-pointer select-none" : ""}`}
-                      onClick={header.column.getToggleSortingHandler()}
-                      title={
-                        header.column.getCanSort()
-                          ? header.column.getNextSortingOrder() === "asc"
-                            ? "Sort ascending"
-                            : header.column.getNextSortingOrder() === "desc"
-                              ? "Sort descending"
-                              : "Clear sort"
-                          : undefined
-                      }
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                      {{
-                        asc: <FaSortAlphaUp />,
-                        desc: <FaSortAlphaDown />,
-                      }[header.column.getIsSorted() as string] ?? null}
-                    </div>
+                          onClick={header.column.getToggleSortingHandler()}
+                          title={
+                            header.column.getCanSort()
+                              ? header.column.getNextSortingOrder() === "asc"
+                                ? "Sort ascending"
+                                : header.column.getNextSortingOrder() === "desc"
+                                  ? "Sort descending"
+                                  : "Clear sort"
+                              : undefined
+                          }
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                          {{
+                            asc: <FaSortAlphaUp />,
+                            desc: <FaSortAlphaDown />,
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                      </>
+                    )}
                     {header.column.getCanFilter() ? (
                       <div>
-                        <Filter column={header.column} />
+                        <Filter
+                          inputWidth={header.getSize()}
+                          column={header.column}
+                        />
                       </div>
                     ) : null}
-                  </>
-                )}
+                  </div>
+                  <div
+                    {...{
+                      onDoubleClick: () => header.column.resetSize(),
+                      onMouseDown: header.getResizeHandler(),
+                      onTouchStart: header.getResizeHandler(),
+                      className: `absolute cursor-col-resize resizer  top-0 right-0 h-full w-2 select-none touch-none ${
+                        table.options.columnResizeDirection
+                      } ${header.column.getIsResizing() ? "bg-red-700 opacity-100" : ""}`,
+                      style: {
+                        transform: header.column.getIsResizing()
+                          ? `translateX(${
+                              (table.options.columnResizeDirection === "ltr"
+                                ? -1
+                                : 1) *
+                              (table.getState().columnSizingInfo.deltaOffset ??
+                                0)
+                            }px)`
+                          : "",
+                      },
+                    }}
+                  >
+                    |
+                  </div>
+                </div>
               </th>
             </>
           ))}
         </tr>
-      ))}
+      ))} */}
+      <tr>
+        {headers.map((header) => (
+          <th
+            key={header}
+            className="w-[10vw] border-2 border-solid border-primary"
+          >
+            <>
+              <div
+                className={` items-center gap-5 text-sm
+                    ${true ? "cursor-pointer select-none" : ""}`}
+              >
+                {header}
+              </div>
+            </>
+            <div
+              className={`cursor-col-resize touch-none select-none ${true ? "bg-blue-600 opacity-100" : ""}`}
+            ></div>
+          </th>
+        ))}
+      </tr>
     </thead>
   );
 };

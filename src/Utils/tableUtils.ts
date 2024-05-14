@@ -45,3 +45,36 @@ export function getTableQuery(tableName: string) {
       FROM columns;`;
   return query;
 }
+
+/**
+ * Generates mock data for a table with a specified number of rows and columns.
+ * @param {number} numRows - The number of rows in the table.
+ * @param {number} numCols - The number of columns in the table.
+ * @returns {Object} An object containing mock headers and table body with rows inside cells.
+ * @example
+ * // Example usage:
+ * const numRows = 3;
+ * const numCols = 4;
+ * const { headers, tableBody } = generateMockData(numRows, numCols);
+ * // 'headers' contains an array of mock column headers
+ * // 'tableBody' contains an array of arrays representing table rows and cells
+ */
+export function generateMockData(numRows: number, numCols: number) {
+  // Generate headers
+  const headers = [];
+  for (let i = 1; i <= numCols; i++) {
+    headers.push(`Header ${i}`);
+  }
+
+  // Generate table body with rows
+  const tableBody = [];
+  for (let i = 1; i <= numRows; i++) {
+    const row = [];
+    for (let j = 1; j <= numCols; j++) {
+      row.push(`Row ${i}, Cell ${j}`);
+    }
+    tableBody.push(row);
+  }
+
+  return { headers, tableBody };
+}

@@ -1,7 +1,13 @@
 import { Column } from "@tanstack/react-table";
 import DebouncedInput from "../../Components/DeferredInput";
 
-const Filter = ({ column }: { column: Column<any, unknown> }) => {
+const Filter = ({
+  column,
+  inputWidth,
+}: {
+  column: Column<any, unknown>;
+  inputWidth: number;
+}) => {
   const columnFilterValue = column.getFilterValue();
   const { filterVariant } = (column.columnDef.meta ?? {}) as {
     filterVariant: string;
@@ -48,6 +54,9 @@ const Filter = ({ column }: { column: Column<any, unknown> }) => {
       className="input input-xs input-accent w-full rounded border text-sm shadow"
       onChange={(value) => {
         column.setFilterValue(value);
+      }}
+      style={{
+        width: inputWidth,
       }}
       placeholder={`Search...`}
       type="text"

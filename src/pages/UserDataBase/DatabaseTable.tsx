@@ -4,13 +4,13 @@ import {
   useReactTable,
   getCoreRowModel,
   createColumnHelper,
-  flexRender,
   getPaginationRowModel,
   PaginationState,
   ColumnFiltersState,
   getFilteredRowModel,
   SortingState,
   getSortedRowModel,
+  Table as TableType,
 } from "@tanstack/react-table";
 import { useGetTableData } from "../../Hooks/useGetTableData";
 import { createObject } from "../../Utils/tableUtils";
@@ -24,8 +24,90 @@ import {
 import Loading from "../../Components/Loading";
 import TableHead from "../../Components/TableHead";
 import TableBody from "../../Components/TableBody";
+import TableFoot from "../../Components/TableFoot";
 
 const pageSizes = [10, 20, 30, 40, 50];
+
+function Pagination({ table }: { table: TableType<unknown> }) {
+  return (
+    <div className="my-3 flex w-full flex-col items-center gap-3 rounded-lg bg-base-300 p-5">
+      <div className="flex gap-5 self-start">
+        <div className="join" aria-label="pagination">
+          <button
+            className="btn join-item"
+            onClick={() => table.firstPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <FaAngleDoubleLeft />
+          </button>
+          <button
+            className="btn join-item"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <FaAngleLeft />
+          </button>
+          <div className="btn join-item">
+            {table.getState().pagination.pageIndex + 1}
+          </div>
+          <button
+            className="btn join-item"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <FaAngleRight />
+          </button>
+          <button
+            className="btn join-item"
+            onClick={() => table.lastPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <FaAngleDoubleRight />
+          </button>
+        </div>
+        <span className="flex items-center gap-1">
+          <div>Page</div>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount().toLocaleString()}
+          </strong>
+        </span>
+      </div>
+      <div className="flex self-end">
+        <span className="flex items-center">
+          Go to page :
+          <input
+            type="number"
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+
+              if (page !== 0 && page > 0 && page < table.getPageCount()) {
+                table.setPageIndex(page);
+              } else {
+                e.target.value = "";
+              }
+            }}
+            className="mx-3 w-1/4 rounded border p-1"
+          />
+        </span>
+        <select
+          className="select select-bordered w-full max-w-xs"
+          value={table.getState().pagination.pageSize}
+          onChange={(e) => {
+            table.setPageSize(Number(e.target.value));
+          }}
+        >
+          {pageSizes.map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+}
 
 function TableComponent({ columns, data }: { columns: any; data: any }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -46,6 +128,7 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
       sorting: sorting,
     },
     columnResizeMode: "onChange",
+    columnResizeDirection: "ltr",
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
@@ -62,102 +145,24 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
 
   return (
     <>
-      <div className="w-max-96 relative h-[80vh] overflow-x-auto">
-        <table className="table table-pin-rows table-pin-cols w-full table-fixed">
+      <div
+        className="w-full overflow-auto"
+        style={{
+          flex: "1 1 0%",
+          overscrollBehavior: "none",
+        }}
+      >
+        <table
+          className="overflow"
+          style={{
+            width: table.getCenterTotalSize(),
+          }}
+        >
           <TableHead table={table} />
           <TableBody table={table} />
-          {/* <tfoot>
-            {table.getFooterGroups().map((footerGroup) => (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext(),
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </tfoot> */}
+          <TableFoot table={table} />
         </table>
-      </div>
-      <div className="flex w-full flex-col items-center gap-3 rounded-lg bg-base-300 p-5">
-        <div className="flex gap-5 self-start">
-          <div className="join" aria-label="pagination">
-            <button
-              className="btn join-item"
-              onClick={() => table.firstPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <FaAngleDoubleLeft />
-            </button>
-            <button
-              className="btn join-item"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <FaAngleLeft />
-            </button>
-            <div className="btn join-item">
-              {table.getState().pagination.pageIndex + 1}
-            </div>
-            <button
-              className="btn join-item"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <FaAngleRight />
-            </button>
-            <button
-              className="btn join-item"
-              onClick={() => table.lastPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <FaAngleDoubleRight />
-            </button>
-          </div>
-          <span className="flex items-center gap-1">
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount().toLocaleString()}
-            </strong>
-          </span>
-        </div>
-        <div className="flex self-end">
-          <span className="flex items-center">
-            Go to page :
-            <input
-              type="number"
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                if (page !== 0 && page > 0 && page < table.getPageCount()) {
-                  table.setPageIndex(page);
-                } else {
-                  e.target.value = "";
-                }
-              }}
-              className="mx-3 w-1/4 rounded border p-1"
-            />
-          </span>
-          <select
-            className="select select-bordered w-full max-w-xs"
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
-          >
-            {pageSizes.map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Pagination table={table} />
       </div>
     </>
   );
@@ -172,7 +177,7 @@ function Table({ querySubstr }: { querySubstr: string | undefined }) {
   const tableColumns = DBhead?.map((item) =>
     columnHelper.accessor(item.toString(), {
       cell: (info) => info.getValue(),
-      // footer: (props) => props.column.id,
+      footer: (props) => props.column.id,
       sortUndefined: "last",
       sortDescFirst: false,
     }),
@@ -196,7 +201,7 @@ const DatabaseTable = () => {
   const { querySubstr } = useGetSubStrQuery(tableName);
 
   return (
-    <div className="mx-5 flex flex-col items-center gap-5">
+    <div className="mx-5 flex h-full flex-col items-center gap-5">
       <h2 className="my-5 self-start text-xl">Table : {tableName}</h2>
       <Table querySubstr={querySubstr} />
     </div>
