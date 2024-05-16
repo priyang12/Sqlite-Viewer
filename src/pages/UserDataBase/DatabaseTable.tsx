@@ -145,15 +145,9 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
 
   return (
     <>
-      <div
-        className="w-full overflow-auto"
-        style={{
-          flex: "1 1 0%",
-          overscrollBehavior: "none",
-        }}
-      >
+      <div className="overflow-x-auto">
         <table
-          className="overflow"
+          className=""
           style={{
             width: table.getCenterTotalSize(),
           }}
@@ -162,8 +156,8 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
           <TableBody table={table} />
           <TableFoot table={table} />
         </table>
-        <Pagination table={table} />
       </div>
+      <Pagination table={table} />
     </>
   );
 }
@@ -201,7 +195,7 @@ const DatabaseTable = () => {
   const { querySubstr } = useGetSubStrQuery(tableName);
 
   return (
-    <div className="mx-5 flex h-full flex-col items-center gap-5">
+    <div className="mx-5 h-full">
       <h2 className="my-5 self-start text-xl">Table : {tableName}</h2>
       <Table querySubstr={querySubstr} />
     </div>

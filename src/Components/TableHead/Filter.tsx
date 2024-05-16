@@ -3,7 +3,6 @@ import DebouncedInput from "../../Components/DeferredInput";
 
 const Filter = ({
   column,
-  inputWidth,
 }: {
   column: Column<any, unknown>;
   inputWidth: number;
@@ -54,9 +53,6 @@ const Filter = ({
       className="input input-xs input-accent w-full rounded border text-sm shadow"
       onChange={(value) => {
         column.setFilterValue(value);
-      }}
-      style={{
-        width: inputWidth,
       }}
       placeholder={`Search...`}
       type="text"

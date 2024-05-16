@@ -25,37 +25,33 @@ function TableSideBar() {
   }
 
   return (
-    <div>
-      <section className="flex h-full w-full  flex-col gap-5 rounded bg-base-300 p-5">
-        <h2 className="mx-6 mt-6 text-xl font-bold">Tables </h2>
-        <SearchTable setTables={setTables} DBtables={DBtables} />
-        <ul className="mx-5 rounded-lg bg-base-200 py-5 text-base-content shadow-lg">
-          {tables ? (
-            tables.length > 0 ? (
-              tables.map((item, index) => (
-                <li
-                  key={index}
-                  className="hover:bg-primary-darker px-4 py-2 transition-colors duration-300"
+    <section className="flex flex-col gap-5 rounded bg-base-300 pb-5">
+      <h2 className="mx-6 mt-6 text-xl font-bold">Tables </h2>
+      <SearchTable setTables={setTables} DBtables={DBtables} />
+      <ul className="mx-5 rounded-lg bg-base-200 py-5 text-base-content shadow-lg">
+        {tables ? (
+          tables.length > 0 ? (
+            tables.map((item, index) => (
+              <li
+                key={index}
+                className="hover:bg-primary-darker px-4 py-2 transition-colors duration-300"
+              >
+                <Link
+                  to={`${item?.toString()}`}
+                  className="text-primary-dark transition-colors duration-300 hover:text-white"
                 >
-                  <Link
-                    to={`${item?.toString()}`}
-                    className="text-primary-dark transition-colors duration-300 hover:text-white"
-                  >
-                    {item?.toString()}
-                  </Link>
-                </li>
-              ))
-            ) : (
-              <div>
-                <h4 className="text-center font-bold">
-                  No Tables in Database.
-                </h4>
-              </div>
-            )
-          ) : null}
-        </ul>
-      </section>
-    </div>
+                  {item?.toString()}
+                </Link>
+              </li>
+            ))
+          ) : (
+            <div>
+              <h4 className="text-center font-bold">No Tables in Database.</h4>
+            </div>
+          )
+        ) : null}
+      </ul>
+    </section>
   );
 }
 
