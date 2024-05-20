@@ -23,7 +23,7 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] Pagination in rows.
 - [x] filter and sort in table.
 - [x] style the table components.
-- [ ] Resize the column.
+- [x] Resize the column.
 
 ## Creator
 
