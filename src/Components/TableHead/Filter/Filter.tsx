@@ -1,5 +1,6 @@
 import { Column } from "@tanstack/react-table";
-import DebouncedInput from "../../Components/DeferredInput";
+import DebouncedInput from "../../DeferredInput";
+import "@testing-library/jest-dom/vitest";
 
 const Filter = ({
   column,

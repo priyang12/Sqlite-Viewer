@@ -1,5 +1,5 @@
 import { render, fireEvent, act } from "@testing-library/react";
-import DeFerredInput from "./DeFerredInput";
+import DeFerredInput from "./DeferredInput";
 import "@testing-library/jest-dom/vitest";
 
 describe("DeFerredInput component", () => {
