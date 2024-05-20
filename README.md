@@ -24,6 +24,8 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] filter and sort in table.
 - [x] style the table components.
 - [x] Resize the column.
+- [x] Add test for table Components.
+- [ ] skeleton loading.
 
 ## Creator
 

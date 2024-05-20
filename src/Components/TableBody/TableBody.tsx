@@ -9,7 +9,7 @@ function NoRows() {
 const TableBody = ({ table }: { table: Table<unknown> }) => {
   return (
     <tbody className="w-full">
-      {table.getRowModel().rows.length > 0 && false ? (
+      {table.getRowModel().rows.length > 0 ? (
         table.getRowModel().rows.map((row) => (
           <tr key={row.id}>
             {row.getVisibleCells().map((cell) => (
