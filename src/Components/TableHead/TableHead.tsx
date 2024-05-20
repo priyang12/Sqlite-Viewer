@@ -4,10 +4,10 @@ import {
   Table,
   flexRender,
 } from "@tanstack/react-table";
-import Filter from "./Filter";
+import Filter from "./Filter/Filter";
 import { FaSortAlphaUp, FaSortAlphaDown } from "react-icons/fa";
 
-function Th({
+export function Th({
   header,
   columnResizeDirection,
 }: {
@@ -40,6 +40,7 @@ function Th({
                         : "Clear sort"
                     : undefined
                 }
+                aria-label={"TableHead"}
               >
                 {flexRender(
                   header.column.columnDef.header,
@@ -53,9 +54,9 @@ function Th({
             </>
           )}
           {header.column.getCanFilter() ? (
-            <div>
+            <>
               <Filter inputWidth={header.getSize()} column={header.column} />
-            </div>
+            </>
           ) : null}
         </div>
         <div
@@ -65,6 +66,7 @@ function Th({
             onTouchStart: header.getResizeHandler(),
             className: `absolute cursor-col-resize resizer  top-0 right-0 h-full w-2 select-none touch-none ${columnResizeDirection} ${header.column.getIsResizing() ? "bg-blue-700 opacity-100" : ""}`,
           }}
+          data-testid="resizerID"
         ></div>
       </div>
     </th>
@@ -76,8 +78,9 @@ const TableHead = ({ table, ...props }: { table: Table<unknown> }) => {
     <thead className="" {...props}>
       {table.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
-          {headerGroup.headers.map((header) => (
+          {headerGroup.headers.map((header, index) => (
             <Th
+              key={index}
               header={header}
               columnResizeDirection={table.options.columnResizeDirection}
             />
