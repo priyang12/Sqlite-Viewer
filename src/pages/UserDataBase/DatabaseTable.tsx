@@ -21,10 +21,10 @@ import {
   FaAngleLeft,
   FaAngleDoubleLeft,
 } from "react-icons/fa";
-import Loading from "../../Components/Loading";
 import TableHead from "../../Components/TableHead";
 import TableBody from "../../Components/TableBody";
 import TableFoot from "../../Components/TableFoot";
+import Skeleton from "../../Components/Skeleton";
 
 const pageSizes = [10, 20, 30, 40, 50];
 
@@ -162,6 +162,29 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
   );
 }
 
+function TableSkeleton() {
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex justify-evenly">
+        <Skeleton width="100px" height="100px" count={6} />
+      </div>
+      {Array.from({ length: 6 }).map((_, index) => (
+        <div className="flex justify-evenly" key={index}>
+          <Skeleton
+            width="100px"
+            height="50px"
+            count={6}
+            className="rounded-none border-2 border-primary opacity-70"
+          />
+        </div>
+      ))}
+      <div className="my-3 flex">
+        <Skeleton width="100%" height="100px" />
+      </div>
+    </div>
+  );
+}
+
 const columnHelper = createColumnHelper<any>();
 
 function Table({ querySubstr }: { querySubstr: string | undefined }) {
@@ -180,7 +203,7 @@ function Table({ querySubstr }: { querySubstr: string | undefined }) {
   if (!querySubstr) return null;
 
   if (loading) {
-    return <Loading />;
+    return <TableSkeleton />;
   }
 
   return (

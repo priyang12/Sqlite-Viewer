@@ -14,7 +14,7 @@ const Overview = () => {
   return (
     <div className="mx-16 box-content flex flex-col items-center gap-5">
       {isLoading ? (
-        <Skeleton className="my-xl text-4xl" width={"50%"} />
+        <Skeleton className="my-5 text-4xl" width={"50%"} height={50} />
       ) : (
         <h2 className="my-5 text-4xl">Overview</h2>
       )}
