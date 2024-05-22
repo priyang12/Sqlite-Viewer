@@ -25,10 +25,15 @@ export const useGetTableData = (query: string | undefined) => {
       try {
         setLoading(true);
         const result = db.exec(query);
-        const columns = result[0].columns;
-        const rows = result[0].values;
-        setColumns(columns);
-        setRow(rows);
+        if (result.length > 0) {
+          const columns = result[0].columns;
+          const rows = result[0].values;
+          setColumns(columns);
+          setRow(rows);
+        } else {
+          setColumns(undefined);
+          setRow(undefined);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -38,9 +43,10 @@ export const useGetTableData = (query: string | undefined) => {
       }
     }
     () => {
+      // clean up function is not getting triggered.
+      console.log("clean up");
       setColumns(undefined);
       setRow(undefined);
-      setLoading(false);
     };
   }, [db, query]);
 

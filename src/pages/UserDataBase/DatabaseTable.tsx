@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   useReactTable,
@@ -25,6 +25,7 @@ import TableHead from "../../Components/TableHead";
 import TableBody from "../../Components/TableBody";
 import TableFoot from "../../Components/TableFoot";
 import Skeleton from "../../Components/Skeleton";
+import useSqlQueries from "../../Hooks/useSqlQueries";
 
 const pageSizes = [10, 20, 30, 40, 50];
 
@@ -119,7 +120,7 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
 
   const table = useReactTable({
     data: data,
-    debugTable: true,
+    // debugTable: true,
     columns: columns,
     filterFns: {},
     state: {
@@ -187,8 +188,30 @@ function TableSkeleton() {
 
 const columnHelper = createColumnHelper<any>();
 
-function Table({ querySubstr }: { querySubstr: string | undefined }) {
+function Table({
+  querySubstr,
+  tableName,
+}: {
+  querySubstr: string | undefined;
+  tableName: string | undefined;
+}) {
+  // Memoize the queries array to prevent infinite re-renders
+  const queries = useMemo(
+    () => [
+      `PRAGMA table_info(${tableName});`,
+      // `PRAGMA foreign_key_list(${tableName});`,
+    ],
+    [tableName],
+  );
+
+  const { results } = useSqlQueries(queries);
+  console.log(results);
+  // pass the result to tableColumns.
+
   const { columns: DBhead, row: DBrow, loading } = useGetTableData(querySubstr);
+
+  console.log(DBhead);
+
   const tableData = DBrow?.map((row) => createObject(row, DBhead));
 
   const tableColumns = DBhead?.map((item) =>
@@ -220,7 +243,7 @@ const DatabaseTable = () => {
   return (
     <div className="mx-5 h-full">
       <h2 className="my-5 self-start text-xl">Table : {tableName}</h2>
-      <Table querySubstr={querySubstr} />
+      <Table querySubstr={querySubstr} tableName={tableName} />
     </div>
   );
 };

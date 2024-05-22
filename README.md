@@ -25,7 +25,12 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] style the table components.
 - [x] Resize the column.
 - [x] Add test for table Components.
-- [ ] skeleton loading.
+- [x] skeleton loading.
+- [x] hook to exec multiple queries parallel.
+- [ ] data types of column in header.
+- [ ] primary and foreign keys.
+
+<!-- PRAGMA foreign_keys = ON; -->
 
 ## Creator
 
