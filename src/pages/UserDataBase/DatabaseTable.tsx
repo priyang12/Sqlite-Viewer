@@ -13,7 +13,8 @@ import {
   Table as TableType,
 } from "@tanstack/react-table";
 import { useGetTableData } from "../../Hooks/useGetTableData";
-import { createObject } from "../../Utils/tableUtils";
+import useSqlQueries, { queryType } from "../../Hooks/useSqlQueries";
+import { columnData, createObject } from "../../Utils/tableUtils";
 import { useGetSubStrQuery } from "../../Hooks/useGetSubStrQuery";
 import {
   FaAngleRight,
@@ -25,7 +26,7 @@ import TableHead from "../../Components/TableHead";
 import TableBody from "../../Components/TableBody";
 import TableFoot from "../../Components/TableFoot";
 import Skeleton from "../../Components/Skeleton";
-import useSqlQueries, { resultType } from "../../Hooks/useSqlQueries";
+import Loading from "../../Components/Loading";
 
 const pageSizes = [10, 20, 30, 40, 50];
 
@@ -190,22 +191,39 @@ const columnHelper = createColumnHelper<any>();
 
 function Table({
   querySubstr,
-  results,
+  tableInfoResult,
+  foreignKeyResult,
 }: {
   querySubstr: string | undefined;
-  results: resultType;
+  tableInfoResult: queryType;
+  foreignKeyResult: queryType;
 }) {
+  // get index of property in which stored the foreign Keys.
+  const propertyIndex =
+    foreignKeyResult.length > 0
+      ? foreignKeyResult[0].columns.findIndex(
+          (val) => val.toString() === "from",
+        )
+      : null;
+  const foreignKeys =
+    foreignKeyResult.length > 0 && propertyIndex
+      ? foreignKeyResult[0].values.map((item) => item[propertyIndex])
+      : null;
+
+  const columnMetaData = columnData(tableInfoResult);
+
   const { columns: DBhead, row: DBrow, loading } = useGetTableData(querySubstr);
 
   const tableData = DBrow?.map((row) => createObject(row, DBhead));
-  const tableColumns = DBhead?.map((item, index) =>
+  const tableColumns = DBhead?.map((item) =>
     columnHelper.accessor(item.toString(), {
       cell: (info) => info.getValue(),
       header: (info) => {
         const customObject = {
           displayName: info.column.id,
-          // convert this into object later or matrix transformation based on name.
-          dataType: results[0][0].values[index][2],
+          dataType: columnMetaData[item.toString()].type,
+          primaryKey: columnMetaData[item.toString()].pk,
+          foreignKey: foreignKeys ? foreignKeys.includes(item) : false,
         };
         return customObject;
       },
@@ -231,21 +249,32 @@ function Table({
 const DatabaseTable = () => {
   const { table: tableName } = useParams();
   const { querySubstr } = useGetSubStrQuery(tableName);
+
   // Memoize the queries array to prevent infinite re-renders
   const queries = useMemo(
     () => [
       `PRAGMA table_info(${tableName});`,
-      // `PRAGMA foreign_key_list(${tableName});`,
+      `PRAGMA foreign_key_list(${tableName});`,
     ],
     [tableName],
   );
+  const { results, loading } = useSqlQueries(queries);
 
-  const { results } = useSqlQueries(queries);
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="mx-5 h-full">
       <h2 className="my-5 self-start text-xl">Table : {tableName}</h2>
-      <Table querySubstr={querySubstr} results={results} />
+
+      {results.length > 0 ? (
+        <Table
+          querySubstr={querySubstr}
+          tableInfoResult={results[0]}
+          foreignKeyResult={results.length > 1 ? results[1] : []}
+        />
+      ) : null}
     </div>
   );
 };

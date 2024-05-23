@@ -59,6 +59,25 @@ export function Th({
                     header.getContext(),
                   )}
                 </span>
+                {flexRender(
+                  headerFn
+                    ? headerFn(header.getContext()).primaryKey
+                    : headerFn,
+                  header.getContext(),
+                ) ? (
+                  <span className="text-xs font-normal">🔑</span>
+                ) : null}
+
+                {flexRender(
+                  headerFn
+                    ? headerFn(header.getContext()).foreignKey
+                    : headerFn,
+                  header.getContext(),
+                ) ? (
+                  <span className="text-xs font-normal" title="foreign Key">
+                    🗝️
+                  </span>
+                ) : null}
 
                 {{
                   asc: <FaSortAlphaUp />,

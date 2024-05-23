@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useDefaultGetDB } from "./useDefaultGetDB";
 import { QueryExecResult } from "sql.js";
 
-export type resultType = QueryExecResult[][];
+export type queryType = QueryExecResult[];
+export type resultType = queryType[];
 
 /**
  * Custom hook to fetch data from a SQLite database using specified queries.

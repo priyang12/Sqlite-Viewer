@@ -28,9 +28,7 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] skeleton loading.
 - [x] hook to exec multiple queries parallel.
 - [x] data types of column in header.
-- [ ] primary and foreign keys.
-
-<!-- PRAGMA foreign_keys = ON; -->
+- [x] primary and foreign keys.
 
 ## Creator
 
