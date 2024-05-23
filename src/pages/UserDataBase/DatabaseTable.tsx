@@ -196,9 +196,7 @@ function Table({
   results: resultType;
 }) {
   const { columns: DBhead, row: DBrow, loading } = useGetTableData(querySubstr);
-
   const tableData = DBrow?.map((row) => createObject(row, DBhead));
-
   const tableColumns = DBhead?.map((item, index) =>
     columnHelper.accessor(item.toString(), {
       cell: (info) => info.getValue(),
@@ -241,25 +239,7 @@ const DatabaseTable = () => {
     [tableName],
   );
 
-  // fix the empty array issue.
-  // const { results } = useSqlQueries(queries);
-
-  const results = [
-    [
-      {
-        columns: ["cid", "name", "type", "notnull", "dflt_value", "pk"],
-        values: [
-          [0, "id", "INTEGER", 0, null, 1],
-          [1, "title", "TEXT", 0, null, 0],
-          [2, "content", "TEXT", 0, null, 0],
-          [3, "description", "TEXT", 0, null, 0],
-          [4, "wordCount", "INTEGER", 0, null, 0],
-          [5, "date", "DATETIME", 0, null, 0],
-          [6, "categoryId", "INTEGER", 0, null, 0],
-        ],
-      },
-    ],
-  ] as unknown as resultType;
+  const { results } = useSqlQueries(queries);
 
   return (
     <div className="mx-5 h-full">

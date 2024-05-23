@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { useDefaultGetDB } from "./useDefaultGetDB";
+import { QueryExecResult } from "sql.js";
+
+export type resultType = QueryExecResult[][];
 
 /**
  * Custom hook to fetch data from a SQLite database using specified queries.
@@ -18,13 +21,13 @@ import { useDefaultGetDB } from "./useDefaultGetDB";
  */
 const useSqlQueries = (queries: string[]) => {
   const { db } = useDefaultGetDB();
-  const [results, setResults] = useState<unknown[]>([]);
+  const [results, setResults] = useState<resultType>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
-    const executeQueries = async () => {
-      if (db) {
+    if (db) {
+      const executeQueries = async () => {
         try {
           const promises = queries.map(
             (query) =>
@@ -37,7 +40,7 @@ const useSqlQueries = (queries: string[]) => {
                 }
               }),
           );
-          const results = await Promise.all(promises);
+          const results = (await Promise.all(promises)) as QueryExecResult[][];
           setResults(results);
         } catch (e) {
           console.error(e);
@@ -45,16 +48,14 @@ const useSqlQueries = (queries: string[]) => {
         } finally {
           setLoading(false);
         }
-      }
-    };
-
-    executeQueries();
-
+      };
+      executeQueries();
+    }
     return () => {
       setResults([]);
       setError(null);
     };
-  }, [queries]);
+  }, [db, queries]);
 
   return { results, loading, error };
 };
