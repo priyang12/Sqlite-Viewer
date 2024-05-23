@@ -14,6 +14,7 @@ export function Th({
   header: Header<unknown, unknown>;
   columnResizeDirection: ColumnResizeDirection | undefined;
 }) {
+  const headerFn = header.column.columnDef.header as any;
   return (
     <th
       key={header.id}
@@ -43,9 +44,20 @@ export function Th({
                 aria-label={"TableHead"}
               >
                 {flexRender(
-                  header.column.columnDef.header,
+                  headerFn
+                    ? headerFn(header.getContext()).displayName
+                    : headerFn,
                   header.getContext(),
                 )}
+                <span>
+                  {flexRender(
+                    headerFn
+                      ? headerFn(header.getContext()).dataType
+                      : headerFn,
+                    header.getContext(),
+                  )}
+                </span>
+
                 {{
                   asc: <FaSortAlphaUp />,
                   desc: <FaSortAlphaDown />,

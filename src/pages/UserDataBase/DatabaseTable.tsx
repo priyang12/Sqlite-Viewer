@@ -25,7 +25,7 @@ import TableHead from "../../Components/TableHead";
 import TableBody from "../../Components/TableBody";
 import TableFoot from "../../Components/TableFoot";
 import Skeleton from "../../Components/Skeleton";
-import useSqlQueries from "../../Hooks/useSqlQueries";
+import useSqlQueries, { resultType } from "../../Hooks/useSqlQueries";
 
 const pageSizes = [10, 20, 30, 40, 50];
 
@@ -190,33 +190,26 @@ const columnHelper = createColumnHelper<any>();
 
 function Table({
   querySubstr,
-  tableName,
+  results,
 }: {
   querySubstr: string | undefined;
-  tableName: string | undefined;
+  results: resultType;
 }) {
-  // Memoize the queries array to prevent infinite re-renders
-  const queries = useMemo(
-    () => [
-      `PRAGMA table_info(${tableName});`,
-      // `PRAGMA foreign_key_list(${tableName});`,
-    ],
-    [tableName],
-  );
-
-  const { results } = useSqlQueries(queries);
-  console.log(results);
-  // pass the result to tableColumns.
-
   const { columns: DBhead, row: DBrow, loading } = useGetTableData(querySubstr);
-
-  console.log(DBhead);
 
   const tableData = DBrow?.map((row) => createObject(row, DBhead));
 
-  const tableColumns = DBhead?.map((item) =>
+  const tableColumns = DBhead?.map((item, index) =>
     columnHelper.accessor(item.toString(), {
       cell: (info) => info.getValue(),
+      header: (info) => {
+        const customObject = {
+          displayName: info.column.id,
+          // convert this into object later or matrix transformation based on name.
+          dataType: results[0][0].values[index][2],
+        };
+        return customObject;
+      },
       footer: (props) => props.column.id,
       sortUndefined: "last",
       sortDescFirst: false,
@@ -239,11 +232,39 @@ function Table({
 const DatabaseTable = () => {
   const { table: tableName } = useParams();
   const { querySubstr } = useGetSubStrQuery(tableName);
+  // Memoize the queries array to prevent infinite re-renders
+  const queries = useMemo(
+    () => [
+      `PRAGMA table_info(${tableName});`,
+      // `PRAGMA foreign_key_list(${tableName});`,
+    ],
+    [tableName],
+  );
+
+  // fix the empty array issue.
+  // const { results } = useSqlQueries(queries);
+
+  const results = [
+    [
+      {
+        columns: ["cid", "name", "type", "notnull", "dflt_value", "pk"],
+        values: [
+          [0, "id", "INTEGER", 0, null, 1],
+          [1, "title", "TEXT", 0, null, 0],
+          [2, "content", "TEXT", 0, null, 0],
+          [3, "description", "TEXT", 0, null, 0],
+          [4, "wordCount", "INTEGER", 0, null, 0],
+          [5, "date", "DATETIME", 0, null, 0],
+          [6, "categoryId", "INTEGER", 0, null, 0],
+        ],
+      },
+    ],
+  ] as unknown as resultType;
 
   return (
     <div className="mx-5 h-full">
       <h2 className="my-5 self-start text-xl">Table : {tableName}</h2>
-      <Table querySubstr={querySubstr} tableName={tableName} />
+      <Table querySubstr={querySubstr} results={results} />
     </div>
   );
 };
