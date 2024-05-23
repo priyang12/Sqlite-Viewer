@@ -146,9 +146,9 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
 
   return (
     <>
-      <div className="overflow-x-auto">
+      <div className="overflow-auto">
         <table
-          className=""
+          className="table table-pin-rows"
           style={{
             width: table.getCenterTotalSize(),
           }}
@@ -196,6 +196,7 @@ function Table({
   results: resultType;
 }) {
   const { columns: DBhead, row: DBrow, loading } = useGetTableData(querySubstr);
+
   const tableData = DBrow?.map((row) => createObject(row, DBhead));
   const tableColumns = DBhead?.map((item, index) =>
     columnHelper.accessor(item.toString(), {

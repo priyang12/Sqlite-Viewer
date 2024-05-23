@@ -22,7 +22,7 @@ export function Th({
       style={{
         width: header.getSize(),
       }}
-      className="relative border-2 border-primary text-center font-bold"
+      className="relative border-2 border-primary p-0 text-center font-bold"
     >
       <div className="flex gap-5 p-3">
         <div className="flex flex-col items-center justify-center gap-5 px-0">
@@ -43,13 +43,15 @@ export function Th({
                 }
                 aria-label={"TableHead"}
               >
-                {flexRender(
-                  headerFn
-                    ? headerFn(header.getContext()).displayName
-                    : headerFn,
-                  header.getContext(),
-                )}
                 <span>
+                  {flexRender(
+                    headerFn
+                      ? headerFn(header.getContext()).displayName
+                      : headerFn,
+                    header.getContext(),
+                  )}
+                </span>
+                <span className="text-xs font-normal">
                   {flexRender(
                     headerFn
                       ? headerFn(header.getContext()).dataType

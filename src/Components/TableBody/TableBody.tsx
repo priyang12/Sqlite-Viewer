@@ -15,12 +15,13 @@ const TableBody = ({ table }: { table: Table<unknown> }) => {
             {row.getVisibleCells().map((cell) => (
               <td
                 key={cell.id}
+                className="border-2 border-solid border-primary "
                 style={{
                   width: cell.column.getSize(),
                 }}
               >
                 <div
-                  className="truncate text-center"
+                  className="truncate px-3 text-left"
                   style={{
                     width: cell.column.getSize(),
                   }}
