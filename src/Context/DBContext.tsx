@@ -1,19 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createContext, useContext } from "react";
-import { useDefaultGetDB } from "../Hooks/useDefaultGetDB";
-import { useIndexedDB } from "../Hooks/useIndexedDB";
+import { storeFileName, useIndexedDB } from "../Hooks/useIndexedDB";
+import { useGetDB } from "../Hooks/useGetDB";
 import type { Database } from "sql.js";
 import type { IDBPDatabase } from "idb";
 
 export type DBContextType = {
   db: Database | undefined;
   indexedDB: IDBPDatabase | undefined;
+  setDBFileName: (value: string) => void;
 };
 
 // Create a context object for managing the database connection
 const DbContext = createContext<DBContextType>({
   db: undefined, // Default context value with an undefined database connection
   indexedDB: undefined, // Default value
+  setDBFileName: () => {},
 });
 
 // Custom hook to easily access the database context
@@ -34,11 +36,25 @@ export const useGetDBContext = () => useContext(DbContext);
 export const DBProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // Retrieve the database connection using a custom hook (useDefaultGetDB)
-  const { db } = useDefaultGetDB();
+  const [indexFileName, setIndexFileName] = useState("");
+  const [databaseFile, setDatabaseFile] = useState<File>();
   const { indexedDB } = useIndexedDB();
+  const { db } = useGetDB(databaseFile);
+
+  useEffect(() => {
+    if (indexFileName) {
+      const getDBFile = async () => {
+        const database = await indexedDB?.get(storeFileName, indexFileName);
+        setDatabaseFile(database);
+      };
+      getDBFile();
+    }
+  }, [indexedDB, indexFileName, storeFileName]);
+
+  const setDBFileName = (fileName: string) => setIndexFileName(fileName);
+
   return (
-    <DbContext.Provider value={{ db, indexedDB }}>
+    <DbContext.Provider value={{ db, indexedDB, setDBFileName }}>
       {children}
     </DbContext.Provider>
   );

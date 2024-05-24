@@ -11,7 +11,7 @@ import sqlWasm from "sql.js/dist/sql-wasm.wasm?url";
  * const file = ... // Provide the SQLite database file
  * const { db } = useGetDB(file);
  */
-export const useGetDB = (file: File | null) => {
+export const useGetDB = (file: File | undefined) => {
   const [db, setDb] = useState<initSqlJs.Database>();
 
   useEffect(() => {

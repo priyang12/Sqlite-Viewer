@@ -1,35 +1,69 @@
-import { render } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { DBProvider, useGetDBContext } from "../DBContext";
+import { storeFileName, useIndexedDB } from "../../Hooks/useIndexedDB";
+import { useGetDB } from "../../Hooks/useGetDB";
+import { Mock } from "vitest";
 
-// Mock useDefaultGetDB and useIndexedDB hooks
-vi.mock("../../Hooks/useDefaultGetDB", () => ({
-  useDefaultGetDB: vi.fn().mockReturnValue({ db: true }),
-}));
+// Mock the hooks
+vi.mock("../../Hooks/useIndexedDB");
+vi.mock("../../Hooks/useGetDB");
 
-vi.mock("../../Hooks/useIndexedDB", () => ({
-  useIndexedDB: vi.fn().mockReturnValue({ indexedDB: true }),
-}));
+// Helper component to consume the context
+const ConsumerComponent = () => {
+  const { db, indexedDB, setDBFileName } = useGetDBContext();
 
-// Test the DBProvider component
-it("provides database context to its children", () => {
-  const ChildComponent = () => {
-    const { db, indexedDB } = useGetDBContext();
-
-    return (
-      <div>
-        <h1>test</h1>
-        {db ? <span>Default DB</span> : null}
-        {indexedDB ? <span>Indexed DB</span> : null}
+  return (
+    <div>
+      <button onClick={() => setDBFileName("test.db")}>Set DB File Name</button>
+      <div data-testid="db">{db ? "DB Loaded" : "No DB"}</div>
+      <div data-testid="indexedDB">
+        {indexedDB ? "IndexedDB Loaded" : "No IndexedDB"}
       </div>
-    );
-  };
-
-  const { getByText } = render(
-    <DBProvider>
-      <ChildComponent />
-    </DBProvider>
+    </div>
   );
+};
 
-  expect(getByText("Default DB")).toBeTruthy(); // Check if mockDB is rendered
-  expect(getByText("Indexed DB")).toBeTruthy(); // Check if mockIndexedDB is rendered
+describe("DBProvider", () => {
+  let getMockedDB: Mock;
+  let getMockedIndexedDB: Mock;
+
+  beforeEach(() => {
+    getMockedDB = vi.fn();
+    getMockedIndexedDB = vi.fn();
+  });
+
+  test("provides default values", () => {
+    (useIndexedDB as Mock).mockReturnValue({
+      indexedDB: null,
+    });
+    (useGetDB as Mock).mockReturnValue({ db: null });
+    render(
+      <DBProvider>
+        <ConsumerComponent />
+      </DBProvider>,
+    );
+
+    expect(screen.getByTestId("db").textContent).toBe("No DB");
+    expect(screen.getByTestId("indexedDB").textContent).toBe("No IndexedDB");
+  });
+
+  test("setDBFileName updates the context state", () => {
+    (useIndexedDB as Mock).mockReturnValue({
+      indexedDB: { get: getMockedIndexedDB },
+    });
+    (useGetDB as Mock).mockReturnValue({ db: getMockedDB });
+
+    render(
+      <DBProvider>
+        <ConsumerComponent />
+      </DBProvider>,
+    );
+
+    act(() => {
+      const button = screen.getByText("Set DB File Name");
+      button.click();
+    });
+
+    expect(getMockedIndexedDB).toHaveBeenCalledWith(storeFileName, "test.db");
+  });
 });

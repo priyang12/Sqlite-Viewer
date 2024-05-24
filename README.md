@@ -19,6 +19,7 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] setup vitest.
 - [x] test contexts.
 - [x] test hooks.
+- [x] Load Database from IndexDB.
 
 ## Creator
 
