@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDefaultGetDB } from "./useDefaultGetDB";
+import { useGetDBContext } from "../Context/DBContext";
 import { getTableQuery } from "../Utils/tableUtils";
 
 /**
@@ -14,7 +14,7 @@ import { getTableQuery } from "../Utils/tableUtils";
  * // 'loading' indicates whether the query is currently being executed
  */
 export const useGetSubStrQuery = (tableName: string | undefined) => {
-  const { db } = useDefaultGetDB();
+  const { db } = useGetDBContext();
   const [loading, setLoading] = useState(false);
   const [querySubstr, setQuerySubstr] = useState<string>();
 

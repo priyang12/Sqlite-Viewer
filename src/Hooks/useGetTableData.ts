@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDefaultGetDB } from "./useDefaultGetDB";
+import { useGetDBContext } from "../Context/DBContext";
 import { SqlValue } from "sql.js";
 
 /**
@@ -15,7 +15,7 @@ import { SqlValue } from "sql.js";
  * // 'loading' indicates whether the data is currently being fetched
  */
 export const useGetTableData = (query: string | undefined) => {
-  const { db } = useDefaultGetDB();
+  const { db } = useGetDBContext();
   const [loading, setLoading] = useState(false);
   const [columns, setColumns] = useState<string[]>();
   const [row, setRow] = useState<SqlValue[][]>();

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDefaultGetDB } from "./useDefaultGetDB";
+import { useGetDBContext } from "../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 
 export type queryType = QueryExecResult[];
@@ -21,7 +21,7 @@ export type resultType = queryType[];
  * // 'error' contains any error encountered during the execution
  */
 const useSqlQueries = (queries: string[]) => {
-  const { db } = useDefaultGetDB();
+  const { db } = useGetDBContext();
   const [results, setResults] = useState<resultType>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
