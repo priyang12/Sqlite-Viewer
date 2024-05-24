@@ -14,21 +14,26 @@ import { SqlValue } from "sql.js";
  * // 'columns' contains the column names of the fetched data
  * // 'loading' indicates whether the data is currently being fetched
  */
-export const useGetTableData = (query: string) => {
+export const useGetTableData = (query: string | undefined) => {
   const { db } = useDefaultGetDB();
   const [loading, setLoading] = useState(false);
   const [columns, setColumns] = useState<string[]>();
   const [row, setRow] = useState<SqlValue[][]>();
 
   useEffect(() => {
-    if (db) {
+    if (db && query) {
       try {
         setLoading(true);
         const result = db.exec(query);
-        const columns = result[0].columns;
-        const rows = result[0].values;
-        setColumns(columns);
-        setRow(rows);
+        if (result.length > 0) {
+          const columns = result[0].columns;
+          const rows = result[0].values;
+          setColumns(columns);
+          setRow(rows);
+        } else {
+          setColumns(undefined);
+          setRow(undefined);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -38,9 +43,10 @@ export const useGetTableData = (query: string) => {
       }
     }
     () => {
+      // clean up function is not getting triggered.
+      console.log("clean up");
       setColumns(undefined);
       setRow(undefined);
-      setLoading(false);
     };
   }, [db, query]);
 

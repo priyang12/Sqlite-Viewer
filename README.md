@@ -20,6 +20,15 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] nested Database layout and nested routes for tables and overview.
 - [x] getTableData Hook and test cases.
 - [x] display table in UserDatabase.
+- [x] Pagination in rows.
+- [x] filter and sort in table.
+- [x] style the table components.
+- [x] Resize the column.
+- [x] Add test for table Components.
+- [x] skeleton loading.
+- [x] hook to exec multiple queries parallel.
+- [x] data types of column in header.
+- [x] primary and foreign keys.
 
 ## Creator
 
