@@ -2,7 +2,6 @@ import { render, fireEvent } from "@testing-library/react";
 import TableHead, { Th } from "./TableHead";
 import { FaSortAlphaUp, FaSortAlphaDown } from "react-icons/fa";
 import type { Header, Table } from "@tanstack/react-table";
-import "@testing-library/jest-dom/vitest";
 
 // Mock data and functions
 const mockHeader = {

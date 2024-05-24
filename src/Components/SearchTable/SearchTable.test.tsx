@@ -1,7 +1,6 @@
 import { render, fireEvent } from "@testing-library/react";
 import SearchTable from "./SearchTable";
 import { SqlValue } from "sql.js";
-import "@testing-library/jest-dom/vitest";
 
 // Mock the setTables function
 const mockSetTables = vi.fn();

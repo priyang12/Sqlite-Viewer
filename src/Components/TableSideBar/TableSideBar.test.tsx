@@ -2,7 +2,7 @@ import TableSideBar from "./TableSideBar";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { useGetData } from "../../Hooks/useGetData";
 import { Mock } from "vitest";
-import "@testing-library/jest-dom/vitest";
+
 import { BrowserRouter } from "react-router-dom";
 
 // Mock the useGetData hook

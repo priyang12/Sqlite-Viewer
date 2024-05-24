@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { Table } from "@tanstack/react-table";
 import TableBody from "./TableBody";
-import "@testing-library/jest-dom/vitest";
 
 // Mock flexRender
 vi.mock("@tanstack/react-table", () => ({

@@ -1,6 +1,5 @@
 import Skeleton from "./Skeleton";
 import { render } from "@testing-library/react";
-import "@testing-library/jest-dom/vitest";
 
 describe("Skeleton Component", () => {
   test("renders the correct number of skeletons", () => {
