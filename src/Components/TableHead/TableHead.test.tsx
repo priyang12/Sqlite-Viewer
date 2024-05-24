@@ -17,7 +17,11 @@ const mockHeader = {
     getNextSortingOrder: vi.fn().mockReturnValue("asc"),
     resetSize: vi.fn(),
     getIsResizing: vi.fn(),
-    columnDef: { header: "Column Header" },
+    columnDef: {
+      header: () => {
+        return { displayName: "Column Header" };
+      },
+    },
   },
   getContext: vi.fn(),
   getResizeHandler: vi.fn().mockReturnValue(vi.fn()),
@@ -105,7 +109,7 @@ describe("Th Component", () => {
   });
 
   it("updates title attribute on click", () => {
-    const { getByText, rerender } = render(
+    const { getByRole, rerender } = render(
       <table>
         <thead>
           <tr>
@@ -119,7 +123,11 @@ describe("Th Component", () => {
     );
 
     // Check the initial title attribute
-    const headerElement = getByText("Column Header");
+    const headerElement = getByRole("button", {
+      name: "TableHead",
+    });
+    console.log(headerElement);
+
     expect(headerElement.title).toBe("Sort ascending");
 
     // Mock sorting state update to 'asc'
@@ -185,6 +193,25 @@ describe("Th Component", () => {
     // Check the updated title attribute
     expect(headerElement.title).toBe("Sort ascending");
   });
+  it("test headerFn", () => {
+    const { getByText } = render(
+      <Th
+        header={
+          {
+            ...mockHeader,
+            column: {
+              ...mockHeader.column,
+              columnDef: {
+                header: "Column Header",
+              },
+            },
+          } as unknown as Header<unknown, unknown>
+        }
+        columnResizeDirection={undefined}
+      />,
+    );
+    expect(getByText("Column Header")).toBeInTheDocument();
+  });
 });
 
 describe("TableHead Component", () => {
@@ -212,7 +239,11 @@ describe("TableHead Component", () => {
               id: "header-2",
               column: {
                 ...mockHeader.column,
-                columnDef: { header: "Second Column" },
+                columnDef: {
+                  header: () => {
+                    return { displayName: "Second Column" };
+                  },
+                },
               },
             },
           ],

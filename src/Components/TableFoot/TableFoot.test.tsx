@@ -43,8 +43,15 @@ describe("TableFoot Component", () => {
   it("renders nothing for placeholder headers", () => {
     const mockTable = {
       getFooterGroups: () =>
-        mockFooterGroup([[{ isPlaceholder: true, footer: null, context: {} }]])
-          .footerGroups,
+        mockFooterGroup([
+          [
+            {
+              isPlaceholder: true,
+              footer: null,
+              context: { getValue: () => null },
+            },
+          ],
+        ]).footerGroups,
     } as unknown as Table<unknown>;
 
     render(<TableFoot table={mockTable} />);

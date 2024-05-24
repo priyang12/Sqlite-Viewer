@@ -19,7 +19,10 @@ function TableSideBar() {
       <h2 className="mx-6 mt-6 text-xl font-bold">Tables </h2>
       <SearchTable setTables={setTables} DBtables={DBtables} />
       {loading ? (
-        <div className="flex w-full flex-col items-center gap-5">
+        <div
+          className="flex w-full flex-col items-center gap-5"
+          data-testid="loading-spinner"
+        >
           <Skeleton className="mx-5" width={"200px"} height={20} count={7} />
         </div>
       ) : (

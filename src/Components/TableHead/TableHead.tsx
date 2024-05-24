@@ -29,6 +29,7 @@ export function Th({
           {header.isPlaceholder ? null : (
             <>
               <div
+                role="button"
                 className={`flex items-center gap-5 truncate text-base
                         ${header.column.getCanSort() ? "cursor-pointer select-none" : ""}`}
                 onClick={header.column.getToggleSortingHandler()}
@@ -45,22 +46,22 @@ export function Th({
               >
                 <span>
                   {flexRender(
-                    headerFn
+                    typeof headerFn === "function"
                       ? headerFn(header.getContext()).displayName
                       : headerFn,
                     header.getContext(),
                   )}
                 </span>
-                <span className="text-xs font-normal">
-                  {flexRender(
-                    headerFn
-                      ? headerFn(header.getContext()).dataType
-                      : headerFn,
-                    header.getContext(),
-                  )}
-                </span>
+                {typeof headerFn === "function" ? (
+                  <span className="text-xs font-normal">
+                    {flexRender(
+                      headerFn(header.getContext()).dataType,
+                      header.getContext(),
+                    )}
+                  </span>
+                ) : null}
                 {flexRender(
-                  headerFn
+                  typeof headerFn === "function"
                     ? headerFn(header.getContext()).primaryKey
                     : headerFn,
                   header.getContext(),
@@ -69,7 +70,7 @@ export function Th({
                 ) : null}
 
                 {flexRender(
-                  headerFn
+                  typeof headerFn === "function"
                     ? headerFn(header.getContext()).foreignKey
                     : headerFn,
                   header.getContext(),
