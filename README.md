@@ -21,6 +21,26 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] test hooks.
 - [x] Load Database from IndexDB.
 
+### UI dev
+
+- [x] Redirect Home to the Tables page.
+- [x] display all the tables.
+- [x] sidebar for tables and main for Content.
+- [x] GetData Hook and test cases.
+- [x] make a Search Component.
+- [x] nested Database layout and nested routes for tables and overview.
+- [x] getTableData Hook and test cases.
+- [x] display table in UserDatabase.
+- [x] Pagination in rows.
+- [x] filter and sort in table.
+- [x] style the table components.
+- [x] Resize the column.
+- [x] Add test for table Components.
+- [x] skeleton loading.
+- [x] hook to exec multiple queries parallel.
+- [x] data types of column in header.
+- [x] primary and foreign keys.
+
 ## Creator
 
 Priyang Patel

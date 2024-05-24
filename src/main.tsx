@@ -12,5 +12,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <App />
       </StoreProvider>
     </DBProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -6,12 +6,12 @@ const NotFound = () => {
 
   return (
     <div
-      className={`flex justify-center items-center h-screen ${
+      className={`flex h-screen items-center justify-center ${
         isDarkMode ? "bg-gray-900" : "bg-gray-200"
       }`}
     >
       <div className="text-center">
-        <h1 className="text-6xl font-bold text-red-800 mb-4">
+        <h1 className="mb-4 text-6xl font-bold text-red-800">
           404 - Not Found
         </h1>
         <p

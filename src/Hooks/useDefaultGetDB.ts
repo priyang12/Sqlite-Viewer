@@ -16,7 +16,7 @@ export const useDefaultGetDB = () => {
     const loadDatabase = async () => {
       try {
         const arrayBuffer = await fetch(databaseFile).then((res) =>
-          res.arrayBuffer()
+          res.arrayBuffer(),
         );
 
         const SQL = await initSqlJs({
