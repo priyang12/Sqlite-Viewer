@@ -10,7 +10,7 @@ const Home = () => {
   let navigate = useNavigate();
   useEffect(() => {
     if (true) {
-      return navigate("/db/default");
+      return navigate("/db/seed.db");
     }
   }, []);
 
@@ -22,20 +22,20 @@ const Home = () => {
 
   if (Loading)
     return (
-      <div className="flex justify-center min-h-lvh">
+      <div className="flex min-h-lvh justify-center">
         <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
 
   return (
-    <div className="dark:bg-gray-800 bg-gray-200 flex justify-center min-h-lvh">
+    <div className="flex min-h-lvh justify-center bg-gray-200 dark:bg-gray-800">
       <div className="flex flex-col">
         <div className="my-5">
           <h1 className="text-5xl font-bold">Your Databases</h1>
           {storedDBs.length > 0
             ? storedDBs.map((item) => (
                 <div className="flex justify-between" key={item.toString()}>
-                  <h2 className="truncate w-1/2">{item.toString()}</h2>
+                  <h2 className="w-1/2 truncate">{item.toString()}</h2>
                   <button onClick={() => removeUserDB(item.toString())}>
                     remove
                   </button>
