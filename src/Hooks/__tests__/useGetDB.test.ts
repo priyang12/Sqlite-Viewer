@@ -50,7 +50,7 @@ describe("useGetDB", () => {
 
     // Asserting that SQL.Database constructor was called with the correct arguments
     expect(mockSQLDatabase.Database).toHaveBeenCalledWith(
-      expect.any(Uint8Array)
+      expect.any(Uint8Array),
     );
 
     // Asserting that the database is set in the state
@@ -78,7 +78,7 @@ describe("useGetDB", () => {
     await waitFor(() => {
       // Asserting that the error is logged
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        new Error("Failed to read file")
+        new Error("Failed to read file"),
       );
     });
 
@@ -88,7 +88,7 @@ describe("useGetDB", () => {
 
   test("should not load database when file is not provided", async () => {
     // Rendering the hook without providing a file
-    const { result } = renderHook(() => useGetDB(null));
+    const { result } = renderHook(() => useGetDB(undefined));
 
     // Asserting that the database is not set in the state
     expect(result.current.db).toBeUndefined();

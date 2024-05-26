@@ -15,8 +15,8 @@ let mockT = vi.fn().mockImplementation((query) => {
   ];
 });
 
-vi.mock("../useDefaultGetDB", () => ({
-  useDefaultGetDB: () => ({
+vi.mock("../useGetDBContext", () => ({
+  useGetDBContext: () => ({
     db: {
       exec: mockT,
     },
@@ -25,7 +25,7 @@ vi.mock("../useDefaultGetDB", () => ({
 
 describe.skip("useGetData", () => {
   test("fetches data from SQLite database", async () => {
-    // Mock the useDefaultGetDB hook to return a mocked database object
+    // Mock the useGetDBContext hook to return a mocked database object
 
     // Render the hook with a sample query
     const { result } = renderHook(() => useGetData("SELECT * FROMr uses"));

@@ -1,8 +1,8 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetSubStrQuery } from "../useGetSubStrQuery";
 
-vi.mock("../useDefaultGetDB", () => ({
-  useDefaultGetDB: vi.fn().mockReturnValue({
+vi.mock("../../Context/DBContext", () => ({
+  useGetDBContext: vi.fn().mockReturnValue({
     db: {
       exec: vi.fn().mockReturnValue([
         {

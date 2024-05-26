@@ -1,10 +1,10 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import useSqlQueries from "../useSqlQueries"; // Adjust the import path as needed
-import { useDefaultGetDB } from "../useDefaultGetDB";
+import { useGetDBContext } from "../../Context/DBContext";
 import { Mock } from "vitest";
 
-vi.mock("../useDefaultGetDB", () => ({
-  useDefaultGetDB: vi.fn().mockReturnValue({
+vi.mock("../../Context/DBContext", () => ({
+  useGetDBContext: vi.fn().mockReturnValue({
     db: {
       exec: vi.fn().mockReturnValue([
         {
@@ -58,7 +58,7 @@ describe("useSqlQueries Hook", () => {
   it("handles errors gracefully", async () => {
     const queries = ["SELECT * FROM table1", "SELECT * FROM table2"];
 
-    (useDefaultGetDB as Mock).mockReturnValue({
+    (useGetDBContext as Mock).mockReturnValue({
       db: {
         exec: vi.fn().mockImplementation(() => {
           throw new Error("Database error");
