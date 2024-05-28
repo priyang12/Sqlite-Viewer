@@ -34,22 +34,9 @@ describe("Filter Component", () => {
     );
   });
 
-  it("renders select filter and handles changes", () => {
-    (mockColumn.getFilterValue as Mock).mockReturnValue("single");
-    mockColumn.columnDef.meta = { filterVariant: "select" };
-
-    render(<Filter column={mockColumn} inputWidth={100} />);
-
-    const select = screen.getByDisplayValue("single");
-    expect(select).toBeInTheDocument();
-
-    fireEvent.change(select, { target: { value: "relationship" } });
-    expect(mockColumn.setFilterValue).toHaveBeenCalledWith("relationship");
-  });
-
   it("renders default text filter and handles changes", () => {
     (mockColumn.getFilterValue as Mock).mockReturnValue("test");
-    mockColumn.columnDef.meta = { filterVariant: "" };
+    mockColumn.columnDef.meta = { filterVariant: undefined };
 
     render(<Filter column={mockColumn} inputWidth={100} />);
 

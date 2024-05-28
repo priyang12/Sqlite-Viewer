@@ -22,6 +22,7 @@ import {
   FaAngleLeft,
   FaAngleDoubleLeft,
 } from "react-icons/fa";
+import { multipleFilter } from "../../Utils/filterUtils";
 import TableHead from "../../Components/TableHead";
 import TableBody from "../../Components/TableBody";
 import TableFoot from "../../Components/TableFoot";
@@ -123,7 +124,13 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
     data: data,
     // debugTable: true,
     columns: columns,
-    filterFns: {},
+    defaultColumn: {
+      size: 200,
+      minSize: 100,
+    },
+    filterFns: {
+      multipleFilter: multipleFilter,
+    },
     state: {
       columnFilters: columnFilters,
       pagination: pagination,
@@ -214,24 +221,37 @@ function Table({
 
   const { columns: DBhead, row: DBrow, loading } = useGetTableData(querySubstr);
 
-  const tableData = DBrow?.map((row) => createObject(row, DBhead));
-  const tableColumns = DBhead?.map((item) =>
-    columnHelper.accessor(item.toString(), {
-      cell: (info) => info.getValue(),
-      header: (info) => {
-        const customObject = {
-          displayName: info.column.id,
-          dataType: columnMetaData[item.toString()].type,
-          primaryKey: columnMetaData[item.toString()].pk,
-          foreignKey: foreignKeys ? foreignKeys.includes(item) : false,
-        };
-        return customObject;
-      },
-      footer: (props) => props.column.id,
-      sortUndefined: "last",
-      sortDescFirst: false,
-    }),
+  const tableData = useMemo(
+    () => DBrow?.map((row) => createObject(row, DBhead)),
+    [DBrow, DBhead],
   );
+  const tableColumns = useMemo(() => {
+    return DBhead?.map((item) =>
+      columnHelper.accessor(item.toString(), {
+        cell: (info) => info.getValue(),
+        header: (info) => {
+          const customObject = {
+            displayName: info.column.id,
+            dataType: columnMetaData[item.toString()].type,
+            primaryKey: columnMetaData[item.toString()].pk,
+            foreignKey: foreignKeys ? foreignKeys.includes(item) : false,
+          };
+          return customObject;
+        },
+        footer: (props) => props.column.id,
+        meta: {
+          filterVariant:
+            columnMetaData[item.toString()].type === "INTEGER"
+              ? "range"
+              : undefined,
+        },
+
+        filterFn: "multipleFilter",
+        sortUndefined: "last",
+        sortDescFirst: false,
+      }),
+    );
+  }, [DBhead]);
 
   if (!querySubstr) return null;
 
