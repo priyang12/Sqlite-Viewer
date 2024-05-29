@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-table";
 import Filter from "./Filter/Filter";
 import { FaSortAlphaUp, FaSortAlphaDown } from "react-icons/fa";
+import IconComponent from "../IconComponent";
 
 export function Th({
   header,
@@ -22,7 +23,7 @@ export function Th({
       style={{
         width: header.getSize(),
       }}
-      className="relative border-2 border-primary p-0 text-center font-bold"
+      className="relative border-2 border-primary text-center font-bold"
     >
       <div className="flex gap-5 p-3">
         <div className="flex flex-col items-center justify-center gap-5 px-0">
@@ -30,8 +31,7 @@ export function Th({
             <>
               <div
                 role="button"
-                className={`flex items-center gap-5 truncate text-base
-                        ${header.column.getCanSort() ? "cursor-pointer select-none" : ""}`}
+                className={`flex items-center gap-5 text-base ${header.column.getCanSort() ? "cursor-pointer select-none" : ""}`}
                 onClick={header.column.getToggleSortingHandler()}
                 title={
                   header.column.getCanSort()
@@ -53,11 +53,16 @@ export function Th({
                   )}
                 </span>
                 {typeof headerFn === "function" ? (
-                  <span className="text-xs font-normal">
-                    {flexRender(
+                  <span
+                    className="tooltip text-3xl font-normal"
+                    data-tip={flexRender(
                       headerFn(header.getContext()).dataType,
                       header.getContext(),
                     )}
+                  >
+                    <IconComponent
+                      IconType={headerFn(header.getContext()).dataType}
+                    />
                   </span>
                 ) : null}
                 {flexRender(
