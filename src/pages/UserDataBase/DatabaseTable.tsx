@@ -14,20 +14,18 @@ import {
 } from "@tanstack/react-table";
 import { useGetTableData } from "../../Hooks/useGetTableData";
 import useSqlQueries, { queryType } from "../../Hooks/useSqlQueries";
-import { columnData, createObject } from "../../Utils/tableUtils";
-import { useGetSubStrQuery } from "../../Hooks/useGetSubStrQuery";
 import {
-  FaAngleRight,
-  FaAngleDoubleRight,
-  FaAngleLeft,
-  FaAngleDoubleLeft,
-} from "react-icons/fa";
+  columnData,
+  createObject,
+  getTableQuery,
+} from "../../Utils/tableUtils";
 import { multipleFilter } from "../../Utils/filterUtils";
 import TableHead from "../../Components/TableHead";
 import TableBody from "../../Components/TableBody";
 import TableFoot from "../../Components/TableFoot";
 import Skeleton from "../../Components/Skeleton";
 import Loading from "../../Components/Loading";
+import IconComponent from "../../Components/IconComponent";
 
 const pageSizes = [10, 20, 30, 40, 50];
 
@@ -41,14 +39,14 @@ function Pagination({ table }: { table: TableType<unknown> }) {
             onClick={() => table.firstPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <FaAngleDoubleLeft />
+            <IconComponent IconType="angleDoubleLeft" />
           </button>
           <button
             className="btn join-item"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <FaAngleLeft />
+            <IconComponent IconType="angleLeft" />
           </button>
           <div className="btn join-item">
             {table.getState().pagination.pageIndex + 1}
@@ -58,14 +56,14 @@ function Pagination({ table }: { table: TableType<unknown> }) {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <FaAngleRight />
+            <IconComponent IconType="angleRight" />
           </button>
           <button
             className="btn join-item"
             onClick={() => table.lastPage()}
             disabled={!table.getCanNextPage()}
           >
-            <FaAngleDoubleRight />
+            <IconComponent IconType="angleDoubleRight" />
           </button>
         </div>
         <span className="flex items-center gap-1">
@@ -268,13 +266,13 @@ function Table({
 
 const DatabaseTable = () => {
   const { table: tableName } = useParams();
-  const { querySubstr } = useGetSubStrQuery(tableName);
 
   // Memoize the queries array to prevent infinite re-renders
   const queries = useMemo(
     () => [
       `PRAGMA table_info(${tableName});`,
       `PRAGMA foreign_key_list(${tableName});`,
+      tableName ? getTableQuery(tableName) : "",
     ],
     [tableName],
   );
@@ -290,7 +288,11 @@ const DatabaseTable = () => {
 
       {results.length > 0 ? (
         <Table
-          querySubstr={querySubstr}
+          querySubstr={
+            results[2]
+              ? `${results[2][0].values[0][0]} FROM ${tableName};`
+              : undefined
+          }
           tableInfoResult={results[0]}
           foreignKeyResult={results.length > 1 ? results[1] : []}
         />

@@ -44,4 +44,31 @@ describe("IconComponent Component", () => {
     expect(icon).toBeInTheDocument();
     expect(icon).toHaveAttribute("aria-label", "none icon");
   });
+  it("renders angleRight icon with correct aria-label", () => {
+    render(<IconComponent IconType="angleRight" />);
+    const icon = screen.getByRole("img", { name: "angle right icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute("aria-label", "angle right icon");
+  });
+
+  it("renders angleDoubleRight icon with correct aria-label", () => {
+    render(<IconComponent IconType="angleDoubleRight" />);
+    const icon = screen.getByRole("img", { name: "angle double right icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute("aria-label", "angle double right icon");
+  });
+
+  it("renders angleLeft icon with correct aria-label", () => {
+    render(<IconComponent IconType="angleLeft" />);
+    const icon = screen.getByRole("img", { name: "angle left icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute("aria-label", "angle left icon");
+  });
+
+  it("renders angleDoubleLeft icon with correct aria-label", () => {
+    render(<IconComponent IconType="angleDoubleLeft" />);
+    const icon = screen.getByRole("img", { name: "angle double left icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute("aria-label", "angle double left icon");
+  });
 });

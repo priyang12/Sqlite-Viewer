@@ -1,3 +1,9 @@
+import {
+  FaAngleRight,
+  FaAngleDoubleRight,
+  FaAngleLeft,
+  FaAngleDoubleLeft,
+} from "react-icons/fa";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { CiSquareMinus } from "react-icons/ci";
 import { GoNumber } from "react-icons/go";
@@ -12,6 +18,14 @@ const icons = {
   pinDown: <MdPushPin role="img" aria-label="pin down icon" />,
   pinUp: <TiPin role="img" aria-label="pin up icon" />,
   none: <CiSquareMinus role="img" aria-label="none icon" />,
+  angleRight: <FaAngleRight role="img" aria-label="angle right icon" />,
+  angleDoubleRight: (
+    <FaAngleDoubleRight role="img" aria-label="angle double right icon" />
+  ),
+  angleLeft: <FaAngleLeft role="img" aria-label="angle left icon" />,
+  angleDoubleLeft: (
+    <FaAngleDoubleLeft role="img" aria-label="angle double left icon" />
+  ),
 };
 
 type IconKeys = keyof typeof icons;
