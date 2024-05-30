@@ -1,4 +1,5 @@
 import { Table, flexRender } from "@tanstack/react-table";
+import { getCommonPinningStyles } from "../../Utils/tableUtils";
 
 function NoRows() {
   return (
@@ -15,9 +16,10 @@ const TableBody = ({ table }: { table: Table<unknown> }) => {
             {row.getVisibleCells().map((cell) => (
               <td
                 key={cell.id}
-                className="border-2 border-solid border-primary "
+                className="border-2 border-solid border-primary"
                 style={{
                   width: cell.column.getSize(),
+                  ...getCommonPinningStyles(cell.column),
                 }}
               >
                 <div

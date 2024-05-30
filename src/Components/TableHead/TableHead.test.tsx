@@ -1,6 +1,5 @@
 import { render, fireEvent } from "@testing-library/react";
 import TableHead, { Th } from "./TableHead";
-import { FaSortAlphaUp, FaSortAlphaDown } from "react-icons/fa";
 import type { Header, Table } from "@tanstack/react-table";
 
 // Mock data and functions
@@ -17,6 +16,11 @@ const mockHeader = {
     getNextSortingOrder: vi.fn().mockReturnValue("asc"),
     resetSize: vi.fn(),
     getIsResizing: vi.fn(),
+    getIsLastColumn: vi.fn().mockReturnValue(false),
+    getStart: vi.fn().mockReturnValue(10),
+    getIsPinned: vi.fn().mockReturnValue(false),
+    getCanPin: vi.fn().mockReturnValue(false),
+    pin: vi.fn(),
     columnDef: {
       header: () => {
         return { displayName: "Column Header" };
@@ -41,22 +45,25 @@ const mockTable = {
 
 describe("Th Component", () => {
   it("renders the header with sorting and filtering", () => {
-    const { getByText, container } = render(
+    const { getByText, queryByRole } = render(
       <Th
         header={mockHeader as unknown as Header<unknown, unknown>}
         columnResizeDirection={undefined}
       />,
     );
+
+    const icon = queryByRole("img", { name: "text icon" });
+
     // Check if the header text is rendered
     expect(getByText("Column Header")).toBeInTheDocument();
 
     // Check if the sorting icons are rendered conditionally
     if (mockHeader.column.getIsSorted() === "asc") {
-      expect(container.querySelector("svg")).toEqual(<FaSortAlphaUp />);
+      expect(icon).toHaveAttribute("aria-label", "sort alpha up icon");
     } else if (mockHeader.column.getIsSorted() === "desc") {
-      expect(container.querySelector("svg")).toEqual(<FaSortAlphaDown />);
+      expect(icon).toHaveAttribute("aria-label", "sort alpha down icon");
     } else {
-      expect(container.querySelector("svg")).toBeNull();
+      expect(icon).toBeNull();
     }
   });
 
@@ -126,7 +133,6 @@ describe("Th Component", () => {
     const headerElement = getByRole("button", {
       name: "TableHead",
     });
-    console.log(headerElement);
 
     expect(headerElement.title).toBe("Sort ascending");
 
@@ -211,6 +217,53 @@ describe("Th Component", () => {
       />,
     );
     expect(getByText("Column Header")).toBeInTheDocument();
+  });
+  it("test pinning Component", () => {
+    const { getByLabelText, rerender } = render(
+      <Th
+        header={
+          {
+            ...mockHeader,
+            column: {
+              ...mockHeader.column,
+              columnDef: {
+                header: "Column Header",
+              },
+              getCanPin: vi.fn().mockReturnValue(true),
+              getIsPinned: vi.fn().mockReturnValue(false),
+            },
+          } as unknown as Header<unknown, unknown>
+        }
+        columnResizeDirection={undefined}
+      />,
+    );
+    const setPinBtn = getByLabelText("set-pin");
+    fireEvent.click(setPinBtn);
+    expect(mockHeader.column.pin).toBeCalledWith("left");
+
+    // Re-render to reflect the new sorting state
+    rerender(
+      <Th
+        header={
+          {
+            ...mockHeader,
+            column: {
+              ...mockHeader.column,
+              columnDef: {
+                header: "Column Header",
+              },
+              getCanPin: vi.fn().mockReturnValue(true),
+              getIsPinned: vi.fn().mockReturnValue(true),
+            },
+          } as unknown as Header<unknown, unknown>
+        }
+        columnResizeDirection={undefined}
+      />,
+    );
+
+    const removePinBtn = getByLabelText("remove-pin");
+    fireEvent.click(removePinBtn);
+    expect(mockHeader.column.pin).toBeCalledWith(false);
   });
 });
 

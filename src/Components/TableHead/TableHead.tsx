@@ -5,8 +5,48 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import Filter from "./Filter/Filter";
-import { FaSortAlphaUp, FaSortAlphaDown } from "react-icons/fa";
+
 import IconComponent from "../IconComponent";
+import { getCommonPinningStyles } from "../../Utils/tableUtils";
+
+function PinComponent({
+  isPlaceholder,
+  canPin,
+  getIsPinned,
+  setPin,
+}: {
+  isPlaceholder: boolean;
+  canPin: boolean;
+  getIsPinned: "left" | "right" | false;
+  setPin: (val: "left" | "right" | false) => void;
+}) {
+  return (
+    <>
+      {!isPlaceholder && canPin ? (
+        <div className="flex justify-center gap-1">
+          {!getIsPinned ? (
+            <button
+              className="text-4xl text-red-500"
+              aria-label="set-pin"
+              onClick={() => setPin("left")}
+            >
+              <IconComponent IconType="pinUp" />
+            </button>
+          ) : null}
+          {getIsPinned ? (
+            <button
+              className="text-4xl text-red-500"
+              aria-label="remove-pin"
+              onClick={() => setPin(false)}
+            >
+              <IconComponent IconType="pinDown" />
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+    </>
+  );
+}
 
 export function Th({
   header,
@@ -22,8 +62,9 @@ export function Th({
       colSpan={header.colSpan}
       style={{
         width: header.getSize(),
+        ...getCommonPinningStyles(header.column),
       }}
-      className="relative border-2 border-primary text-center font-bold"
+      className="relative border-2 border-solid border-primary text-center font-bold"
     >
       <div className="flex gap-5 p-3">
         <div className="flex flex-col items-center justify-center gap-5 px-0">
@@ -44,7 +85,8 @@ export function Th({
                 }
                 aria-label={"TableHead"}
               >
-                <span>
+                <span className="flex flex-col">
+                  {/* <p>{column.getIndex(column.getIsPinned() || "center")}</p> */}
                   {flexRender(
                     typeof headerFn === "function"
                       ? headerFn(header.getContext()).displayName
@@ -52,6 +94,7 @@ export function Th({
                     header.getContext(),
                   )}
                 </span>
+
                 {typeof headerFn === "function" ? (
                   <span
                     className="tooltip text-3xl font-normal"
@@ -86,8 +129,8 @@ export function Th({
                 ) : null}
 
                 {{
-                  asc: <FaSortAlphaUp />,
-                  desc: <FaSortAlphaDown />,
+                  asc: <IconComponent IconType="sortAlphaUp" />,
+                  desc: <IconComponent IconType="sortAlphaDown" />,
                 }[header.column.getIsSorted() as string] ?? null}
               </div>
             </>
@@ -98,6 +141,13 @@ export function Th({
             </>
           ) : null}
         </div>
+        <PinComponent
+          isPlaceholder={header.isPlaceholder}
+          canPin={header.column.getCanPin()}
+          getIsPinned={header.column.getIsPinned()}
+          setPin={(val) => header.column.pin(val)}
+        />
+
         <div
           {...{
             onDoubleClick: () => header.column.resetSize(),

@@ -1,5 +1,10 @@
+import { Column } from "@tanstack/react-table";
 import { queryType } from "../../Hooks/useSqlQueries";
-import { createObject, getTableQuery } from "../tableUtils";
+import {
+  createObject,
+  getCommonPinningStyles,
+  getTableQuery,
+} from "../tableUtils";
 import { columnData } from "../tableUtils";
 
 describe("createObject function", () => {
@@ -44,7 +49,7 @@ describe("createObject function", () => {
   });
 });
 
-describe.skip("getTableQuery function", () => {
+describe("getTableQuery function", () => {
   it("should return the correct query for a given table name", () => {
     const tableName = "yourTableName";
     const expectedQuery = `WITH columns AS (
@@ -163,5 +168,104 @@ describe("columnData", () => {
     expect(Object.keys(result).length).toBe(1000);
     expect(result["name0"]).toEqual({ type: "INTEGER", pk: 0 });
     expect(result["name999"]).toEqual({ type: "INTEGER", pk: 1 });
+  });
+});
+
+// Mock the Column class using vi.mock
+const createMockColumn = ({
+  pinned = null,
+  lastLeft = false,
+  firstRight = false,
+  start = null,
+  after = null,
+  size = "150px",
+}: any) => ({
+  getIsPinned: vi.fn().mockReturnValue(pinned),
+  getIsLastColumn: vi
+    .fn()
+    .mockImplementation((position) => (position === "left" ? lastLeft : false)),
+  getIsFirstColumn: vi
+    .fn()
+    .mockImplementation((position) =>
+      position === "right" ? firstRight : false,
+    ),
+  getStart: vi.fn().mockReturnValue(start),
+  getAfter: vi.fn().mockReturnValue(after),
+});
+
+describe("getCommonPinningStyles", () => {
+  it("should return styles for a column pinned to the left and is the last left pinned column", () => {
+    const column = createMockColumn({
+      pinned: "left",
+      lastLeft: true,
+      start: 100,
+    }) as unknown as Column<unknown>;
+    const styles = getCommonPinningStyles(column);
+
+    expect(styles).toEqual({
+      boxShadow: "-4px 0 4px -4px gray inset",
+      backgroundColor: "#475569",
+      left: "100px",
+      right: undefined,
+      opacity: 0.95,
+      position: "sticky",
+      zIndex: 1,
+      border: "5px solid red",
+    });
+  });
+
+  it("should return styles for a column pinned to the right and is the first right pinned column", () => {
+    const column = createMockColumn({
+      pinned: "right",
+      firstRight: true,
+      after: 200,
+    }) as unknown as Column<unknown>;
+    const styles = getCommonPinningStyles(column);
+
+    expect(styles).toEqual({
+      boxShadow: "4px 0 4px -4px gray inset",
+      backgroundColor: "",
+      left: undefined,
+      right: "200px",
+      opacity: 0.95,
+      position: "sticky",
+      zIndex: 1,
+      border: "5px solid red",
+    });
+  });
+
+  it("should return styles for a column not pinned", () => {
+    const column = createMockColumn({}) as unknown as Column<unknown>;
+    const styles = getCommonPinningStyles(column);
+
+    expect(styles).toEqual({
+      boxShadow: undefined,
+      backgroundColor: "",
+      left: undefined,
+      right: undefined,
+      opacity: 1,
+      position: "relative",
+      zIndex: 0,
+      border: "",
+    });
+  });
+
+  it("should return styles for a column pinned to the left but not the last left pinned column", () => {
+    const column = createMockColumn({
+      pinned: "left",
+      start: 100,
+    }) as unknown as Column<unknown>;
+    const styles = getCommonPinningStyles(column);
+
+    expect(styles).toEqual({
+      boxShadow: undefined,
+      backgroundColor: "#475569",
+      left: "100px",
+      right: undefined,
+      opacity: 0.95,
+      position: "sticky",
+      zIndex: 1,
+      border: "5px solid red",
+    });
   });
 });

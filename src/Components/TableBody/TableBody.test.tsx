@@ -17,10 +17,12 @@ const mockRowModel = (rows: any[]) => ({
         column: {
           getSize: () => 100,
           columnDef: { cell: ({ getValue }: any) => getValue() },
+          getIsPinned: vi.fn().mockReturnValue(false),
         },
         getContext: () => ({
           getValue: () => cell,
         }),
+        getIsPinned: false,
       })),
   })),
 });

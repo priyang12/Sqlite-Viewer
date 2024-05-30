@@ -11,6 +11,7 @@ import {
   SortingState,
   getSortedRowModel,
   Table as TableType,
+  ColumnOrderState,
 } from "@tanstack/react-table";
 import { useGetTableData } from "../../Hooks/useGetTableData";
 import useSqlQueries, { queryType } from "../../Hooks/useSqlQueries";
@@ -117,6 +118,8 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
     pageSize: 10,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnPinning, setColumnPinning] = useState({});
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
 
   const table = useReactTable({
     data: data,
@@ -133,9 +136,13 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
       columnFilters: columnFilters,
       pagination: pagination,
       sorting: sorting,
+      columnPinning: columnPinning,
+      columnOrder: columnOrder,
     },
     columnResizeMode: "onChange",
     columnResizeDirection: "ltr",
+    onColumnPinningChange: setColumnPinning,
+    onColumnOrderChange: setColumnOrder,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
@@ -154,7 +161,7 @@ function TableComponent({ columns, data }: { columns: any; data: any }) {
     <>
       <div className="overflow-auto">
         <table
-          className="table table-pin-rows"
+          className="table-pin-row table"
           style={{
             width: table.getCenterTotalSize(),
           }}

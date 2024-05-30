@@ -41,6 +41,7 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] data types of column in header.
 - [x] primary and foreign keys.
 - [x] Multiple Filter.
+- [x] Pin Column.
 
 ## Creator
 

@@ -1,5 +1,7 @@
 import type { SqlValue } from "sql.js";
 import { queryType } from "../Hooks/useSqlQueries";
+import { CSSProperties } from "react";
+import { Column } from "@tanstack/react-table";
 
 /**
  * Function to create objects with properties from tableHead.
@@ -130,3 +132,60 @@ export function columnData(tableInfoResult: queryType) {
 
   return result;
 }
+
+/**
+ * Returns a set of common styles for pinned columns in a table.
+ * The styles are based on the column's pinning state (left or right) and its position.
+ *
+ * @param {Column<unknown>} column - The column object to retrieve styles for.
+ * @returns {CSSProperties} An object containing the CSS properties for the column.
+ *
+ * @example
+ * const column = {
+ *   getIsPinned: () => 'left',
+ *   getIsLastColumn: (position) => position === 'left',
+ *   getIsFirstColumn: (position) => position === 'right',
+ *   getStart: (position) => 100,
+ *   getAfter: (position) => 200,
+ *   getSize: () => '150px',
+ * };
+ *
+ * const styles = getCommonPinningStyles(column);
+ * console.log(styles);
+ * // Output:
+ * // {
+ * //   boxShadow: '-4px 0 4px -4px gray inset',
+ * //   backgroundColor: '#475569',
+ * //   left: '100px',
+ * //   right: undefined,
+ * //   opacity: 0.95,
+ * //   position: 'sticky',
+ * //   width: '150px',
+ * //   zIndex: 1,
+ * //   border: '5px solid red',
+ * // }
+ */
+export const getCommonPinningStyles = (
+  column: Column<unknown>,
+): CSSProperties => {
+  const isPinned = column.getIsPinned();
+  const isLastLeftPinnedColumn =
+    isPinned === "left" && column.getIsLastColumn("left");
+  const isFirstRightPinnedColumn =
+    isPinned === "right" && column.getIsFirstColumn("right");
+
+  return {
+    boxShadow: isLastLeftPinnedColumn
+      ? "-4px 0 4px -4px gray inset"
+      : isFirstRightPinnedColumn
+        ? "4px 0 4px -4px gray inset"
+        : undefined,
+    backgroundColor: isPinned === "left" ? "#475569" : "",
+    left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
+    right: isPinned === "right" ? `${column.getAfter("right")}px` : undefined,
+    opacity: isPinned ? 0.95 : 1,
+    position: isPinned ? "sticky" : "relative",
+    zIndex: isPinned ? 1 : 0,
+    border: isPinned ? "5px solid red" : "",
+  };
+};
