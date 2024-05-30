@@ -9,6 +9,34 @@ import Filter from "./Filter/Filter";
 import IconComponent from "../IconComponent";
 import { getCommonPinningStyles } from "../../Utils/tableUtils";
 
+function ColumnType({ dataType }: { dataType: string }) {
+  return (
+    <span className="tooltip text-3xl font-normal" data-tip={dataType}>
+      <IconComponent IconType={dataType as any} />
+    </span>
+  );
+}
+
+function Resizer({
+  header,
+  columnResizeDirection,
+}: {
+  header: Header<unknown, unknown>;
+  columnResizeDirection: ColumnResizeDirection | undefined;
+}) {
+  return (
+    <div
+      {...{
+        onDoubleClick: () => header.column.resetSize(),
+        onMouseDown: header.getResizeHandler(),
+        onTouchStart: header.getResizeHandler(),
+        className: `absolute cursor-col-resize resizer  top-0 right-0 h-full w-2 select-none touch-none ${columnResizeDirection} ${header.column.getIsResizing() ? "bg-blue-700 opacity-100" : ""}`,
+      }}
+      data-testid="resizerID"
+    ></div>
+  );
+}
+
 function PinComponent({
   isPlaceholder,
   canPin,
@@ -69,71 +97,69 @@ export function Th({
       <div className="flex gap-5 p-3">
         <div className="flex flex-col items-center justify-center gap-5 px-0">
           {header.isPlaceholder ? null : (
-            <>
-              <div
-                role="button"
-                className={`flex items-center gap-5 text-base ${header.column.getCanSort() ? "cursor-pointer select-none" : ""}`}
-                onClick={header.column.getToggleSortingHandler()}
-                title={
-                  header.column.getCanSort()
-                    ? header.column.getNextSortingOrder() === "asc"
-                      ? "Sort ascending"
-                      : header.column.getNextSortingOrder() === "desc"
-                        ? "Sort descending"
-                        : "Clear sort"
-                    : undefined
-                }
-                aria-label={"TableHead"}
-              >
-                <span className="flex flex-col">
-                  {/* <p>{column.getIndex(column.getIsPinned() || "center")}</p> */}
-                  {flexRender(
-                    typeof headerFn === "function"
-                      ? headerFn(header.getContext()).displayName
-                      : headerFn,
-                    header.getContext(),
-                  )}
-                </span>
+            <div
+              role="button"
+              aria-label={"TableHead"}
+              className={`flex items-center gap-5 text-base ${header.column.getCanSort() ? "cursor-pointer select-none" : ""}`}
+              onClick={header.column.getToggleSortingHandler()}
+              title={
+                header.column.getCanSort()
+                  ? header.column.getNextSortingOrder() === "asc"
+                    ? "Sort ascending"
+                    : header.column.getNextSortingOrder() === "desc"
+                      ? "Sort descending"
+                      : "Clear sort"
+                  : undefined
+              }
+            >
+              <span className="flex flex-col">
+                {/* <p>{column.getIndex(column.getIsPinned() || "center")}</p> */}
+                {flexRender(
+                  typeof headerFn === "function"
+                    ? headerFn(header.getContext()).displayName
+                    : headerFn,
+                  header.getContext(),
+                )}
+              </span>
 
-                {typeof headerFn === "function" ? (
-                  <span
-                    className="tooltip text-3xl font-normal"
-                    data-tip={flexRender(
+              {typeof headerFn === "function" ? (
+                <ColumnType
+                  dataType={
+                    flexRender(
                       headerFn(header.getContext()).dataType,
                       header.getContext(),
-                    )}
-                  >
-                    <IconComponent
-                      IconType={headerFn(header.getContext()).dataType}
-                    />
-                  </span>
-                ) : null}
-                {flexRender(
-                  typeof headerFn === "function"
-                    ? headerFn(header.getContext()).primaryKey
-                    : headerFn,
+                    ) as string
+                  }
+                />
+              ) : null}
+
+              {typeof headerFn === "function" ? (
+                flexRender(
+                  headerFn(header.getContext()).primaryKey,
                   header.getContext(),
                 ) ? (
-                  <span className="text-xs font-normal">🔑</span>
-                ) : null}
+                  <span className="text-lg font-normal" title="primary Key">
+                    <IconComponent IconType="primaryKey" />
+                  </span>
+                ) : null
+              ) : null}
 
-                {flexRender(
-                  typeof headerFn === "function"
-                    ? headerFn(header.getContext()).foreignKey
-                    : headerFn,
+              {typeof headerFn === "function" ? (
+                flexRender(
+                  headerFn(header.getContext()).foreignKey,
                   header.getContext(),
                 ) ? (
-                  <span className="text-xs font-normal" title="foreign Key">
-                    🗝️
+                  <span className="text-lg font-normal" title="foreign Key">
+                    <IconComponent IconType="foreignKey" />
                   </span>
-                ) : null}
+                ) : null
+              ) : null}
 
-                {{
-                  asc: <IconComponent IconType="sortAlphaUp" />,
-                  desc: <IconComponent IconType="sortAlphaDown" />,
-                }[header.column.getIsSorted() as string] ?? null}
-              </div>
-            </>
+              {{
+                asc: <IconComponent IconType="sortAlphaUp" />,
+                desc: <IconComponent IconType="sortAlphaDown" />,
+              }[header.column.getIsSorted() as string] ?? null}
+            </div>
           )}
           {header.column.getCanFilter() ? (
             <>
@@ -147,16 +173,10 @@ export function Th({
           getIsPinned={header.column.getIsPinned()}
           setPin={(val) => header.column.pin(val)}
         />
-
-        <div
-          {...{
-            onDoubleClick: () => header.column.resetSize(),
-            onMouseDown: header.getResizeHandler(),
-            onTouchStart: header.getResizeHandler(),
-            className: `absolute cursor-col-resize resizer  top-0 right-0 h-full w-2 select-none touch-none ${columnResizeDirection} ${header.column.getIsResizing() ? "bg-blue-700 opacity-100" : ""}`,
-          }}
-          data-testid="resizerID"
-        ></div>
+        <Resizer
+          header={header}
+          columnResizeDirection={columnResizeDirection}
+        />
       </div>
     </th>
   );
@@ -179,5 +199,4 @@ const TableHead = ({ table, ...props }: { table: Table<unknown> }) => {
     </thead>
   );
 };
-
 export default TableHead;

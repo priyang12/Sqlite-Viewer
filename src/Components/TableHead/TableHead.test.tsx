@@ -200,7 +200,7 @@ describe("Th Component", () => {
     expect(headerElement.title).toBe("Sort ascending");
   });
   it("test headerFn", () => {
-    const { getByText } = render(
+    const { getByText, getByTitle } = render(
       <Th
         header={
           {
@@ -208,7 +208,14 @@ describe("Th Component", () => {
             column: {
               ...mockHeader.column,
               columnDef: {
-                header: "Column Header",
+                header: () => {
+                  return {
+                    displayName: "Column Header",
+                    dataType: "INTEGER",
+                    primaryKey: true,
+                    foreignKey: true,
+                  };
+                },
               },
             },
           } as unknown as Header<unknown, unknown>
@@ -217,6 +224,8 @@ describe("Th Component", () => {
       />,
     );
     expect(getByText("Column Header")).toBeInTheDocument();
+    expect(getByTitle("primary Key")).toBeInTheDocument();
+    expect(getByTitle("foreign Key")).toBeInTheDocument();
   });
   it("test pinning Component", () => {
     const { getByLabelText, rerender } = render(

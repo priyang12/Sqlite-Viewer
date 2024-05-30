@@ -71,4 +71,29 @@ describe("IconComponent Component", () => {
     expect(icon).toBeInTheDocument();
     expect(icon).toHaveAttribute("aria-label", "angle double left icon");
   });
+  it("renders angleDoubleLeft icon with correct aria-label", () => {
+    render(<IconComponent IconType="sortAlphaDown" />);
+    const icon = screen.getByRole("img", { name: "sort alpha down icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute("aria-label", "sort alpha down icon");
+  });
+  it("renders angleDoubleLeft icon with correct aria-label", () => {
+    render(<IconComponent IconType="sortAlphaUp" />);
+    const icon = screen.getByRole("img", { name: "sort alpha up icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute("aria-label", "sort alpha up icon");
+  });
+  it("renders Primary Key icon with correct aria-label", () => {
+    render(<IconComponent IconType="primaryKey" />);
+    const icon = screen.getByRole("img", { name: "primaryKey icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute("aria-label", "primaryKey icon");
+    expect(icon).toHaveClass("text-yellow-500");
+  });
+  it("renders foreign Key icon with correct aria-label", () => {
+    render(<IconComponent IconType="foreignKey" />);
+    const icon = screen.getByRole("img", { name: "foreignKey icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveClass("text-gray-700");
+  });
 });

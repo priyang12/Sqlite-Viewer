@@ -3,7 +3,11 @@ import {
   FaAngleDoubleRight,
   FaAngleLeft,
   FaAngleDoubleLeft,
+  FaSortAlphaUp,
+  FaSortAlphaDown,
+  FaKey,
 } from "react-icons/fa";
+
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { CiSquareMinus } from "react-icons/ci";
 import { GoNumber } from "react-icons/go";
@@ -25,6 +29,20 @@ const icons = {
   angleLeft: <FaAngleLeft role="img" aria-label="angle left icon" />,
   angleDoubleLeft: (
     <FaAngleDoubleLeft role="img" aria-label="angle double left icon" />
+  ),
+  sortAlphaUp: <FaSortAlphaUp role="img" aria-label="sort alpha up icon" />,
+  sortAlphaDown: (
+    <FaSortAlphaDown role="img" aria-label="sort alpha down icon" />
+  ),
+  primaryKey: (
+    <FaKey
+      className="text-yellow-500"
+      role="img"
+      aria-label="primaryKey icon"
+    />
+  ),
+  foreignKey: (
+    <FaKey className="text-gray-700" role="img" aria-label="foreignKey icon" />
   ),
 };
 
