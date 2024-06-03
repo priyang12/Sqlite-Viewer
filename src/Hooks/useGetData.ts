@@ -35,7 +35,7 @@ export const useGetData = (query: string) => {
         setLoading(false);
       }
     }
-    () => {
+    return () => {
       setColumns(undefined);
       setRow(undefined);
       setLoading(false);

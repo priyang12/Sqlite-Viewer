@@ -30,9 +30,6 @@ export const useGetTableData = (query: string | undefined) => {
           const rows = result[0].values;
           setColumns(columns);
           setRow(rows);
-        } else {
-          setColumns(undefined);
-          setRow(undefined);
         }
       } catch (error) {
         console.error(error);
@@ -42,9 +39,8 @@ export const useGetTableData = (query: string | undefined) => {
         }, 1000);
       }
     }
-    () => {
-      // clean up function is not getting triggered.
-      console.log("clean up");
+    return () => {
+      console.log("Clean up");
       setColumns(undefined);
       setRow(undefined);
     };

@@ -32,7 +32,7 @@ export const useGetSubStrQuery = (tableName: string | undefined) => {
         }, 1000);
       }
     }
-    () => setQuerySubstr(undefined);
+    return () => setQuerySubstr(undefined);
   }, [db, tableName]);
 
   return {

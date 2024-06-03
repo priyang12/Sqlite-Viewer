@@ -23,7 +23,7 @@ export const useGetUserDBs = (indexedDB: DBContextType["indexedDB"]) => {
         if (dbs) setStoredDBs(dbs);
       })();
     }
-    () => setStoredDBs([]);
+    return () => setStoredDBs([]);
   }, [indexedDB]);
 
   return {

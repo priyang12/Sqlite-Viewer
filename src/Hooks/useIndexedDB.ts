@@ -32,7 +32,7 @@ export const useIndexedDB = () => {
     };
 
     initializeDB();
-    () => setIndexedDB(undefined);
+    return () => setIndexedDB(undefined);
   }, []);
 
   return { indexedDB };
