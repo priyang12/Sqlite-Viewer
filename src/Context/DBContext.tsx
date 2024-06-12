@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { createContext, useContext } from "react";
 import { storeFileName, useIndexedDB } from "../Hooks/useIndexedDB";
 import { useGetDB } from "../Hooks/useGetDB";
@@ -49,9 +49,12 @@ export const DBProvider: React.FC<{ children: React.ReactNode }> = ({
       };
       getDBFile();
     }
-  }, [indexedDB, indexFileName, storeFileName]);
+  }, [indexedDB, indexFileName]);
 
-  const setDBFileName = (fileName: string) => setIndexFileName(fileName);
+  const setDBFileName = useCallback(
+    (fileName: string) => setIndexFileName(fileName),
+    [],
+  );
 
   return (
     <DbContext.Provider value={{ db, indexedDB, setDBFileName }}>

@@ -11,7 +11,7 @@ const DataBaseLayout = () => {
     if (name) {
       setDBFileName(name);
     }
-  }, [name]);
+  }, [name, setDBFileName]);
 
   return (
     <div className="bg-base-100">

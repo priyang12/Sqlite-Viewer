@@ -17,7 +17,7 @@ export const multipleFilter: FilterFn<any> = (
   }
 
   if (typeof value === "object") {
-    let [min2, max2] = value;
+    const [min2, max2] = value;
     const rowValue = row.getValue(columnId) as number;
     if (min2 !== "" && max2 !== "") {
       return rowValue >= Number(min2) && rowValue <= Number(max2);

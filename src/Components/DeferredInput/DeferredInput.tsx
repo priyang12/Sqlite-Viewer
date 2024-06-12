@@ -13,7 +13,7 @@ function DeFerredInput({
 
   useEffect(() => {
     onChange(deferredFilterSearch);
-  }, [deferredFilterSearch]);
+  }, [deferredFilterSearch, onChange]);
 
   return (
     <input

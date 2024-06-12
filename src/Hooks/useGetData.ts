@@ -40,7 +40,7 @@ export const useGetData = (query: string) => {
       setRow(undefined);
       setLoading(false);
     };
-  }, [db]);
+  }, [db, query]);
 
   return {
     row,

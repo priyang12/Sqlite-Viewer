@@ -178,7 +178,6 @@ const createMockColumn = ({
   firstRight = false,
   start = null,
   after = null,
-  size = "150px",
 }: any) => ({
   getIsPinned: vi.fn().mockReturnValue(pinned),
   getIsLastColumn: vi

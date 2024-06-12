@@ -256,7 +256,7 @@ function Table({
         sortDescFirst: false,
       }),
     );
-  }, [DBhead]);
+  }, [DBhead, foreignKeys, columnMetaData]);
 
   if (!querySubstr) return null;
 

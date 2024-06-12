@@ -1,9 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetData } from "../useGetData";
 
-// need to fix mocking.
-
-let mockT = vi.fn().mockImplementation((query) => {
+const mockT = vi.fn().mockImplementation(() => {
   return [
     {
       columns: ["id", "name"],
