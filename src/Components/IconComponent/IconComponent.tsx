@@ -14,6 +14,7 @@ import { GoNumber } from "react-icons/go";
 import { IoText } from "react-icons/io5";
 import { MdPushPin } from "react-icons/md";
 import { TiPin } from "react-icons/ti";
+import { TbPhotoPlus } from "react-icons/tb";
 
 const icons = {
   INTEGER: <GoNumber role="img" aria-label="integer icon" />,
@@ -43,6 +44,13 @@ const icons = {
   ),
   foreignKey: (
     <FaKey className="text-gray-700" role="img" aria-label="foreignKey icon" />
+  ),
+  fileInput: (
+    <TbPhotoPlus
+      className="text-blue-600"
+      role="img"
+      aria-label="input database file icon"
+    />
   ),
 };
 

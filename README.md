@@ -42,6 +42,7 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] primary and foreign keys.
 - [x] Multiple Filter.
 - [x] Pin Column.
+- [x] User Databases Page.
 
 ## Creator
 

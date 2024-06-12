@@ -96,4 +96,11 @@ describe("IconComponent Component", () => {
     expect(icon).toBeInTheDocument();
     expect(icon).toHaveClass("text-gray-700");
   });
+
+  it("renders foreign Key icon with correct aria-label", () => {
+    render(<IconComponent IconType="fileInput" />);
+    const icon = screen.getByRole("img", { name: "input database file icon" });
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveClass("text-blue-600");
+  });
 });

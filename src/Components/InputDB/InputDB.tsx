@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
+import IconComponent from "../IconComponent";
 
 interface Props {
   onFileSelect: (file: File | null) => void;
@@ -14,14 +15,19 @@ const InputDB: React.FC<Props> = ({ onFileSelect }) => {
   };
 
   return (
-    <div>
-      <input
-        type="file"
-        className="file-input file-input-bordered file-input-md w-full max-w-xs"
-        accept=".db"
-        onChange={handleFileChange}
-      />
-      {selectedFile && <p>Selected File: {selectedFile.name}</p>}
+    <div className="flex">
+      <div className="flex">
+        <input
+          type="file"
+          className="file-input file-input-bordered file-input-md w-full max-w-xs"
+          accept=".db"
+          onChange={handleFileChange}
+        />
+        {selectedFile && <p>Selected File: {selectedFile.name}</p>}
+      </div>
+      <span className="text-5xl">
+        <IconComponent IconType="fileInput" />
+      </span>
     </div>
   );
 };
