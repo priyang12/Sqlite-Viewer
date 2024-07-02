@@ -91,7 +91,7 @@ const Home = () => {
 
   const onSelectFile = async (file: File | null) => {
     if (file) {
-      // insertUserDB(file);
+      insertUserDB(file);
     }
   };
 
@@ -107,7 +107,7 @@ const Home = () => {
       <div className="h-screen w-full pt-5">
         <h1 className="text-center text-4xl font-bold">Your Databases</h1>
         <div className="my-5 flex h-[80vh] w-full flex-col justify-evenly gap-5 bg-base-300 p-5 sm:flex-row">
-          <div className="sm:w-[40%]">
+          <div className="h-full sm:w-[40%]">
             <InputDB onFileSelect={onSelectFile} />
           </div>
           {storedDBs.length > 0 ? (
