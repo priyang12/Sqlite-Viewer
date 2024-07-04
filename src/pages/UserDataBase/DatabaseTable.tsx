@@ -13,6 +13,7 @@ import {
   Table as TableType,
   ColumnOrderState,
 } from "@tanstack/react-table";
+import { CSVLink } from "react-csv";
 import { useGetTableData } from "../../Hooks/useGetTableData";
 import useSqlQueries, { queryType } from "../../Hooks/useSqlQueries";
 import {
@@ -111,7 +112,15 @@ function Pagination({ table }: { table: TableType<unknown> }) {
   );
 }
 
-function TableComponent({ columns, data }: { columns: any; data: any }) {
+function TableComponent({
+  columns,
+  data,
+  CSVHeaders,
+}: {
+  columns: any;
+  data: any;
+  CSVHeaders: any;
+}) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -202,10 +211,12 @@ function TableSkeleton() {
 const columnHelper = createColumnHelper<any>();
 
 function Table({
+  tableName,
   querySubstr,
   tableInfoResult,
   foreignKeyResult,
 }: {
+  tableName: string;
   querySubstr: string | undefined;
   tableInfoResult: queryType;
   foreignKeyResult: queryType;
@@ -230,6 +241,7 @@ function Table({
     () => DBrow?.map((row) => createObject(row, DBhead)),
     [DBrow, DBhead],
   );
+
   const tableColumns = useMemo(() => {
     return DBhead?.map((item) =>
       columnHelper.accessor(item.toString(), {
@@ -258,6 +270,8 @@ function Table({
     );
   }, [DBhead, foreignKeys, columnMetaData]);
 
+  const CSVHeaders = DBhead?.map((col) => ({ label: col, key: col }));
+
   if (!querySubstr) return null;
 
   if (loading) {
@@ -266,7 +280,24 @@ function Table({
 
   return (
     <>
-      <TableComponent columns={tableColumns} data={tableData} />
+      <div className="flex items-center justify-between">
+        <h2 className="my-5 self-start text-lg">Table : {tableName}</h2>
+        {tableData ? (
+          <CSVLink
+            data={tableData}
+            headers={CSVHeaders}
+            filename={`${tableName}-table-data.csv`}
+          >
+            <div className="btn btn-info my-1">Export to CSV</div>
+          </CSVLink>
+        ) : null}
+      </div>
+
+      <TableComponent
+        columns={tableColumns}
+        data={tableData}
+        CSVHeaders={CSVHeaders}
+      />
     </>
   );
 }
@@ -291,10 +322,9 @@ const DatabaseTable = () => {
 
   return (
     <div className="mx-5 h-full">
-      <h2 className="my-5 self-start text-xl">Table : {tableName}</h2>
-
-      {results.length > 0 ? (
+      {results.length > 0 && tableName ? (
         <Table
+          tableName={tableName}
           querySubstr={
             results[2]
               ? `${results[2][0].values[0][0]} FROM ${tableName};`
