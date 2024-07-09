@@ -43,6 +43,8 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] Multiple Filter.
 - [x] Pin Column.
 - [x] User Databases Page.
+- [x] CSV export of table data.
+- [ ] Add and remove filters.
 
 ## Creator
 
