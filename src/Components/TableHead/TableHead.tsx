@@ -30,7 +30,7 @@ function Resizer({
         onDoubleClick: () => header.column.resetSize(),
         onMouseDown: header.getResizeHandler(),
         onTouchStart: header.getResizeHandler(),
-        className: `absolute cursor-col-resize resizer  top-0 right-0 h-full w-2 select-none touch-none ${columnResizeDirection} ${header.column.getIsResizing() ? "bg-blue-700 opacity-100" : ""}`,
+        className: `absolute cursor-col-resize resizer top-0 right-0 h-full w-2 select-none touch-none ${columnResizeDirection} ${header.column.getIsResizing() ? "bg-blue-700 opacity-100" : ""}`,
       }}
       data-testid="resizerID"
     ></div>
@@ -49,7 +49,7 @@ function PinComponent({
   setPin: (val: "left" | "right" | false) => void;
 }) {
   return (
-    <>
+    <div className="absolute right-3 top-2">
       {!isPlaceholder && canPin ? (
         <div className="flex justify-center gap-1">
           {!getIsPinned ? (
@@ -72,7 +72,7 @@ function PinComponent({
           ) : null}
         </div>
       ) : null}
-    </>
+    </div>
   );
 }
 
@@ -83,7 +83,7 @@ export function Th({
   header: Header<unknown, unknown>;
   columnResizeDirection: ColumnResizeDirection | undefined;
 }) {
-  const headerFn = header.column.columnDef.header as any;
+  const headerFn = header.column.columnDef.header;
   return (
     <th
       key={header.id}
@@ -163,7 +163,7 @@ export function Th({
           )}
           {header.column.getCanFilter() ? (
             <>
-              <Filter inputWidth={header.getSize()} column={header.column} />
+              <Filter column={header.column} />
             </>
           ) : null}
         </div>
