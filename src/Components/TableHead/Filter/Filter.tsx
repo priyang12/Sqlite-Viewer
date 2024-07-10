@@ -49,20 +49,33 @@ const Filter = ({ column }: { column: Column<any, unknown> }) => {
 
   const searchFiler = useCallback(
     (value: string | number) => {
-      column.setFilterValue(value);
+      column.setFilterValue({
+        type: "search",
+        filterValue: value,
+      });
     },
     [column],
   );
 
   const minFn = useCallback(
     (value: string | number) => {
-      column.setFilterValue((old: [number, number]) => [value, old?.[1]]);
+      // column.setFilterValue((old: [number, number]) => [value, old?.[1]]);
+      column.setFilterValue((old: { filterValue: [number, number] }) => {
+        const oldValue = old.filterValue;
+        return { type: "range", filterValue: [value, oldValue?.[1]] };
+      });
     },
     [column],
   );
+
   const maxFn = useCallback(
-    (value: string | number) =>
-      column.setFilterValue((old: [number, number]) => [old?.[0], value]),
+    (value: string | number) => {
+      column.setFilterValue((old: { filterValue: [number, number] }) => {
+        // column.setFilterValue((old: [number, number]) => [old?.[0], value]),
+        const oldValue = old.filterValue;
+        return { type: "range", filterValue: [oldValue?.[0], value] };
+      });
+    },
     [column],
   );
 
@@ -86,6 +99,7 @@ const Filter = ({ column }: { column: Column<any, unknown> }) => {
         type="text"
         value={(columnFilterValue ?? "") as string}
       />
+
       {filters.some((value) => value === rangeFilterName) ? (
         <div className="flex">
           <RangeFilter
