@@ -33,7 +33,6 @@ export const useIndexedDB = () => {
 
     initializeDB();
     return () => {
-      console.log("clean up in Hook");
       setIndexedDB(undefined);
     };
   }, []);

@@ -1,7 +1,7 @@
 import InputDB from "../Components/InputDB/InputDB";
-import { useStoreContext } from "../Context/StoreContext";
 import { Link } from "react-router-dom";
 import type { storedKeysType } from "../Hooks/useGetUserDBs";
+import { useDBStore } from "../Hooks/useDBStore";
 
 function UsersDBList({
   storedDBs,
@@ -71,7 +71,12 @@ function NoDBList() {
 }
 
 const Home = () => {
-  const { Loading, storedDBs, insertUserDB, removeUserDB } = useStoreContext();
+  const {
+    isLoading: Loading,
+    storedDBs,
+    insertUserDB,
+    removeUserDB,
+  } = useDBStore();
 
   // temporary push it to default DB.
   // let navigate = useNavigate();

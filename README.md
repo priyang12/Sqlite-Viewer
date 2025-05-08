@@ -44,6 +44,10 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] Pin Column.
 - [x] User Databases Page.
 
+## bugs
+
+- [] fix rerender due to useEffect. look if effect can comply removed.
+
 ## Creator
 
 Priyang Patel

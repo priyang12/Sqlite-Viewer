@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { createContext, useContext } from "react";
-import { storeFileName, useIndexedDB } from "../Hooks/useIndexedDB";
+import { storeFileName } from "../Hooks/useIndexedDB";
 import { useGetDB } from "../Hooks/useGetDB";
 import type { Database } from "sql.js";
 import type { IDBPDatabase } from "idb";
+import { useIndexedDBContext } from "./IndexedDBContext";
 
 export type DBContextType = {
   db: Database | undefined;
@@ -38,13 +39,14 @@ export const DBProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [indexFileName, setIndexFileName] = useState("");
   const [databaseFile, setDatabaseFile] = useState<File>();
-  const { indexedDB } = useIndexedDB();
+  const { indexDB: indexedDB } = useIndexedDBContext();
   const { db } = useGetDB(databaseFile);
 
   useEffect(() => {
     if (indexFileName) {
       const getDBFile = async () => {
         const database = await indexedDB?.get(storeFileName, indexFileName);
+
         setDatabaseFile(database);
       };
       getDBFile();
