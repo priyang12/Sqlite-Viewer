@@ -14,7 +14,7 @@ export const storeFileName = "DBFiles";
  * }
  */
 export const useIndexedDB = () => {
-  const [indexedDB, setIndexedDB] = useState<IDBPDatabase<unknown>>();
+  const [indexedDB, setIndexedDB] = useState<IDBPDatabase>();
 
   useEffect(() => {
     const initializeDB = async () => {
@@ -32,7 +32,10 @@ export const useIndexedDB = () => {
     };
 
     initializeDB();
-    return () => setIndexedDB(undefined);
+    return () => {
+      console.log("clean up in Hook");
+      setIndexedDB(undefined);
+    };
   }, []);
 
   return { indexedDB };
