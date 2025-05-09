@@ -1,27 +1,26 @@
-import React from "react";
 import { SqlValue } from "sql.js";
 import Skeleton from "../Skeleton";
 
 const SearchTable = ({
-  DBtables,
-  setTables,
+  originalTable,
+  setSearchTables,
 }: {
-  DBtables: SqlValue[] | undefined;
-  setTables: React.Dispatch<React.SetStateAction<SqlValue[] | undefined>>;
+  originalTable: SqlValue[] | undefined;
+  setSearchTables: React.Dispatch<React.SetStateAction<SqlValue[] | undefined>>;
 }) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value.toLowerCase(); // Get the search term
-    if (DBtables) {
-      const filteredTables = DBtables.filter((table) =>
+    if (originalTable) {
+      const filteredTables = originalTable.filter((table) =>
         table?.toString().toLowerCase().includes(searchTerm),
       );
-      setTables(filteredTables);
+      setSearchTables(filteredTables);
     }
   };
 
   return (
     <>
-      {!DBtables ? (
+      {!originalTable ? (
         <Skeleton className="input mx-5" width={"150px"} />
       ) : (
         <label className="input input-bordered mx-5 flex items-center gap-2 bg-base-300">

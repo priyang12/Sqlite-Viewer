@@ -1,24 +1,40 @@
 import { useEffect, useState } from "react";
-import { useGetData } from "../../Hooks/useGetData";
 import { Link } from "react-router-dom";
+import { useGetDBContext } from "../../Context/DBContext";
+import { SqlValue } from "sql.js";
 import SearchTable from "../SearchTable";
 import Skeleton from "../Skeleton";
 
 const tableQuery = "SELECT name FROM sqlite_master WHERE type='table'";
 
 function TableSideBar() {
-  const { row: DBtables, loading } = useGetData(tableQuery);
-  const [tables, setTables] = useState(DBtables);
+  const { db } = useGetDBContext();
+  const [tables, setTables] = useState<SqlValue[]>();
+  const [searchTables, setSearchTables] = useState(tables);
 
   useEffect(() => {
-    if (DBtables) setTables(DBtables);
-  }, [DBtables]);
+    if (typeof db !== "undefined") {
+      try {
+        const result = db.exec(tableQuery);
+        const rows = result[0].values.map((r) => r[0]);
+        setTables(rows);
+        setSearchTables(rows);
+      } catch (error) {
+        console.error(error);
+      } finally {
+      }
+    }
+    return () => {
+      setTables(undefined);
+      setSearchTables(undefined);
+    };
+  }, [db, tableQuery]);
 
   return (
     <section className="flex flex-col gap-5 rounded bg-base-300 pb-5">
       <h2 className="mx-6 mt-6 text-xl font-bold">Tables </h2>
-      <SearchTable setTables={setTables} DBtables={DBtables} />
-      {loading ? (
+      <SearchTable originalTable={tables} setSearchTables={setSearchTables} />
+      {typeof tables === "undefined" ? (
         <div
           className="flex w-full flex-col items-center gap-5"
           data-testid="loading-spinner"
@@ -27,9 +43,9 @@ function TableSideBar() {
         </div>
       ) : (
         <ul className="mx-5 rounded-lg bg-base-200 py-5 text-base-content shadow-lg">
-          {tables ? (
-            tables.length > 0 ? (
-              tables.map((item, index) => (
+          {searchTables ? (
+            searchTables.length > 0 ? (
+              searchTables.map((item, index) => (
                 <li
                   key={index}
                   className="hover:bg-primary-darker px-4 py-2 transition-colors duration-300"
