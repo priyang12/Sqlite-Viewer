@@ -1,17 +1,8 @@
 import { useParams, Outlet } from "react-router-dom";
 import TableSideBar from "../../Components/TableSideBar";
-import { useGetDBContext } from "../../Context/DBContext";
-import { useEffect } from "react";
 
 const DataBaseLayout = () => {
   const { name } = useParams();
-  const { setDBFileName } = useGetDBContext();
-
-  useEffect(() => {
-    if (name) {
-      setDBFileName(name);
-    }
-  }, [name, setDBFileName]);
 
   return (
     <div className="bg-base-100">

@@ -1,22 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createContext, useContext } from "react";
 import { storeFileName } from "../Hooks/useIndexedDB";
-import { useGetDB } from "../Hooks/useGetDB";
+import { loadDatabase } from "../Hooks/useGetDB";
 import type { Database } from "sql.js";
 import type { IDBPDatabase } from "idb";
 import { useIndexedDBContext } from "./IndexedDBContext";
+import { useParams } from "react-router-dom";
 
 export type DBContextType = {
   db: Database | undefined;
   indexedDB: IDBPDatabase | undefined;
-  setDBFileName: (value: string) => void;
 };
 
 // Create a context object for managing the database connection
 const DbContext = createContext<DBContextType>({
   db: undefined, // Default context value with an undefined database connection
   indexedDB: undefined, // Default value
-  setDBFileName: () => {},
 });
 
 // Custom hook to easily access the database context
@@ -37,29 +36,25 @@ export const useGetDBContext = () => useContext(DbContext);
 export const DBProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [indexFileName, setIndexFileName] = useState("");
-  const [databaseFile, setDatabaseFile] = useState<File>();
+  const { name } = useParams();
   const { indexDB: indexedDB } = useIndexedDBContext();
-  const { db } = useGetDB(databaseFile);
+  const [db, setDb] = useState<Database>();
 
   useEffect(() => {
-    if (indexFileName) {
+    if (name) {
       const getDBFile = async () => {
-        const database = await indexedDB?.get(storeFileName, indexFileName);
-
-        setDatabaseFile(database);
+        const databaseFile = await indexedDB?.get(storeFileName, name);
+        if (databaseFile) {
+          const db = await loadDatabase(databaseFile);
+          setDb(db);
+        }
       };
       getDBFile();
     }
-  }, [indexedDB, indexFileName]);
-
-  const setDBFileName = useCallback(
-    (fileName: string) => setIndexFileName(fileName),
-    [],
-  );
+  }, [indexedDB, name]);
 
   return (
-    <DbContext.Provider value={{ db, indexedDB, setDBFileName }}>
+    <DbContext.Provider value={{ db, indexedDB }}>
       {children}
     </DbContext.Provider>
   );
