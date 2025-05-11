@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import {
   useReactTable,
   getCoreRowModel,
@@ -28,6 +28,7 @@ import TableFoot from "../../Components/TableFoot";
 import Skeleton from "../../Components/Skeleton";
 import Loading from "../../Components/Loading";
 import IconComponent from "../../Components/IconComponent";
+import { Database } from "sql.js";
 
 const pageSizes = [10, 20, 30, 40, 50];
 
@@ -304,6 +305,7 @@ function Table({
 
 const DatabaseTable = () => {
   const { table: tableName } = useParams();
+  const { db } = useOutletContext<{ db: Database }>();
 
   // Memoize the queries array to prevent infinite re-renders
   const queries = useMemo(
@@ -314,7 +316,7 @@ const DatabaseTable = () => {
     ],
     [tableName],
   );
-  const { results, loading } = useSqlQueries(queries);
+  const { results, loading } = useSqlQueries(queries, db);
 
   if (loading) {
     return <Loading />;

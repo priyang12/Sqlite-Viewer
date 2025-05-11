@@ -1,34 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useGetDBContext } from "../../Context/DBContext";
-import { SqlValue } from "sql.js";
+import { Database, SqlValue } from "sql.js";
 import SearchTable from "../SearchTable";
 import Skeleton from "../Skeleton";
 
 const tableQuery = "SELECT name FROM sqlite_master WHERE type='table'";
 
-function TableSideBar() {
-  const { db } = useGetDBContext();
-  const [tables, setTables] = useState<SqlValue[]>();
-  const [searchTables, setSearchTables] = useState(tables);
+function TableSideBar({ db }: { db: Database }) {
+  const tables = useMemo(() => {
+    const queryResult = db.exec(tableQuery);
+    const rows = queryResult[0].values.map((r) => r[0]);
+    return rows;
+  }, [db]);
 
-  useEffect(() => {
-    if (typeof db !== "undefined") {
-      try {
-        const result = db.exec(tableQuery);
-        const rows = result[0].values.map((r) => r[0]);
-        setTables(rows);
-        setSearchTables(rows);
-      } catch (error) {
-        console.error(error);
-      } finally {
-      }
-    }
-    return () => {
-      setTables(undefined);
-      setSearchTables(undefined);
-    };
-  }, [db, tableQuery]);
+  const [searchTables, setSearchTables] = useState(tables);
 
   return (
     <section className="flex flex-col gap-5 rounded bg-base-300 pb-5">

@@ -6,7 +6,7 @@ const SearchTable = ({
   setSearchTables,
 }: {
   originalTable: SqlValue[] | undefined;
-  setSearchTables: React.Dispatch<React.SetStateAction<SqlValue[] | undefined>>;
+  setSearchTables: React.Dispatch<React.SetStateAction<SqlValue[]>>;
 }) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value.toLowerCase(); // Get the search term

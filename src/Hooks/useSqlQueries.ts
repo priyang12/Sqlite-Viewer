@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useGetDBContext } from "../Context/DBContext";
-import { QueryExecResult } from "sql.js";
+import { Database, QueryExecResult } from "sql.js";
 
 export type queryType = QueryExecResult[];
 export type resultType = queryType[];
@@ -20,38 +20,37 @@ export type resultType = queryType[];
  * // 'loading' indicates whether the data is currently being fetched
  * // 'error' contains any error encountered during the execution
  */
-const useSqlQueries = (queries: string[]) => {
-  const { db } = useGetDBContext();
+const useSqlQueries = (queries: string[], db: Database) => {
   const [results, setResults] = useState<resultType>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
-    if (db) {
-      const executeQueries = async () => {
-        try {
-          const promises = queries.map(
-            (query) =>
-              new Promise((resolve, reject) => {
-                try {
-                  const result = db.exec(query);
-                  resolve(result);
-                } catch (e) {
-                  reject(e);
-                }
-              }),
-          );
-          const results = (await Promise.all(promises)) as QueryExecResult[][];
-          setResults(results);
-        } catch (e) {
-          console.error(e);
-          setError(e);
-        } finally {
-          setLoading(false);
-        }
-      };
-      executeQueries();
-    }
+    const executeQueries = async () => {
+      try {
+        const promises = queries.map(
+          (query) =>
+            new Promise((resolve, reject) => {
+              try {
+                // remove async Promise since exec works in sync.
+                const result = db.exec(query);
+                resolve(result);
+              } catch (e) {
+                reject(e);
+              }
+            }),
+        );
+        const results = (await Promise.all(promises)) as QueryExecResult[][];
+        setResults(results);
+      } catch (e) {
+        console.error(e);
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    executeQueries();
+
     return () => {
       setResults([]);
       setError(null);
