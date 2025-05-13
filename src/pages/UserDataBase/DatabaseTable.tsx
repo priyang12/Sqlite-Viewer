@@ -26,7 +26,6 @@ import TableHead from "../../Components/TableHead";
 import TableBody from "../../Components/TableBody";
 import TableFoot from "../../Components/TableFoot";
 import Skeleton from "../../Components/Skeleton";
-import Loading from "../../Components/Loading";
 import IconComponent from "../../Components/IconComponent";
 import { Database } from "sql.js";
 
@@ -316,11 +315,10 @@ const DatabaseTable = () => {
     ],
     [tableName],
   );
-  const { results, loading } = useSqlQueries(queries, db);
 
-  if (loading) {
-    return <Loading />;
-  }
+  const results = useMemo(() => {
+    return queries.map((item) => db.exec(item));
+  }, [db, queries]);
 
   return (
     <div className="mx-5 h-full">
