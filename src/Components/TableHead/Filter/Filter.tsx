@@ -2,12 +2,6 @@ import { useCallback, useState } from "react";
 import { Column } from "@tanstack/react-table";
 import DebouncedInput from "../../DeferredInput";
 
-// need to fix multiple filter so values can apply on all the filters.
-// in Utils/filterUtils.ts -> multipleFilter
-
-// or make apply filter function that set make president the filters and just
-// set one value into column.setFilterValue.
-
 function RangeFilter({
   columnFilterValue,
   minFn,
@@ -41,9 +35,17 @@ function RangeFilter({
 }
 
 const rangeFilterName = "rangeFilter";
-const selectFilterName = "selectFilter";
+const dataTypes = ["INTEGER"];
 
-const Filter = ({ column }: { column: Column<any, unknown> }) => {
+const Filter = ({
+  column,
+  dataType,
+}: {
+  column: Column<any, unknown>;
+  dataType: String;
+}) => {
+  console.log(dataType);
+
   const [filters, setFilters] = useState<string[]>([]);
   const columnFilterValue = column.getFilterValue();
 
@@ -88,6 +90,7 @@ const Filter = ({ column }: { column: Column<any, unknown> }) => {
   const removeFilter = (type: string) => {
     const newFilters = filters.filter((filterType) => filterType !== type);
     setFilters(newFilters);
+    column.setFilterValue(undefined);
   };
 
   return (
@@ -117,7 +120,7 @@ const Filter = ({ column }: { column: Column<any, unknown> }) => {
       ) : null}
 
       <div className="flex space-x-2">
-        {filters.length < 2 ? (
+        {filters.length < 2 && dataTypes.includes(dataType.toString()) ? (
           <>
             {!filters.some((filter) => filter === rangeFilterName) && (
               <button
@@ -126,15 +129,6 @@ const Filter = ({ column }: { column: Column<any, unknown> }) => {
                 aria-label="Add Range Filter Button"
               >
                 Add Range Filter
-              </button>
-            )}
-            {!filters.some((filter) => filter === selectFilterName) && (
-              <button
-                onClick={() => addFilter(selectFilterName)}
-                className="btn btn-primary btn-xs"
-                aria-label="Add Select Filter Button"
-              >
-                Add Select Filter
               </button>
             )}
           </>

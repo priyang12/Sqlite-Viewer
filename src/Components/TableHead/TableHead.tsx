@@ -84,6 +84,11 @@ export function Th({
   columnResizeDirection: ColumnResizeDirection | undefined;
 }) {
   const headerFn = header.column.columnDef.header;
+  const dataType =
+    typeof headerFn === "function"
+      ? headerFn(header.getContext()).dataType
+      : undefined;
+
   return (
     <th
       key={header.id}
@@ -163,7 +168,7 @@ export function Th({
           )}
           {header.column.getCanFilter() ? (
             <>
-              <Filter column={header.column} />
+              <Filter column={header.column} dataType={String(dataType)} />
             </>
           ) : null}
         </div>
