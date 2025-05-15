@@ -1,13 +1,18 @@
 import { rankItem } from "@tanstack/match-sorter-utils";
 import { FilterFn } from "@tanstack/react-table";
 
+export type filterTypes = "search" | "range";
+
 export const multipleFilter: FilterFn<any> = (
   row,
   columnId,
-  value,
+  filterValues,
   addMeta,
 ) => {
-  if (typeof value === "string") {
+  const filterType = filterValues.type as filterTypes;
+  const value = filterValues.filterValue;
+
+  if (filterType === "search") {
     // return (row.getValue(id) as string).includes(value);
     const itemRank = rankItem(row.getValue(columnId), value);
     addMeta({
@@ -16,7 +21,7 @@ export const multipleFilter: FilterFn<any> = (
     return itemRank.passed;
   }
 
-  if (typeof value === "object") {
+  if (filterType === "range") {
     const [min2, max2] = value;
     const rowValue = row.getValue(columnId) as number;
     if (min2 !== "" && max2 !== "") {
@@ -30,5 +35,5 @@ export const multipleFilter: FilterFn<any> = (
       return true;
     }
   }
-  return value;
+  return filterValues;
 };

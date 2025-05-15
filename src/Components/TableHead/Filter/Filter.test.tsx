@@ -11,12 +11,32 @@ describe("Filter Component", () => {
     columnDef: { meta: {} },
   } as unknown as Column<any, unknown>;
 
-  it("renders range filter and handles changes", () => {
+  it("renders default text filter and handles changes", () => {
+    (mockColumn.getFilterValue as Mock).mockReturnValue("test");
+    mockColumn.columnDef.meta = { filterVariant: undefined };
+
+    render(<Filter column={mockColumn} />);
+
+    const input = screen.getByPlaceholderText("Search...");
+    expect(input).toBeInTheDocument();
+    expect(input).toHaveValue("test");
+
+    fireEvent.change(input, { target: { value: "updated" } });
+    expect(mockColumn.setFilterValue).toHaveBeenCalledWith("updated");
+  });
+
+  it("Range Filter", () => {
     (mockColumn.getFilterValue as Mock).mockReturnValue([10, 20]);
-    mockColumn.columnDef.meta = { filterVariant: "range" };
+    mockColumn.columnDef.meta = { filterVariant: undefined };
 
-    render(<Filter column={mockColumn} inputWidth={100} />);
+    render(<Filter column={mockColumn} />);
 
+    // add range Filer
+    const rangeFilterBtn = screen.getByLabelText("Add Range Filter Button");
+    fireEvent.click(rangeFilterBtn);
+    expect(screen.getByLabelText("rangeFilter")).toBeInTheDocument();
+
+    // check Range filter working.
     const minInput = screen.getByPlaceholderText("Min");
     const maxInput = screen.getByPlaceholderText("Max");
 
@@ -29,22 +49,15 @@ describe("Filter Component", () => {
     fireEvent.change(maxInput, { target: { value: "25" } });
 
     // Ensure setFilterValue is called with a function
+    // so that the filter is getting applied.
     expect(mockColumn.setFilterValue).toHaveBeenCalledWith(
       expect.any(Function),
     );
-  });
 
-  it("renders default text filter and handles changes", () => {
-    (mockColumn.getFilterValue as Mock).mockReturnValue("test");
-    mockColumn.columnDef.meta = { filterVariant: undefined };
+    // remove range Filter
+    const removeBtn = screen.getByLabelText("remove Range Filter Button");
+    fireEvent.click(removeBtn);
 
-    render(<Filter column={mockColumn} inputWidth={100} />);
-
-    const input = screen.getByPlaceholderText("Search...");
-    expect(input).toBeInTheDocument();
-    expect(input).toHaveValue("test");
-
-    fireEvent.change(input, { target: { value: "updated" } });
-    expect(mockColumn.setFilterValue).toHaveBeenCalledWith("updated");
+    expect(screen.queryByLabelText("rangeFilter")).not.toBeInTheDocument();
   });
 });
