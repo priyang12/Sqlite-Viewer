@@ -44,8 +44,6 @@ const Filter = ({
   column: Column<any, unknown>;
   dataType: String;
 }) => {
-  console.log(dataType);
-
   const [filters, setFilters] = useState<string[]>([]);
   const columnFilterValue = column.getFilterValue();
 

@@ -249,8 +249,8 @@ function Table({
         header: (info) => {
           const customObject = {
             displayName: info.column.id,
-            dataType: columnMetaData[item.toString()].type,
-            primaryKey: columnMetaData[item.toString()].pk,
+            dataType: columnMetaData[item.toString()]?.type,
+            primaryKey: columnMetaData[item.toString()]?.pk,
             foreignKey: foreignKeys ? foreignKeys.includes(item) : false,
           };
           return customObject;
@@ -258,7 +258,7 @@ function Table({
         footer: (props) => props.column.id,
         meta: {
           filterVariant:
-            columnMetaData[item.toString()].type === "INTEGER"
+            columnMetaData[item.toString()]?.type === "INTEGER"
               ? "range"
               : undefined,
         },
@@ -319,6 +319,8 @@ const DatabaseTable = () => {
   const results = useMemo(() => {
     return queries.map((item) => db.exec(item));
   }, [db, queries]);
+
+  console.log(results[1]);
 
   return (
     <div className="mx-5 h-full">

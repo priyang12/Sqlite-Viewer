@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Database, SqlValue } from "sql.js";
 import SearchTable from "../SearchTable";
 import Skeleton from "../Skeleton";
@@ -7,6 +7,7 @@ import Skeleton from "../Skeleton";
 const tableQuery = "SELECT name FROM sqlite_master WHERE type='table'";
 
 function TableSideBar({ db }: { db: Database }) {
+  const { name } = useParams();
   const tables = useMemo(() => {
     const queryResult = db.exec(tableQuery);
     const rows = queryResult[0].values.map((r) => r[0]);
@@ -17,6 +18,10 @@ function TableSideBar({ db }: { db: Database }) {
 
   return (
     <section className="flex flex-col gap-5 rounded bg-base-300 pb-5">
+      <Link to={`/chart/${name}`} className="link">
+        DB Chart
+      </Link>
+
       <h2 className="mx-6 mt-6 text-xl font-bold">Tables </h2>
       <SearchTable originalTable={tables} setSearchTables={setSearchTables} />
       {typeof tables === "undefined" ? (
