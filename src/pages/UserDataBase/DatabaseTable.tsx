@@ -320,8 +320,6 @@ const DatabaseTable = () => {
     return queries.map((item) => db.exec(item));
   }, [db, queries]);
 
-  console.log(results[1]);
-
   return (
     <div className="mx-5 h-full">
       {results.length > 0 && tableName ? (
