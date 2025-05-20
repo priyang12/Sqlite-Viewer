@@ -26,12 +26,13 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
 
   useEffect(() => {
     try {
+      console.log(db.exec(queries.table.foreignKey(tableName)));
+
       const result = db.exec(queries.table.properties(tableName));
+      // remove extras props check.
       const props = result[0]?.values.map((r) => r[1]) || [];
+      const columnMetaData = columnData(result);
       setColumns(props);
-      const columnMetaData = columnData(
-        db.exec(queries.table.properties(tableName)),
-      );
       setTableInfo(columnMetaData);
     } catch (err: any) {
       // throw error
@@ -55,6 +56,8 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
               </tr>
             </thead>
             <tbody>
+              {/* remove Column state and render the object key */}
+              {/* {Object.keys(tableInfo).map((item))} */}
               {columns.map((col, idx) => (
                 <tr key={idx}>
                   <td className="border-t border-gray-100 py-1">{col}</td>

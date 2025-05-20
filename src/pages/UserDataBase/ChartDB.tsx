@@ -3,7 +3,7 @@ import { useGetDBContext } from "../../Context/DBContext";
 import { useParams } from "react-router-dom";
 import { queries } from "../../Utils/queriesUtils";
 import { Database } from "sql.js";
-import { Background, Controls, Node, ReactFlow } from "@xyflow/react";
+import { Background, Controls, Edge, Node, ReactFlow } from "@xyflow/react";
 import Loading from "../../Components/Loading";
 import TableNode from "../../Components/TableNode/TableNode";
 import "@xyflow/react/dist/style.css";
@@ -25,9 +25,36 @@ function QueryLayout({ db }: { db: Database }) {
     data: { db, tableName },
   }));
 
+  const edges: Edge[] = useMemo(() => {
+    const result: Edge[] = [];
+
+    tables.forEach((tableName) => {
+      const foreignKeys = db.exec(`PRAGMA foreign_key_list(${tableName});`);
+      if (foreignKeys.length === 0) return;
+
+      const rows = foreignKeys[0].values;
+      rows.forEach((fk, idx) => {
+        const referencedTable = fk[2]; // column index 2 is the referenced table name
+        if (referencedTable && tables.includes(referencedTable?.toString())) {
+          result.push({
+            id: `edge-${tableName}-${referencedTable}-${idx}`,
+            source: tableName,
+            target: referencedTable?.toString() || "",
+            animated: true,
+            style: { stroke: "#888" },
+          });
+        }
+      });
+    });
+
+    return result;
+  }, [tables, db]);
+
+  console.log(edges);
+
   return (
     <div style={{ width: "100%", height: "90vh" }}>
-      <ReactFlow nodes={nodes} edges={[]} nodeTypes={nodeTypes} fitView>
+      <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
         <Background />
         <Controls />
       </ReactFlow>
