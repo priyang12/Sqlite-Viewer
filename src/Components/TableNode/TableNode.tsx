@@ -47,17 +47,17 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
   }, [db, tableName]);
 
   return (
-    <div className="min-w-[200px] rounded-md border border-gray-300 bg-white p-4 shadow-md">
+    <div className="bg-card text-card-foreground hover:ring-1border-gray-300 relative rounded-md border bg-white p-4">
       <h3 className="text-md mb-2 font-semibold text-gray-800">{tableName}</h3>
-      <div className="max-h-48 overflow-y-auto">
+      <div className="border-spacing-10 overflow-visible">
         {loading ? (
           <p className="text-sm text-gray-500">Loading...</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Column</TableHead>
-                <TableHead>Type</TableHead>
+                <TableHead className="text-gray-800">Column</TableHead>
+                <TableHead className="text-gray-800">Type</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -65,7 +65,7 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
                 <TableRow key={idx}>
                   {col ? (
                     <>
-                      <TableCell>{col}</TableCell>
+                      <TableCell className="text-gray-800">{col}</TableCell>
                       <TableCell>
                         {tableInfo?.[col.toString()]?.type ?? "Unknown"}
                       </TableCell>
