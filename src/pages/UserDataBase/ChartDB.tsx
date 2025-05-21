@@ -38,6 +38,7 @@ function QueryLayout({ db }: { db: Database }) {
 
     tables.forEach((tableName) => {
       const foreignKeys = db.exec(`PRAGMA foreign_key_list(${tableName});`);
+
       if (foreignKeys.length === 0) return;
 
       const rows = foreignKeys[0].values;
@@ -48,6 +49,8 @@ function QueryLayout({ db }: { db: Database }) {
             id: `edge-${tableName}-${referencedTable}-${idx}`,
             source: tableName,
             target: referencedTable?.toString() || "",
+            // targetHandle:
+            // sourceHandle:
             animated: true,
             style: { stroke: "#888" },
           });
@@ -60,7 +63,6 @@ function QueryLayout({ db }: { db: Database }) {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  console.log(edges);
 
   return (
     <div style={{ width: "100%", height: "90vh" }}>

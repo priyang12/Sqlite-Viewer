@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  TableHandle,
 } from "./Table";
 
 type Props = {
@@ -47,7 +48,7 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
   }, [db, tableName]);
 
   return (
-    <div className="bg-card text-card-foreground hover:ring-1border-gray-300 relative rounded-md border bg-white p-4">
+    <div className="bg-card text-card-foreground hover:ring-1border-gray-300 relative rounded-md border bg-white p-5">
       <h3 className="text-md mb-2 font-semibold text-gray-800">{tableName}</h3>
       <div className="border-spacing-10 overflow-visible">
         {loading ? (
@@ -62,12 +63,34 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
             </TableHeader>
             <TableBody>
               {columns.map((col, idx) => (
-                <TableRow key={idx}>
+                <TableRow className="" key={idx}>
                   {col ? (
                     <>
-                      <TableCell className="text-gray-800">{col}</TableCell>
+                      <TableCell className="p-2">
+                        <div
+                          className="relative flex flex-row items-center"
+                          title={col.toString()}
+                        >
+                          <TableHandle
+                            type="target"
+                            id={`target-${col}`}
+                            position={Position.Left}
+                          />
+                          <span className="text-gray-800">{col}</span>
+                        </div>
+                      </TableCell>
+
                       <TableCell>
-                        {tableInfo?.[col.toString()]?.type ?? "Unknown"}
+                        <div className="relative flex justify-end">
+                          <span>
+                            {tableInfo?.[col.toString()]?.type ?? "Unknown"}
+                            <TableHandle
+                              type="source"
+                              id={`source-${col}`}
+                              position={Position.Right}
+                            />
+                          </span>
+                        </div>
                       </TableCell>
                     </>
                   ) : null}

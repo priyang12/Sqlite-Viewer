@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import React from "react";
+import { Handle, HandleProps } from "@xyflow/react";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
@@ -101,6 +102,20 @@ function TableCaption({
   );
 }
 
+function TableHandle({ className, ...props }: HandleProps) {
+  return (
+    <>
+      <Handle
+        className={twMerge(
+          "h-[11px] w-[11px] rounded-full border border-slate-300 bg-slate-100 transition",
+          className,
+        )}
+        {...props}
+      />
+    </>
+  );
+}
+
 export {
   Table,
   TableHeader,
@@ -110,4 +125,5 @@ export {
   TableRow,
   TableCell,
   TableCaption,
+  TableHandle,
 };
