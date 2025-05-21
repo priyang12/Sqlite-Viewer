@@ -3,6 +3,14 @@ import { Handle, Position } from "@xyflow/react";
 import { queries } from "../../Utils/queriesUtils";
 import { Database, SqlValue } from "sql.js";
 import { columnData } from "../../Utils/tableUtils";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "./Table";
 
 type Props = {
   id: string;
@@ -20,22 +28,19 @@ type TableInfo = {
 };
 
 const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [tableInfo, setTableInfo] = useState<TableInfo>();
   const [columns, setColumns] = useState<SqlValue[]>([]);
 
   useEffect(() => {
     try {
-      console.log(db.exec(queries.table.foreignKey(tableName)));
-
       const result = db.exec(queries.table.properties(tableName));
-      // remove extras props check.
       const props = result[0]?.values.map((r) => r[1]) || [];
       const columnMetaData = columnData(result);
       setColumns(props);
       setTableInfo(columnMetaData);
     } catch (err: any) {
-      // throw error
+      // handle error (optionally)
     } finally {
       setLoading(false);
     }
@@ -43,33 +48,33 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
 
   return (
     <div className="min-w-[200px] rounded-md border border-gray-300 bg-white p-4 shadow-md">
-      <Handle type="target" position={Position.Top} />
       <h3 className="text-md mb-2 font-semibold text-gray-800">{tableName}</h3>
       <div className="max-h-48 overflow-y-auto">
-        {loading && <p className="text-sm text-gray-500">Loading...</p>}
-        {!loading && (
-          <table className="w-full border-t border-gray-200 text-left text-sm">
-            <thead>
-              <tr>
-                <th className="py-1 font-medium text-gray-500">Column</th>
-                <th className="py-1 font-medium text-gray-500">Types</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* remove Column state and render the object key */}
-              {/* {Object.keys(tableInfo).map((item))} */}
+        {loading ? (
+          <p className="text-sm text-gray-500">Loading...</p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Column</TableHead>
+                <TableHead>Type</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {columns.map((col, idx) => (
-                <tr key={idx}>
-                  <td className="border-t border-gray-100 py-1">{col}</td>
-                  {tableInfo && col ? (
-                    <td className="border-t border-gray-100 py-1">
-                      {tableInfo[col.toString()].type}
-                    </td>
+                <TableRow key={idx}>
+                  {col ? (
+                    <>
+                      <TableCell>{col}</TableCell>
+                      <TableCell>
+                        {tableInfo?.[col.toString()]?.type ?? "Unknown"}
+                      </TableCell>
+                    </>
                   ) : null}
-                </tr>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         )}
       </div>
 

@@ -3,7 +3,15 @@ import { useGetDBContext } from "../../Context/DBContext";
 import { useParams } from "react-router-dom";
 import { queries } from "../../Utils/queriesUtils";
 import { Database } from "sql.js";
-import { Background, Controls, Edge, Node, ReactFlow } from "@xyflow/react";
+import {
+  Background,
+  Controls,
+  Edge,
+  Node,
+  ReactFlow,
+  useEdgesState,
+  useNodesState,
+} from "@xyflow/react";
 import Loading from "../../Components/Loading";
 import TableNode from "../../Components/TableNode/TableNode";
 import "@xyflow/react/dist/style.css";
@@ -18,14 +26,14 @@ function QueryLayout({ db }: { db: Database }) {
     return result[0]?.values.map((r) => r[0]?.toString() || "") || [];
   }, [db]);
 
-  const nodes: Node[] = tables.map((tableName, index) => ({
+  const initialNodes: Node[] = tables.map((tableName, index) => ({
     id: tableName,
     type: "tableNode",
     position: { x: index * 250, y: 100 },
     data: { db, tableName },
   }));
 
-  const edges: Edge[] = useMemo(() => {
+  const initialEdges: Edge[] = useMemo(() => {
     const result: Edge[] = [];
 
     tables.forEach((tableName) => {
@@ -50,11 +58,21 @@ function QueryLayout({ db }: { db: Database }) {
     return result;
   }, [tables, db]);
 
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   console.log(edges);
 
   return (
     <div style={{ width: "100%", height: "90vh" }}>
-      <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes}
+        nodesDraggable={true}
+        fitView
+      >
         <Background />
         <Controls />
       </ReactFlow>
