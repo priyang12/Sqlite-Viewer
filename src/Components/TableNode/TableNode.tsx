@@ -73,7 +73,7 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
                         >
                           <TableHandle
                             type="target"
-                            id={`target-${col}`}
+                            id={`target-${col.toString()}`}
                             position={Position.Left}
                           />
                           <span className="text-gray-800">{col}</span>
@@ -86,7 +86,7 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
                             {tableInfo?.[col.toString()]?.type ?? "Unknown"}
                             <TableHandle
                               type="source"
-                              id={`source-${col}`}
+                              id={`source-${col.toString()}`}
                               position={Position.Right}
                             />
                           </span>

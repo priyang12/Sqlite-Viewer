@@ -44,13 +44,16 @@ function QueryLayout({ db }: { db: Database }) {
       const rows = foreignKeys[0].values;
       rows.forEach((fk, idx) => {
         const referencedTable = fk[2]; // column index 2 is the referenced table name
+        const fromColumn = fk[3]; // column in this (source) table
+        const toColumn = fk[4]; // column in the referenced (target) table
+
         if (referencedTable && tables.includes(referencedTable?.toString())) {
           result.push({
             id: `edge-${tableName}-${referencedTable}-${idx}`,
             source: tableName,
             target: referencedTable?.toString() || "",
-            // targetHandle:
-            // sourceHandle:
+            sourceHandle: `source-${fromColumn}`,
+            targetHandle: `target-${toColumn}`,
             animated: true,
             style: { stroke: "#888" },
           });
@@ -61,8 +64,8 @@ function QueryLayout({ db }: { db: Database }) {
     return result;
   }, [tables, db]);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, _, onNodesChange] = useNodesState(initialNodes);
+  const [edges, __, onEdgesChange] = useEdgesState(initialEdges);
 
   return (
     <div style={{ width: "100%", height: "90vh" }}>
