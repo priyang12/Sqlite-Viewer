@@ -15,7 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { CSVLink } from "react-csv";
 import { useGetTableData } from "../../Hooks/useGetTableData";
-import useSqlQueries, { queryType } from "../../Hooks/useSqlQueries";
+import { queryType } from "../../Hooks/useSqlQueries";
 import {
   columnData,
   createObject,
@@ -115,7 +115,6 @@ function Pagination({ table }: { table: TableType<unknown> }) {
 function TableComponent({
   columns,
   data,
-  CSVHeaders,
 }: {
   columns: any;
   data: any;

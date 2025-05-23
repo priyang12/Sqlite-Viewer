@@ -56,8 +56,11 @@ const icons = {
 
 type IconKeys = keyof typeof icons;
 
-const IconComponent = ({ IconType }: { IconType: IconKeys }) => {
-  return <>{icons[IconType]}</>;
+const IconComponent = ({ IconType }: { IconType: string }) => {
+  if (IconType in icons) {
+    return <>{icons[IconType as IconKeys]}</>;
+  }
+  return null;
 };
 
 export default IconComponent;

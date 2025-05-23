@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useGetDBContext } from "../Context/DBContext";
 import { Database, QueryExecResult } from "sql.js";
 
 export type queryType = QueryExecResult[];

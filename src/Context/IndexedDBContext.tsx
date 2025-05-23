@@ -10,7 +10,11 @@ const IndexDBContext = createContext<{
 
 export const useIndexedDBContext = () => useContext(IndexDBContext);
 
-export default function ({ children }: { children: React.ReactNode }) {
+export default function IndexDBProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { indexedDB } = useIndexedDB();
 
   return (

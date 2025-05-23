@@ -5,7 +5,7 @@ function SkeletonComponent({
   style,
   className,
 }: {
-  style: any;
+  style: React.CSSProperties;
   className?: string;
 }) {
   // fix className

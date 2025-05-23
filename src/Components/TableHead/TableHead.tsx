@@ -12,7 +12,7 @@ import { getCommonPinningStyles } from "../../Utils/tableUtils";
 function ColumnType({ dataType }: { dataType: string }) {
   return (
     <span className="tooltip text-3xl font-normal" data-tip={dataType}>
-      <IconComponent IconType={dataType as any} />
+      <IconComponent IconType={dataType} />
     </span>
   );
 }

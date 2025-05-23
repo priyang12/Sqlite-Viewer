@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Database, SqlValue } from "sql.js";
+import { Database } from "sql.js";
 import SearchTable from "../SearchTable";
 import Skeleton from "../Skeleton";
 

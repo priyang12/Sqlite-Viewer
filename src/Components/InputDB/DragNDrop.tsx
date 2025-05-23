@@ -2,7 +2,7 @@ import * as React from "react";
 
 export type PropType = {
   children: React.ReactNode;
-  onUpload: (files: FileList | any) => void;
+  onUpload: (files: FileList) => void;
   OpenFileModel: () => void;
 };
 

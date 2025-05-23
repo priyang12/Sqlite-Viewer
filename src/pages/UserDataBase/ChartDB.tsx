@@ -64,8 +64,8 @@ function QueryLayout({ db }: { db: Database }) {
     return result;
   }, [tables, db]);
 
-  const [nodes, _, onNodesChange] = useNodesState(initialNodes);
-  const [edges, __, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
+  const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 
   return (
     <div style={{ width: "100%", height: "90vh" }}>
