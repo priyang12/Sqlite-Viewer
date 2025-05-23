@@ -7,6 +7,8 @@ import Loading from "../../Components/Loading";
 // pass the db from layout by uplifting the state to avoid firing the effect.
 const DataBaseLayout = () => {
   const { name } = useParams();
+  console.log(name);
+
   const { db } = useGetDBContext();
 
   return (
