@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import UserDataBase from "./pages/UserDataBase";
 import { DBProvider } from "./Context/DBContext";
 import ChartDB from "./pages/UserDataBase/ChartDB";
+import QueryBuilder from "./pages/UserDataBase/QueryBuilder";
 
 function DBLayoutWrapper() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path=":table" element={<UserDataBase.DatabaseTable />} />
           </Route>
           <Route path="chart/:name" element={<ChartDB />} />
+          <Route path="queryBuilder/:name" element={<QueryBuilder />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
         <Route path="*" element={<NotFound />} />

@@ -21,6 +21,9 @@ function TableSideBar({ db }: { db: Database }) {
       <Link to={`/db/chart/${name}`} className="link">
         DB Chart
       </Link>
+      <Link to={`/db/queryBuilder/${name}`} className="link">
+        search queries
+      </Link>
 
       <h2 className="mx-6 mt-6 text-xl font-bold">Tables </h2>
       <SearchTable originalTable={tables} setSearchTables={setSearchTables} />
