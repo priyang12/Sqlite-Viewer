@@ -41,9 +41,8 @@ const QueryBuilder = () => {
     if (db && parQuery) {
       try {
         const res = db.exec(parQuery);
-        console.log(res);
-        // setResult(res);
-        // setError(undefined);
+        setResult(res);
+        setError(undefined);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -60,12 +59,17 @@ const QueryBuilder = () => {
   return (
     <div className="mx-auto max-w-xl p-6">
       <h1 className="mb-4 text-2xl font-semibold">Query</h1>
-      <BuilderComponent query={query} setQuery={setQuery} />
-      {/* <InputQueryComponent
+      {db ? (
+        <BuilderComponent db={db} query={query} setQuery={setQuery} />
+      ) : (
+        <>Loading Database...</>
+      )}
+
+      <InputQueryComponent
         query={query}
         setQuery={setQuery}
         executeQuery={executeQuery}
-      /> */}
+      />
       {error && (
         <div className="mt-4 font-mono text-red-500">
           <strong>Error:</strong> {error}
