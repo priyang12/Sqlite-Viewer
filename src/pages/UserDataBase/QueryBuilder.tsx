@@ -2,23 +2,48 @@ import React from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import { useSearchParams } from "react-router-dom";
+import BuilderComponent from "../../Components/BuilderComponent";
+
+const InputQueryComponent: React.FC<{
+  query: string;
+  setQuery: React.Dispatch<React.SetStateAction<string>>;
+  executeQuery: () => void;
+}> = ({ query, setQuery, executeQuery }) => {
+  return (
+    <>
+      <textarea
+        className="mb-4 h-40 w-full resize-none rounded border border-gray-300 p-3 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Write your SQL here..."
+      />
+      <button
+        onClick={executeQuery}
+        className="rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600"
+      >
+        Run Query
+      </button>
+    </>
+  );
+};
 
 const QueryBuilder = () => {
   const { db } = useGetDBContext();
   const [searchParams, setSearchParams] = useSearchParams();
+  const parQuery = decodeURIComponent(searchParams.get("query") ?? "");
   const [query, setQuery] = React.useState(
-    searchParams.get("query") ?? "SELECT * FROM (TableName);",
+    parQuery || "SELECT * FROM (TableName);",
   );
   const [result, setResult] = React.useState<QueryExecResult[]>();
   const [error, setError] = React.useState<string>();
 
   React.useEffect(() => {
-    const parQuery = searchParams.get("query");
     if (db && parQuery) {
       try {
-        const res = db.exec(parQuery); // Returns an array of results
-        setResult(res);
-        setError(undefined);
+        const res = db.exec(parQuery);
+        console.log(res);
+        // setResult(res);
+        // setError(undefined);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -35,18 +60,12 @@ const QueryBuilder = () => {
   return (
     <div className="mx-auto max-w-xl p-6">
       <h1 className="mb-4 text-2xl font-semibold">Query</h1>
-      <textarea
-        className="mb-4 h-40 w-full resize-none rounded border border-gray-300 p-3 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Write your SQL here..."
-      />
-      <button
-        onClick={executeQuery}
-        className="rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600"
-      >
-        Run Query
-      </button>
+      <BuilderComponent query={query} setQuery={setQuery} />
+      {/* <InputQueryComponent
+        query={query}
+        setQuery={setQuery}
+        executeQuery={executeQuery}
+      /> */}
       {error && (
         <div className="mt-4 font-mono text-red-500">
           <strong>Error:</strong> {error}

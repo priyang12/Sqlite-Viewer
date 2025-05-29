@@ -45,6 +45,8 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] User Databases Page.
 - [x] CSV export of table data.
 - [x] Add and remove filters.
+- [x] Table diagrams using React-flow
+- [] Query Builder and Exe query
 
 ## bugs
 
