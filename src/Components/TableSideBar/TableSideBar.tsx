@@ -18,7 +18,7 @@ function TableSideBar({ db }: { db: Database }) {
 
   return (
     <section className="flex flex-col gap-5 rounded bg-base-300 pb-5">
-      <Link to={`/db/chart/${name}`} className="link">
+      <Link to={`/db/charts/${name}`} className="link">
         DB Chart
       </Link>
       <Link to={`/db/queryBuilder/${name}`} className="link">

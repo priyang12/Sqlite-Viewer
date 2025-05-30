@@ -9,10 +9,11 @@ import { useEffect } from "react";
 import useDark from "./Hooks/useDark";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import UserDataBase from "./pages/UserDataBase";
+import UserDataBase from "./pages/UserDataBase/Tables";
+import Charts from "./pages/UserDataBase/Charts";
+import Builder from "./pages/UserDataBase/QueryBuilder";
+
 import { DBProvider } from "./Context/DBContext";
-import ChartDB from "./pages/UserDataBase/ChartDB";
-import QueryBuilder from "./pages/UserDataBase/QueryBuilder";
 
 function DBLayoutWrapper() {
   return (
@@ -40,8 +41,8 @@ function App() {
             <Route index element={<UserDataBase.Overview />} />
             <Route path=":table" element={<UserDataBase.DatabaseTable />} />
           </Route>
-          <Route path="chart/:name" element={<ChartDB />} />
-          <Route path="queryBuilder/:name" element={<QueryBuilder />} />
+          <Route path="charts/:name" element={<Charts.ChartDB />} />
+          <Route path="queryBuilder/:name" element={<Builder.QueryBuilder />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
         <Route path="*" element={<NotFound />} />

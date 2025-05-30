@@ -14,19 +14,19 @@ import {
   ColumnOrderState,
 } from "@tanstack/react-table";
 import { CSVLink } from "react-csv";
-import { useGetTableData } from "../../Hooks/useGetTableData";
-import { queryType } from "../../Hooks/useSqlQueries";
+import { useGetTableData } from "../../../Hooks/useGetTableData";
+import { queryType } from "../../../Hooks/useSqlQueries";
 import {
   columnData,
   createObject,
   getTableQuery,
-} from "../../Utils/tableUtils";
-import { multipleFilter } from "../../Utils/filterUtils";
-import TableHead from "../../Components/TableHead";
-import TableBody from "../../Components/TableBody";
-import TableFoot from "../../Components/TableFoot";
-import Skeleton from "../../Components/Skeleton";
-import IconComponent from "../../Components/IconComponent";
+} from "../../../Utils/tableUtils";
+import { multipleFilter } from "../../../Utils/filterUtils";
+import TableHead from "../../../Components/TableHead";
+import TableBody from "../../../Components/TableBody";
+import TableFoot from "../../../Components/TableFoot";
+import Skeleton from "../../../Components/Skeleton";
+import IconComponent from "../../../Components/IconComponent";
 import { Database } from "sql.js";
 
 const pageSizes = [10, 20, 30, 40, 50];

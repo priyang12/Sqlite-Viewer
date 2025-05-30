@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { useGetDBContext } from "../../Context/DBContext";
+import { useGetDBContext } from "../../../Context/DBContext";
 import { useParams } from "react-router-dom";
-import { queries } from "../../Utils/queriesUtils";
+import { queries } from "../../../Utils/queriesUtils";
 import { Database } from "sql.js";
 import {
   Background,
@@ -12,8 +12,8 @@ import {
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
-import Loading from "../../Components/Loading";
-import TableNode from "../../Components/TableNode/TableNode";
+import Loading from "../../../Components/Loading";
+import TableNode from "../../../Components/TableNode/TableNode";
 import "@xyflow/react/dist/style.css";
 
 const nodeTypes = {

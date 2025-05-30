@@ -1,8 +1,8 @@
 import { useParams, Outlet } from "react-router-dom";
-import TableSideBar from "../../Components/TableSideBar";
-import { useGetDBContext } from "../../Context/DBContext";
-import Skeleton from "../../Components/Skeleton";
-import Loading from "../../Components/Loading";
+import TableSideBar from "../../../Components/TableSideBar";
+import { useGetDBContext } from "../../../Context/DBContext";
+import Skeleton from "../../../Components/Skeleton";
+import Loading from "../../../Components/Loading";
 
 // pass the db from layout by uplifting the state to avoid firing the effect.
 const DataBaseLayout = () => {
