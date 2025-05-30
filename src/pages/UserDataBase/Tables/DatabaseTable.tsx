@@ -15,7 +15,6 @@ import {
 } from "@tanstack/react-table";
 import { CSVLink } from "react-csv";
 import { useGetTableData } from "../../../Hooks/useGetTableData";
-import { queryType } from "../../../Hooks/useSqlQueries";
 import {
   columnData,
   createObject,
@@ -27,7 +26,9 @@ import TableBody from "../../../Components/TableBody";
 import TableFoot from "../../../Components/TableFoot";
 import Skeleton from "../../../Components/Skeleton";
 import IconComponent from "../../../Components/IconComponent";
-import { Database } from "sql.js";
+import type { Database, QueryExecResult } from "sql.js";
+
+type queryType = QueryExecResult[];
 
 const pageSizes = [10, 20, 30, 40, 50];
 
