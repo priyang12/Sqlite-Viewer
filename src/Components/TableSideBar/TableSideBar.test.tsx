@@ -1,15 +1,16 @@
 import TableSideBar from "./TableSideBar";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { useGetData } from "../../Hooks/useGetData";
-import { Mock } from "vitest";
-
 import { BrowserRouter } from "react-router-dom";
 
-// Mock the useGetData hook
-vi.mock("../../Hooks/useGetData", () => ({
-  __esModule: true,
-  useGetData: vi.fn(),
-}));
+function createMockDB(tables: string[] = []) {
+  return {
+    exec: vi.fn(() => [
+      {
+        values: tables.map((table) => [table]),
+      },
+    ]),
+  } as any;
+}
 
 describe("TableSideBar Component", () => {
   beforeEach(() => {
@@ -17,24 +18,13 @@ describe("TableSideBar Component", () => {
     vi.clearAllMocks();
   });
 
-  it("renders loading spinner when loading", () => {
-    // Mock the useGetData hook to return loading state
-    (useGetData as Mock).mockReturnValue({ row: null, loading: true });
-    render(
-      <BrowserRouter>
-        <TableSideBar />
-      </BrowserRouter>,
-    );
-    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
-  });
-
   it("renders table names when data is fetched", () => {
     const tables = ["Table1", "Table2", "Table3"];
-    // Mock the useGetData hook to return fetched data
-    (useGetData as Mock).mockReturnValue({ row: tables, loading: false });
+    const db = createMockDB(["Table1", "Table2", "Table3"]);
+
     render(
       <BrowserRouter>
-        <TableSideBar />
+        <TableSideBar db={db} />
       </BrowserRouter>,
     );
     tables.forEach((tableName) => {
@@ -43,18 +33,21 @@ describe("TableSideBar Component", () => {
   });
 
   it("renders no tables message when there are no tables", () => {
-    // Mock the useGetData hook to return no data
-    (useGetData as Mock).mockReturnValue({ row: [], loading: false });
-    render(<TableSideBar />);
+    const db = createMockDB([]);
+    render(
+      <BrowserRouter>
+        <TableSideBar db={db} />
+      </BrowserRouter>,
+    );
     expect(screen.getByText("No Tables in Database.")).toBeInTheDocument();
   });
 
   it("filters tables based on search input", () => {
-    const tables = ["Table1", "Table2", "Table3"];
-    (useGetData as Mock).mockReturnValue({ row: tables, loading: false });
+    const db = createMockDB(["Table1", "Table2", "Table3"]);
+
     render(
       <BrowserRouter>
-        <TableSideBar />
+        <TableSideBar db={db} />
       </BrowserRouter>,
     );
     const searchInput = screen.getByRole("textbox");

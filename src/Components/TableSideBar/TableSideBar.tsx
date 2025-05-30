@@ -3,13 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import { Database } from "sql.js";
 import SearchTable from "../SearchTable";
 import Skeleton from "../Skeleton";
-
-const tableQuery = "SELECT name FROM sqlite_master WHERE type='table'";
+import { queries } from "../../Utils/queriesUtils";
 
 function TableSideBar({ db }: { db: Database }) {
   const { name } = useParams();
   const tables = useMemo(() => {
-    const queryResult = db.exec(tableQuery);
+    const queryResult = db.exec(queries.table.allTables);
     const rows = queryResult[0].values.map((r) => r[0]);
     return rows;
   }, [db]);
