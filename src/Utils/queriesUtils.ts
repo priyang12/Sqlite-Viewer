@@ -6,14 +6,31 @@ export const queries = {
   },
 };
 
+export const OPERATORS = [
+  "=",
+  "!=",
+  "<",
+  "<=",
+  ">",
+  ">=",
+  "LIKE",
+  "NOT LIKE",
+  "IN",
+  "NOT IN",
+  "IS NULL",
+  "IS NOT NULL",
+];
+
+export type Condition = {
+  column: string;
+  operator: string;
+  value: string;
+};
+
 type QueryBuilderState = {
   table: string | null;
   selectedColumns: string[]; // SELECT col1, col2
-  conditions: Array<{
-    column: string;
-    operator: string;
-    value: string;
-  }>;
+  conditions: Array<Condition>;
   orderBy?: { column: string; direction: "ASC" | "DESC" };
   limit?: number;
 };
