@@ -3,12 +3,13 @@ import TableSideBar from "../../../Components/TableSideBar";
 import { useGetDBContext } from "../../../Context/DBContext";
 import Skeleton from "../../../Components/Skeleton";
 import Loading from "../../../Components/Loading";
+import ErrorFallbackComponent, {
+  WrappedErrorBoundary,
+} from "../../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
+import { ErrorBoundary } from "react-error-boundary";
 
-// pass the db from layout by uplifting the state to avoid firing the effect.
 const DataBaseLayout = () => {
   const { name } = useParams();
-  console.log(name);
-
   const { db } = useGetDBContext();
 
   return (
@@ -25,19 +26,29 @@ const DataBaseLayout = () => {
             <Skeleton className="mx-5" width={"200px"} height={20} count={7} />
           </div>
         ) : (
-          <TableSideBar db={db} />
+          <ErrorBoundary
+            fallbackRender={(props) => (
+              <div className="flex flex-col gap-5 rounded bg-base-300 pb-5">
+                <ErrorFallbackComponent {...props} />
+              </div>
+            )}
+          >
+            <TableSideBar db={db} />
+          </ErrorBoundary>
         )}
 
         <section className="sm:w-3/4">
-          {typeof db === "undefined" ? (
-            <Loading />
-          ) : (
-            <Outlet
-              context={{
-                db,
-              }}
-            />
-          )}
+          <WrappedErrorBoundary>
+            {typeof db === "undefined" ? (
+              <Loading />
+            ) : (
+              <Outlet
+                context={{
+                  db,
+                }}
+              />
+            )}
+          </WrappedErrorBoundary>
         </section>
       </main>
     </div>

@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import { insertDB, removeDb } from "../Utils/indexDBUtils";
 import { storedKeysType } from "./useGetUserDBs";
 import { useIndexedDBContext } from "../Context/IndexedDBContext";
+import { useErrorBoundary } from "react-error-boundary";
 
 export const useDBStore = () => {
   const { indexDB: indexedDB } = useIndexedDBContext();
+  const { showBoundary } = useErrorBoundary();
   const [storedDBs, setStoredDBs] = useState<storedKeysType>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,7 +35,7 @@ export const useDBStore = () => {
           }
         }
       } catch (error) {
-        // set notification here.
+        showBoundary(error);
       } finally {
         setIsLoading(false);
       }
@@ -56,7 +58,7 @@ export const useDBStore = () => {
           }
         }
       } catch (error) {
-        // set notification here.
+        showBoundary(error);
       } finally {
         setIsLoading(false);
       }

@@ -2,6 +2,10 @@ import InputDB from "../Components/InputDB/InputDB";
 import { Link } from "react-router-dom";
 import type { storedKeysType } from "../Hooks/useGetUserDBs";
 import { useDBStore } from "../Hooks/useDBStore";
+import ErrorFallbackComponent, {
+  WrappedErrorBoundary,
+} from "../Components/ErrorFallbackComponent/ErrorFallbackComponent";
+import { ErrorBoundary } from "react-error-boundary";
 
 function UsersDBList({
   storedDBs,
@@ -78,22 +82,6 @@ const Home = () => {
     removeUserDB,
   } = useDBStore();
 
-  // temporary push it to default DB.
-  // let navigate = useNavigate();
-  // useEffect(() => {
-  //   if (true) {
-  //     return navigate("/db/seed.db");
-  //   }
-  // }, []);
-
-  // const storedDBs = [
-  //   ...Array.from(
-  //     { length: 10 },
-  //     (_, i) =>
-  //       `data${i + 1} Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae veniam iste consequuntur commodi reprehenderit officiis debitis quasi, odit aut labore quam accusantium cumque maiores iure dolor dolorum? Accusamus, dolores ullam!.db`,
-  //   ),
-  // ];
-
   const onSelectFile = async (file: File | null) => {
     if (file) {
       insertUserDB(file);
@@ -113,13 +101,24 @@ const Home = () => {
         <h1 className="text-center text-4xl font-bold">Your Databases</h1>
         <div className="my-5 flex h-[80vh] w-full flex-col justify-evenly gap-5 bg-base-300 p-5 sm:flex-row">
           <div className="h-full sm:w-[40%]">
-            <InputDB onFileSelect={onSelectFile} />
+            <WrappedErrorBoundary>
+              <InputDB onFileSelect={onSelectFile} />
+            </WrappedErrorBoundary>
           </div>
-          {storedDBs.length > 0 ? (
-            <UsersDBList storedDBs={storedDBs} removeUserDB={removeUserDB} />
-          ) : (
-            <NoDBList />
-          )}
+
+          <ErrorBoundary
+            fallbackRender={(props) => (
+              <div className="flex h-full flex-col items-center gap-5 overflow-y-scroll rounded-lg bg-base-200 p-5 sm:w-[60%]">
+                <ErrorFallbackComponent {...props} />
+              </div>
+            )}
+          >
+            {storedDBs.length > 0 ? (
+              <UsersDBList storedDBs={storedDBs} removeUserDB={removeUserDB} />
+            ) : (
+              <NoDBList />
+            )}
+          </ErrorBoundary>
         </div>
       </div>
     </div>

@@ -2,7 +2,6 @@ import useDark from "../Hooks/useDark";
 
 const NotFound = () => {
   const { isDarkMode } = useDark();
-  console.log(isDarkMode);
 
   return (
     <div
