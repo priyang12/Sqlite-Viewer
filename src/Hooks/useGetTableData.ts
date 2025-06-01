@@ -32,7 +32,7 @@ export const useGetTableData = (query: string | undefined) => {
           setRow(rows);
         }
       } catch (error) {
-        console.error(error);
+        throw error;
       } finally {
         setTimeout(() => {
           setLoading(false);
