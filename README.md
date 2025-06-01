@@ -47,8 +47,8 @@ A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent q
 - [x] Add and remove filters.
 - [x] Table diagrams using React-flow
 - [x] Wrapped component and routes in Error-boundary
+- [x] add support page.
 - [] Query Builder and Exe query
-- [] add help and support page.
 
 ## bugs
 

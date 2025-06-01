@@ -113,7 +113,7 @@ const Home = () => {
               </div>
             )}
           >
-            {storedDBs.length > 0 ? (
+            {storedDBs.length < 0 ? (
               <UsersDBList storedDBs={storedDBs} removeUserDB={removeUserDB} />
             ) : (
               <NoDBList />

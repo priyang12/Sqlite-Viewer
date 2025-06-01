@@ -4,6 +4,7 @@ import NotFound from "./pages/NotFound";
 import UserDataBase from "./pages/UserDataBase/Tables";
 import Charts from "./pages/UserDataBase/Charts";
 import Builder from "./pages/UserDataBase/QueryBuilder";
+import SupportPage from "./pages/support";
 import { DBProvider } from "./Context/DBContext";
 
 function DBLayoutWrapper() {
@@ -19,6 +20,12 @@ const routes = [
     path: "/",
     element: <Home />,
   },
+
+  {
+    path: "/support",
+    element: <SupportPage />,
+  },
+
   {
     path: "/db",
     element: <DBLayoutWrapper />,
