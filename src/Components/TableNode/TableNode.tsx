@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Handle, Position } from "@xyflow/react";
 import { queries } from "../../Utils/queriesUtils";
-import { Database, SqlValue } from "sql.js";
+import { Database } from "sql.js";
 import { columnData } from "../../Utils/tableUtils";
 import {
   Table,
@@ -12,6 +12,7 @@ import {
   TableCell,
   TableHandle,
 } from "./Table";
+import Loading from "../Loading";
 
 type Props = {
   id: string;
@@ -31,14 +32,11 @@ type TableInfo = {
 const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
   const [loading, setLoading] = useState(false);
   const [tableInfo, setTableInfo] = useState<TableInfo>();
-  const [columns, setColumns] = useState<SqlValue[]>([]);
 
   useEffect(() => {
     try {
       const result = db.exec(queries.table.properties(tableName));
-      const props = result[0]?.values.map((r) => r[1]) || [];
       const columnMetaData = columnData(result);
-      setColumns(props);
       setTableInfo(columnMetaData);
     } catch (err: any) {
       // handle error (optionally)
@@ -48,24 +46,26 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
   }, [db, tableName]);
 
   return (
-    <div className="bg-card text-card-foreground hover:ring-1border-gray-300 relative rounded-md border bg-white p-5">
-      <h3 className="text-md mb-2 font-semibold text-gray-800">{tableName}</h3>
+    <div className="bg-card text-card-foreground hover:ring-1border-gray-300 relative rounded-md border bg-base-200 p-2 text-base-content">
+      <h3 className="text-md mb-2 font-semibold ">{tableName}</h3>
       <div className="border-spacing-10 overflow-visible">
         {loading ? (
-          <p className="text-sm text-gray-500">Loading...</p>
+          <div className="flex h-[10rem] items-center gap-5">
+            <Loading />
+            <p className="text-sm text-gray-300">Loading...</p>
+          </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-gray-800">Column</TableHead>
-                <TableHead className="text-gray-800">Type</TableHead>
+                <TableHead>Column</TableHead>
+                <TableHead>Type</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {columns.map((col, idx) => (
-                <TableRow className="" key={idx}>
-                  {col ? (
-                    <>
+              {tableInfo
+                ? Object.keys(tableInfo).map((col, idx) => (
+                    <TableRow className="relative" key={idx}>
                       <TableCell className="p-2">
                         <div
                           className="relative flex flex-row items-center"
@@ -73,10 +73,11 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
                         >
                           <TableHandle
                             type="target"
+                            className="-translate-y-1/2 translate-x-[-200%]"
                             id={`target-${col.toString()}`}
                             position={Position.Left}
                           />
-                          <span className="text-gray-800">{col}</span>
+                          <span className="">{col}</span>
                         </div>
                       </TableCell>
 
@@ -86,16 +87,16 @@ const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
                             {tableInfo?.[col.toString()]?.type ?? "Unknown"}
                             <TableHandle
                               type="source"
+                              className="-translate-y-1/2 translate-x-[200%]"
                               id={`source-${col.toString()}`}
                               position={Position.Right}
                             />
                           </span>
                         </div>
                       </TableCell>
-                    </>
-                  ) : null}
-                </TableRow>
-              ))}
+                    </TableRow>
+                  ))
+                : null}
             </TableBody>
           </Table>
         )}
