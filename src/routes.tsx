@@ -4,7 +4,7 @@ import NotFound from "./pages/NotFound";
 import UserDataBase from "./pages/UserDataBase/Tables";
 import Charts from "./pages/UserDataBase/Charts";
 import Builder from "./pages/UserDataBase/QueryBuilder";
-import SupportPage from "./pages/support";
+import SupportPage from "./pages/Support";
 import { DBProvider } from "./Context/DBContext";
 
 function DBLayoutWrapper() {
