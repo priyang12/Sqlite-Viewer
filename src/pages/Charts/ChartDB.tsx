@@ -26,12 +26,14 @@ function QueryLayout({ db }: { db: Database }) {
     return result[0]?.values.map((r) => r[0]?.toString() || "") || [];
   }, [db]);
 
-  const initialNodes: Node[] = tables.map((tableName, index) => ({
-    id: tableName,
-    type: "tableNode",
-    position: { x: index * 250, y: 100 },
-    data: { db, tableName },
-  }));
+  const initialNodes: Node[] = useMemo(() => {
+    return tables.map((tableName, index) => ({
+      id: tableName,
+      type: "tableNode",
+      position: { x: index * 250, y: 100 },
+      data: { db, tableName },
+    }));
+  }, [tables, db]);
 
   const initialEdges: Edge[] = useMemo(() => {
     const result: Edge[] = [];
