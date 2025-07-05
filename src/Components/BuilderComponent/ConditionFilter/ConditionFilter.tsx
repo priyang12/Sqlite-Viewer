@@ -1,6 +1,63 @@
 import React from "react";
 import { OPERATORS } from "../../../Utils/queriesUtils";
 
+function Conditions({
+  conditions,
+  editCondition,
+  removeCondition,
+}: {
+  conditions: string[];
+  editCondition: (index: number) => void;
+  removeCondition: (index: number) => void;
+}) {
+  return (
+    <ul className="space-y-2">
+      {conditions.map((item, index) => (
+        <li
+          key={index}
+          data-index={index}
+          className="flex items-center justify-between rounded-md bg-base-100 p-3 shadow-sm"
+        >
+          <span className="text-base-content">{item}</span>
+          <div className="space-x-2">
+            <button
+              onClick={() => editCondition(index)}
+              className="rounded border border-blue-600 px-2 py-1 text-sm text-blue-600 hover:bg-blue-50"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => removeCondition(index)}
+              className="rounded border border-red-600 px-2 py-1 text-sm text-red-600 hover:bg-red-50"
+            >
+              Remove
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// temp solution since it's create more complexity and loose code.
+// change the condition array shape from string[] to Condition[] and pass the string[] to
+// Insert Conditions.
+const parseCondition = (conditionStr: string): Condition | null => {
+  // Regex to match: column operator value
+  const regex = /^(.+?)\s*(=|!=|>|<|>=|<=|LIKE)\s*(.+)$/i;
+  const match = conditionStr.match(regex);
+
+  if (!match) return null;
+
+  const [, column, operator, value] = match;
+
+  return {
+    column: column.trim(),
+    operator: operator.trim(),
+    value: value.trim().replace(/^['"]|['"]$/g, ""), // remove quotes
+  };
+};
+
 type Condition = {
   column: string;
   operator: string;
@@ -21,7 +78,7 @@ const ConditionFilter: React.FC<{
   >;
 }> = ({ columns, setWhereConditions }) => {
   const [conditions, setConditions] = React.useState<string[]>();
-  const [addCondition, setAddCondition] =
+  const [currentCondition, setCurrentCondition] =
     React.useState<Condition>(emptyCondition);
 
   const updateNewCondition = (e: any) => {
@@ -29,10 +86,27 @@ const ConditionFilter: React.FC<{
     const value = e.target.value;
     if (!field) return;
 
-    setAddCondition((currentState) => ({
+    setCurrentCondition((currentState) => ({
       ...currentState,
       [field]: value,
     }));
+  };
+
+  const editCondition = (conditionIndex: number) => {
+    if (conditions) {
+      const conditionToEdit = conditions[conditionIndex];
+      const condition = parseCondition(conditionToEdit);
+      if (condition) {
+        setCurrentCondition(condition);
+        removeCondition(conditionIndex);
+      }
+    }
+  };
+
+  const removeCondition = (conditionIndex: number) => {
+    setConditions((prev) =>
+      prev ? prev.filter((_, index) => index !== conditionIndex) : undefined,
+    );
   };
 
   const insertCondition = () => {
@@ -40,12 +114,12 @@ const ConditionFilter: React.FC<{
       if (state) {
         return [
           ...state,
-          `(${addCondition.column} ${addCondition.operator} ${addCondition.value})`,
+          `(${currentCondition.column} ${currentCondition.operator} ${currentCondition.value})`,
         ];
       }
       return state;
     });
-    setAddCondition(emptyCondition);
+    setCurrentCondition(emptyCondition);
   };
 
   return (
@@ -79,19 +153,23 @@ const ConditionFilter: React.FC<{
           <div className="flex gap-2">
             <select
               data-id={"column" satisfies ConditionField}
-              value={addCondition.column}
+              value={currentCondition.column}
               onChange={updateNewCondition}
             >
               <option value="">Column</option>
               {columns.map((col) => (
-                <option key={col} value={col}>
+                <option
+                  key={col}
+                  value={col}
+                  selected={currentCondition.column === col}
+                >
                   {col}
                 </option>
               ))}
             </select>
             <select
               data-id={"operator" satisfies ConditionField}
-              value={addCondition.operator}
+              value={currentCondition.operator}
               onChange={updateNewCondition}
             >
               <option value="">Condition</option>
@@ -105,7 +183,7 @@ const ConditionFilter: React.FC<{
             <input
               data-id={"value" satisfies ConditionField}
               placeholder="Value"
-              value={addCondition.value}
+              value={currentCondition.value}
               onChange={updateNewCondition}
             />
             <button onClick={insertCondition}> ADD </button>
@@ -120,6 +198,15 @@ const ConditionFilter: React.FC<{
           </div>
         </>
       ) : null}
+      {conditions ? (
+        <Conditions
+          conditions={conditions}
+          editCondition={editCondition}
+          removeCondition={removeCondition}
+        />
+      ) : (
+        <div>NO conditions</div>
+      )}
     </div>
   );
 };

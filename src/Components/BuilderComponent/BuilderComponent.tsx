@@ -58,10 +58,20 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ db, setQuery }) => {
   React.useEffect(() => {
     if (whereConditions && whereConditions.length > 0) {
       setQuery((prevQuery) => {
-        const whereClause = ` WHERE ${whereConditions.join(" AND ")}`;
         const semicolonIndex = prevQuery.lastIndexOf(";");
-        const base = prevQuery.slice(0, semicolonIndex);
-        return `${base}${whereClause};`;
+        const baseQuery =
+          semicolonIndex !== -1
+            ? prevQuery.slice(0, semicolonIndex)
+            : prevQuery;
+
+        // Remove existing WHERE clause if present
+        const whereRegex =
+          /\s+WHERE\s+[\s\S]*?(?=(GROUP\s+BY|ORDER\s+BY|LIMIT|$))/i;
+        const queryWithoutWhere = baseQuery.replace(whereRegex, "");
+
+        // Append new WHERE clause
+        const newWhereClause = ` WHERE ${whereConditions.join(" AND ")}`;
+        return `${queryWithoutWhere}${newWhereClause};`;
       });
     }
   }, [whereConditions]);
