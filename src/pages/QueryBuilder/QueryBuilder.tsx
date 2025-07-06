@@ -3,7 +3,7 @@ import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import { useSearchParams } from "react-router-dom";
 import BuilderComponent from "../../Components/BuilderComponent";
-import HistoryPanel, { appendQueryToLocalStorage } from "./HistoryPanel";
+import HistoryPanel, { useRecentQueries } from "./HistoryPanel";
 import { WrappedErrorBoundary } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 
 const InputQueryComponent: React.FC<{
@@ -39,6 +39,8 @@ const QueryBuilder = () => {
   const [result, setResult] = React.useState<QueryExecResult[]>();
   const [error, setError] = React.useState<string>();
 
+  const { queries, addQuery, clearQueries } = useRecentQueries();
+
   React.useEffect(() => {
     if (db && parQuery) {
       try {
@@ -58,9 +60,8 @@ const QueryBuilder = () => {
 
   const executeQuery = () => {
     setSearchParams({ query: encodeURIComponent(query) });
-
-    // add it to local storage
-    appendQueryToLocalStorage(query);
+    // fn for adding it to local storage and syncing the history state.
+    addQuery(query);
   };
 
   return (
@@ -120,7 +121,13 @@ const QueryBuilder = () => {
           </div>
         )} */}
         <WrappedErrorBoundary>
-          <HistoryPanel setSearchParams={setSearchParams} />
+          <HistoryPanel
+            executeQuery={(query) =>
+              setSearchParams({ query: encodeURIComponent(query) })
+            }
+            queries={queries}
+            clearHistory={clearQueries}
+          />
         </WrappedErrorBoundary>
       </div>
     </div>

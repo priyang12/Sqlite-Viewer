@@ -1,97 +1,86 @@
-import React, { useEffect, useState } from "react";
-import { SetURLSearchParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 export const RecentQueryKey = "recentQueries";
 
-export function appendQueryToLocalStorage(newQuery: string) {
-  try {
-    const raw = localStorage.getItem(RecentQueryKey);
-    const existing: string[] = raw ? JSON.parse(raw) : [];
-    existing.push(newQuery);
-
-    // Limit to last 10 queries (for now)
-    const limited = existing.slice(0, 10);
-
-    localStorage.setItem(RecentQueryKey, JSON.stringify(limited));
-  } catch (err) {
-    console.error("Failed to update recent queries:", err);
-  }
-}
+const LimitedQueries = 10;
 
 // display queries and set URL - done
 // Add a "Clear History" button - done
-// Limit to last N queries
-// Display timestamp with each query and make key on runtime with db name.
+// Limit to last N queries - done
+// Display timestamp with each query
 // Make items clickable to re-run queries -done
 
-const HistoryPanel: React.FC<{ setSearchParams: SetURLSearchParams }> = ({
-  setSearchParams,
-}) => {
-  const [queries, setQueries] = useState<string[]>([]);
-  const [reloadKey, setReloadKey] = useState(0);
+// seal the logic into custom hook and let parent component control the state.
+// this avoid the adhoc re-rendering when new query is added.
+export const useRecentQueries = () => {
+  const { name: dbname } = useParams<{ name: string }>();
+  const key = `${dbname}-${RecentQueryKey}`;
 
-  useEffect(() => {
+  const [queries, setQueries] = useState<string[]>([]);
+
+  const loadFromStorage = useCallback(() => {
     try {
-      const raw = localStorage.getItem(RecentQueryKey);
+      const raw = localStorage.getItem(key);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
           setQueries(parsed);
+        } else {
+          throw new Error("Malformed recent query data.");
         }
+      } else {
+        setQueries([]);
       }
     } catch (err) {
       console.error("Failed to parse recent queries from localStorage:", err);
-      throw Error(
-        "Failed to get queries from storage. try again or clean the storage.",
+      throw new Error(
+        "Failed to load recent queries. Try again or clear your storage.",
       );
     }
-  }, []);
+  }, [key]);
 
-  // this is just for temp
   useEffect(() => {
-    const raw = localStorage.getItem("recentQueries");
-    const parsed = raw ? JSON.parse(raw) : [];
-    setQueries(parsed);
-  }, [reloadKey]);
+    loadFromStorage();
+  }, [loadFromStorage]);
 
-  const runQuery = (query: string) => {
-    setSearchParams({ query: encodeURIComponent(query) });
-  };
+  const addQuery = useCallback(
+    (newQuery: string) => {
+      try {
+        const unique = [newQuery, ...queries.filter((q) => q !== newQuery)];
+        const limited = unique.slice(0, LimitedQueries);
+        setQueries(limited);
+        localStorage.setItem(key, JSON.stringify(limited));
+      } catch (err) {
+        console.error("Failed to save recent query:", err);
+      }
+    },
+    [key, queries],
+  );
 
-  const triggerReload = () => {
-    setReloadKey((prev) => prev + 1); // Forces effect to run again
-  };
-
-  const clearHistory = () => {
-    localStorage.removeItem(RecentQueryKey);
+  const clearQueries = useCallback(() => {
+    localStorage.removeItem(key);
     setQueries([]);
-  };
+  }, [key]);
 
+  return {
+    queries,
+    addQuery,
+    clearQueries,
+    reload: loadFromStorage,
+  };
+};
+
+const HistoryPanel: React.FC<{
+  queries: string[];
+  clearHistory: () => void;
+  executeQuery: (query: string) => void;
+}> = ({ queries, clearHistory, executeQuery }) => {
   return (
     <section className="h-full w-full rounded-lg border-2 border-solid border-primary bg-base-100 p-4 shadow-md">
       <div className="flex justify-between">
         <h2 className="mb-3 text-lg font-semibold text-base-content">
-          Recent Queries
-          <button
-            onClick={triggerReload}
-            title="Reload"
-            className="text-base-content transition hover:text-primary"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582M20 20v-5h-.581M5.5 8.5A7.978 7.978 0 0112 4c4.418 0 8 3.582 8 8s-3.582 8-8 8a7.978 7.978 0 01-6.5-3.5"
-              />
-            </svg>
-          </button>
+          Showing {queries.length} of {LimitedQueries} recent queries
         </h2>
 
         <button
@@ -116,7 +105,7 @@ const HistoryPanel: React.FC<{ setSearchParams: SetURLSearchParams }> = ({
                 <div className="divider divider-horizontal" />
                 <button
                   className="h-[30px] rounded border border-blue-600 px-2 py-1 text-sm text-blue-600 hover:bg-red-50"
-                  onClick={() => runQuery(query)}
+                  onClick={() => executeQuery(query)}
                 >
                   Run
                 </button>
