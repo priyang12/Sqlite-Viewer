@@ -1,12 +1,11 @@
 import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Database } from "sql.js";
 import SearchTable from "../SearchTable";
 import Skeleton from "../Skeleton";
 import { queries } from "../../Utils/queriesUtils";
 
 function TableSideBar({ db }: { db: Database }) {
-  const { name } = useParams();
   const tables = useMemo(() => {
     const queryResult = db.exec(queries.table.allTables);
     const rows = queryResult[0].values.map((r) => r[0]);
@@ -17,14 +16,13 @@ function TableSideBar({ db }: { db: Database }) {
 
   return (
     <section className="flex flex-col gap-5 rounded bg-base-300 pb-5">
-      <Link to={`/db/charts/${name}`} className="link">
-        DB Chart
-      </Link>
-      <Link to={`/db/queryBuilder/${name}`} className="link">
-        search queries
-      </Link>
+      <div className="mx-6 mt-6 flex justify-between">
+        <h2 className="text-xl font-bold">Tables</h2>
+        <Link className="link link-info" to=".." relative="route">
+          ← Go Back
+        </Link>
+      </div>
 
-      <h2 className="mx-6 mt-6 text-xl font-bold">Tables </h2>
       <SearchTable originalTable={tables} setSearchTables={setSearchTables} />
       {typeof tables === "undefined" ? (
         <div

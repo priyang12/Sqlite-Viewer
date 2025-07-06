@@ -1,7 +1,7 @@
 import React from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import BuilderComponent from "../../Components/BuilderComponent";
 
 const InputQueryComponent: React.FC<{
@@ -58,7 +58,16 @@ const QueryBuilder = () => {
 
   return (
     <div className="mx-auto max-w-xl p-6">
-      <h1 className="mb-4 text-2xl font-semibold">Query</h1>
+      <div className="flex justify-between">
+        <h1 className="mb-4 text-2xl font-semibold">Query</h1>
+        <Link
+          to=".."
+          relative="route"
+          className="btn btn-info btn-sm text-white"
+        >
+          ← Go Back
+        </Link>
+      </div>
       {db ? (
         <BuilderComponent db={db} query={query} setQuery={setQuery} />
       ) : (

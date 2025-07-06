@@ -6,6 +6,7 @@ import Charts from "./pages/Charts";
 import Builder from "./pages/QueryBuilder";
 import SupportPage from "./pages/Support";
 import { DBProvider } from "./Context/DBContext";
+import DBHome from "./pages/DBHome";
 
 function DBLayoutWrapper() {
   return (
@@ -28,10 +29,19 @@ const routes = [
 
   {
     path: "/db",
+    element: <Navigate to="/" replace />,
+  },
+
+  {
+    path: "/db/:name",
     element: <DBLayoutWrapper />,
     children: [
       {
-        path: "tables/:name",
+        index: true,
+        element: <DBHome />,
+      },
+      {
+        path: "tables",
         element: <UserDataBase.DataBaseLayout />,
         children: [
           {
@@ -45,11 +55,11 @@ const routes = [
         ],
       },
       {
-        path: "charts/:name",
+        path: "charts",
         element: <Charts.ChartDB />,
       },
       {
-        path: "queryBuilder/:name",
+        path: "queryBuilder",
         element: <Builder.QueryBuilder />,
       },
       {

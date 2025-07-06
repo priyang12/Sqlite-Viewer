@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGetDBContext } from "../../Context/DBContext";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { queries } from "../../Utils/queriesUtils";
 import { Database } from "sql.js";
 import {
@@ -90,9 +90,23 @@ function ChartDB() {
   const { db } = useGetDBContext();
 
   return (
-    <div>
-      <h1>Chart : {name}</h1>
-      {typeof db !== "undefined" ? <QueryLayout db={db} /> : <Loading />}
+    <div className="flex h-full flex-col bg-base-200 p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-base-content">
+          Chart: <span className="font-mono text-info">{name}</span>
+        </h1>
+        <Link
+          to=".."
+          relative="route"
+          className="btn btn-info btn-sm text-white"
+        >
+          ← Go Back
+        </Link>
+      </div>
+
+      <div className="card min-h-0 flex-1 overflow-hidden bg-base-100 shadow-lg">
+        {typeof db !== "undefined" ? <QueryLayout db={db} /> : <Loading />}
+      </div>
     </div>
   );
 }

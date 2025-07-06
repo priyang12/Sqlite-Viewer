@@ -24,13 +24,13 @@ function UsersDBList({
           <span className="">
             <Link
               className="btn btn-circle btn-active"
-              to={`/db/tables/${item.toString()}`}
+              to={`/db/${item.toString()}`}
             >
               {index + 1}
             </Link>
           </span>
           <span className="w-[60%] truncate text-xl">
-            <Link to={`/db/tables/${item.toString()}`} className="link">
+            <Link to={`/db/${item.toString()}`} className="link">
               {item.toString()}
             </Link>
           </span>
