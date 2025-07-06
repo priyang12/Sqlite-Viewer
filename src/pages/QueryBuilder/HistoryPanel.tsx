@@ -10,12 +10,6 @@ type storedObject = {
   timestamp: string;
 };
 
-// display queries and set URL - done
-// Add a "Clear History" button - done
-// Limit to last N queries - done
-// Display timestamp with each query - done
-// Make items clickable to re-run queries -done
-
 // seal the logic into custom hook and let parent component control the state.
 // this avoid the adhoc re-rendering when new query is added.
 // may be we can useImperativeHandle to mutation from parent and let child consume useRecentQueries.

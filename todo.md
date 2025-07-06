@@ -1,4 +1,4 @@
 - [x] memo chart Tables to avoid re-renders.
 - [] create proper navigation between pages with db for navigating to charts,tables and builder.
 - [x] QueryBuilder: add edit and remove queries (fixed where condition stacking in query).
-- [] QueryBuilder: History panel to show recent queries.
+- [x] QueryBuilder: History panel to show recent queries.
