@@ -19,10 +19,10 @@ export function appendQueryToLocalStorage(newQuery: string) {
 }
 
 // display queries and set URL - done
-// Add a "Clear History" button
+// Add a "Clear History" button - done
 // Limit to last N queries
-// Display timestamp with each query
-// Make items clickable to re-run queries
+// Display timestamp with each query and make key on runtime with db name.
+// Make items clickable to re-run queries -done
 
 const HistoryPanel: React.FC<{ setSearchParams: SetURLSearchParams }> = ({
   setSearchParams,
@@ -62,31 +62,45 @@ const HistoryPanel: React.FC<{ setSearchParams: SetURLSearchParams }> = ({
     setReloadKey((prev) => prev + 1); // Forces effect to run again
   };
 
+  const clearHistory = () => {
+    localStorage.removeItem(RecentQueryKey);
+    setQueries([]);
+  };
+
   return (
     <section className="h-full w-full rounded-lg border-2 border-solid border-primary bg-base-100 p-4 shadow-md">
-      <h2 className="mb-3 text-lg font-semibold text-base-content">
-        Recent Queries
-        <button
-          onClick={triggerReload}
-          title="Reload"
-          className="text-base-content transition hover:text-primary"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+      <div className="flex justify-between">
+        <h2 className="mb-3 text-lg font-semibold text-base-content">
+          Recent Queries
+          <button
+            onClick={triggerReload}
+            title="Reload"
+            className="text-base-content transition hover:text-primary"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4v5h.582M20 20v-5h-.581M5.5 8.5A7.978 7.978 0 0112 4c4.418 0 8 3.582 8 8s-3.582 8-8 8a7.978 7.978 0 01-6.5-3.5"
-            />
-          </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582M20 20v-5h-.581M5.5 8.5A7.978 7.978 0 0112 4c4.418 0 8 3.582 8 8s-3.582 8-8 8a7.978 7.978 0 01-6.5-3.5"
+              />
+            </svg>
+          </button>
+        </h2>
+
+        <button
+          onClick={clearHistory}
+          className="btn btn-outline btn-error btn-sm ml-2"
+        >
+          Clear All
         </button>
-      </h2>
+      </div>
 
       {queries.length === 0 ? (
         <p className="text-sm text-gray-500">No recent queries found.</p>
