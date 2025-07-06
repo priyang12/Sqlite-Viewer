@@ -1,11 +1,11 @@
 import { useParams, Outlet } from "react-router-dom";
-import TableSideBar from "../../../Components/TableSideBar";
-import { useGetDBContext } from "../../../Context/DBContext";
-import Skeleton from "../../../Components/Skeleton";
-import Loading from "../../../Components/Loading";
+import TableSideBar from "../../Components/TableSideBar";
+import { useGetDBContext } from "../../Context/DBContext";
+import Skeleton from "../../Components/Skeleton";
+import Loading from "../../Components/Loading";
 import ErrorFallbackComponent, {
   WrappedErrorBoundary,
-} from "../../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
+} from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import { ErrorBoundary } from "react-error-boundary";
 
 const DataBaseLayout = () => {

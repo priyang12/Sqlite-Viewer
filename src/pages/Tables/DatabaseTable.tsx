@@ -14,18 +14,18 @@ import {
   ColumnOrderState,
 } from "@tanstack/react-table";
 import { CSVLink } from "react-csv";
-import { useGetTableData } from "../../../Hooks/useGetTableData";
+import { useGetTableData } from "../../Hooks/useGetTableData";
 import {
   columnData,
   createObject,
   getTableQuery,
-} from "../../../Utils/tableUtils";
-import { multipleFilter } from "../../../Utils/filterUtils";
-import TableHead from "../../../Components/TableHead";
-import TableBody from "../../../Components/TableBody";
-import TableFoot from "../../../Components/TableFoot";
-import Skeleton from "../../../Components/Skeleton";
-import IconComponent from "../../../Components/IconComponent";
+} from "../../Utils/tableUtils";
+import { multipleFilter } from "../../Utils/filterUtils";
+import TableHead from "../../Components/TableHead";
+import TableBody from "../../Components/TableBody";
+import TableFoot from "../../Components/TableFoot";
+import Skeleton from "../../Components/Skeleton";
+import IconComponent from "../../Components/IconComponent";
 import type { Database, QueryExecResult } from "sql.js";
 
 type queryType = QueryExecResult[];

@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import UserDataBase from "./pages/UserDataBase/Tables";
-import Charts from "./pages/UserDataBase/Charts";
-import Builder from "./pages/UserDataBase/QueryBuilder";
+import UserDataBase from "./pages/Tables";
+import Charts from "./pages/Charts";
+import Builder from "./pages/QueryBuilder";
 import SupportPage from "./pages/Support";
 import { DBProvider } from "./Context/DBContext";
 
