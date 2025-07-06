@@ -1,13 +1,8 @@
 {
-  "name": "sqliteeditor",
+  "name": "sqliteviewer",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "jest": {
-    "setupFilesAfterEnv": [
-      "<rootDir>/jestSetup.js"
-    ]
-  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

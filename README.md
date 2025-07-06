@@ -1,6 +1,6 @@
-# Sqlite Editor
+# Sqlite Viewer
 
-A Web App (offline) for viewing the Sqlite databases and edit it. Run diffrent queries and edit the db and create a new DB which can be saved.
+A Web App (offline) for viewing the Sqlite databases.
 
 ## Tech Stack
 
@@ -62,7 +62,7 @@ Priyang Patel
 
 MIT License
 
-Copyright (c) [2024] [Priyang Patel]
+Copyright (c) [2025] [Priyang Patel]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
