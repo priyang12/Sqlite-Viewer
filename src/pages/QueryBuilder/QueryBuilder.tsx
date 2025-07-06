@@ -1,7 +1,7 @@
 import React from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import HistoryPanel, { useRecentQueries } from "./HistoryPanel";
 import { WrappedErrorBoundary } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import BuilderComponent from "../../Components/BuilderComponent";
@@ -69,9 +69,16 @@ const QueryBuilder = () => {
 
   return (
     <div className="flex flex-col items-center p-6">
-      <h1 className="mb-4 w-[80vw] self-center text-2xl font-semibold">
-        Query
-      </h1>
+      <div className="flex w-[80vw] justify-between">
+        <h1 className="mb-4 text-2xl font-semibold">Query</h1>
+        <Link
+          to=".."
+          relative="route"
+          className="btn btn-info btn-sm text-white"
+        >
+          ← Go Back
+        </Link>
+      </div>
       <div className="flex w-[80vw] flex-col gap-5 lg:flex-row">
         <div className="w-full flex-1">
           {db ? (
