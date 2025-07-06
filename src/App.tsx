@@ -2,14 +2,13 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { useEffect } from "react";
 import useDark from "./Hooks/useDark";
 import routes from "./routes";
-import ErrorFallbackComponent from "./Components/ErrorFallbackComponent/ErrorFallbackComponent";
-import { ErrorBoundary } from "react-error-boundary";
+import { WrappedErrorBoundary } from "./Components/ErrorFallbackComponent";
 
 const ErrorBoundaryLayout = () => (
   <div className="h-screen">
-    <ErrorBoundary FallbackComponent={ErrorFallbackComponent}>
+    <WrappedErrorBoundary>
       <Outlet />
-    </ErrorBoundary>
+    </WrappedErrorBoundary>
   </div>
 );
 

@@ -1,0 +1,4 @@
+- [x] memo chart Tables to avoid re-renders.
+- [] create proper navigation between pages with db for navigating to charts,tables and builder.
+- [x] query builder: add edit and remove queries (fixed "Where" condition stacking in query).
+- [x] error boundary with which component the error has happened and error stacks.
