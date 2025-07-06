@@ -2,9 +2,9 @@ import React from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import { useSearchParams } from "react-router-dom";
-import BuilderComponent from "../../Components/BuilderComponent";
 import HistoryPanel, { useRecentQueries } from "./HistoryPanel";
 import { WrappedErrorBoundary } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
+import BuilderComponent from "../../Components/BuilderComponent";
 
 const InputQueryComponent: React.FC<{
   query: string;
