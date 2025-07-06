@@ -83,17 +83,17 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ db, setQuery }) => {
           <span>SELECT </span>
           <select
             multiple={!!selectedTable}
-            className="border px-2 py-1"
             size={Math.min(columns.length, 6)}
+            disabled={!columns.length}
             onChange={(e) =>
               setSelectedCols(
                 Array.from(e.target.selectedOptions).map((opt) => opt.value),
               )
             }
-            disabled={!columns.length}
+            className="select select-bordered my-2 h-auto min-h-[8rem] w-full p-2 text-sm focus:outline-none focus:ring focus:ring-primary/50 disabled:opacity-50"
           >
             {columns.map((col, index) => (
-              <option key={col + index} value={col}>
+              <option key={col + index} value={col} className="text-sm">
                 {col}
               </option>
             ))}
@@ -103,6 +103,7 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ db, setQuery }) => {
           <select
             name="table"
             id="table"
+            className="min-h-auto select select-bordered h-auto"
             onChange={(e) => {
               setSelectedTable(e.target.value);
               setColumns([]);
