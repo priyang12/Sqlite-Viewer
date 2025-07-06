@@ -61,7 +61,10 @@ const QueryBuilder = () => {
   const executeQuery = () => {
     setSearchParams({ query: encodeURIComponent(query) });
     // fn for adding it to local storage and syncing the history state.
-    addQuery(query);
+    addQuery({
+      query: query,
+      timestamp: new Date().toISOString(),
+    });
   };
 
   return (

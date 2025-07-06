@@ -5,19 +5,25 @@ export const RecentQueryKey = "recentQueries";
 
 const LimitedQueries = 10;
 
+type storedObject = {
+  query: string;
+  timestamp: string;
+};
+
 // display queries and set URL - done
 // Add a "Clear History" button - done
 // Limit to last N queries - done
-// Display timestamp with each query
+// Display timestamp with each query - done
 // Make items clickable to re-run queries -done
 
 // seal the logic into custom hook and let parent component control the state.
 // this avoid the adhoc re-rendering when new query is added.
+// may be we can useImperativeHandle to mutation from parent and let child consume useRecentQueries.
 export const useRecentQueries = () => {
   const { name: dbname } = useParams<{ name: string }>();
   const key = `${dbname}-${RecentQueryKey}`;
 
-  const [queries, setQueries] = useState<string[]>([]);
+  const [queries, setQueries] = useState<storedObject[]>([]);
 
   const loadFromStorage = useCallback(() => {
     try {
@@ -45,9 +51,12 @@ export const useRecentQueries = () => {
   }, [loadFromStorage]);
 
   const addQuery = useCallback(
-    (newQuery: string) => {
+    (obj: storedObject) => {
       try {
-        const unique = [newQuery, ...queries.filter((q) => q !== newQuery)];
+        const unique = [
+          obj,
+          ...queries.filter((item) => item.query !== obj.query),
+        ];
         const limited = unique.slice(0, LimitedQueries);
         setQueries(limited);
         localStorage.setItem(key, JSON.stringify(limited));
@@ -72,7 +81,7 @@ export const useRecentQueries = () => {
 };
 
 const HistoryPanel: React.FC<{
-  queries: string[];
+  queries: storedObject[];
   clearHistory: () => void;
   executeQuery: (query: string) => void;
 }> = ({ queries, clearHistory, executeQuery }) => {
@@ -95,23 +104,42 @@ const HistoryPanel: React.FC<{
         <p className="text-sm text-gray-500">No recent queries found.</p>
       ) : (
         <ul className="space-y-2">
-          {queries.map((query, index) => (
-            <li
-              key={index}
-              className="flex items-center justify-between rounded bg-base-200 px-3 py-2 transition-colors hover:bg-base-300"
-            >
-              <code className="text-sm text-base-content">{query}</code>
-              <div className="flex">
-                <div className="divider divider-horizontal" />
-                <button
-                  className="h-[30px] rounded border border-blue-600 px-2 py-1 text-sm text-blue-600 hover:bg-red-50"
-                  onClick={() => executeQuery(query)}
-                >
-                  Run
-                </button>
-              </div>
-            </li>
-          ))}
+          {queries.map((item, index) => {
+            const timestamp = new Date(item.timestamp).toLocaleString("en-GB", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            });
+
+            return (
+              <li
+                key={index}
+                className="flex items-center justify-between rounded bg-base-200 px-3 py-2 transition-colors hover:bg-base-300"
+              >
+                <div className="flex flex-col">
+                  <code className="text-sm text-base-content">
+                    {item.query}
+                  </code>
+                  <span className="text-xs text-base-content/50">
+                    {timestamp}
+                  </span>
+                </div>
+
+                <div className="flex items-center">
+                  <div className="divider divider-horizontal" />
+                  <button
+                    className="h-[30px] rounded border border-blue-600 px-2 py-1 text-sm text-blue-600 hover:bg-red-50"
+                    onClick={() => executeQuery(item.query)}
+                  >
+                    Run
+                  </button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>
