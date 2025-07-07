@@ -2,24 +2,6 @@ import React from "react";
 import { clsx } from "clsx";
 import { Handle, HandleProps } from "@xyflow/react";
 
-function TableWrapper({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      data-slot="table-container"
-      className={clsx("relative w-full overflow-x-auto")}
-    >
-      <table
-        data-slot="table"
-        className={clsx("w-full caption-bottom text-sm", className)}
-        {...props}
-      />
-    </div>
-  );
-}
-
 function Table({
   className,
   ...props
@@ -69,10 +51,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   );
 }
 
-function TableRow({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLTableRowElement>) {
+function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   return (
     <tr
       data-slot="table-row"
@@ -85,10 +64,7 @@ function TableRow({
   );
 }
 
-function TableHead({
-  className,
-  ...props
-}: React.ThHTMLAttributes<HTMLTableCellElement>) {
+function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
@@ -101,10 +77,7 @@ function TableHead({
   );
 }
 
-function TableCell({
-  className,
-  ...props
-}: React.TdHTMLAttributes<HTMLTableCellElement>) {
+function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
       data-slot="table-cell"
@@ -120,7 +93,7 @@ function TableCell({
 function TableCaption({
   className,
   ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: React.ComponentProps<"caption">) {
   return (
     <caption
       data-slot="table-caption"
@@ -145,13 +118,12 @@ function TableHandle({ className, ...props }: HandleProps) {
 }
 
 export {
-  TableWrapper,
   Table,
   TableHeader,
-  TableFooter,
   TableBody,
-  TableRow,
+  TableFooter,
   TableHead,
+  TableRow,
   TableCell,
   TableCaption,
   TableHandle,
