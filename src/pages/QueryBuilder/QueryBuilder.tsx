@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import { Link, useSearchParams } from "react-router-dom";
 import HistoryPanel, { useRecentQueries } from "./HistoryPanel";
 import { WrappedErrorBoundary } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import BuilderComponent from "../../Components/BuilderComponent";
+import CodeEditor from "./CodeEditor";
 
 const InputQueryComponent: React.FC<{
   query: string;
@@ -12,9 +13,9 @@ const InputQueryComponent: React.FC<{
   executeQuery: () => void;
 }> = ({ query, setQuery, executeQuery }) => {
   return (
-    <>
+    <div className="w-full max-w-4xl rounded-box bg-base-200 p-6 shadow-lg">
       <textarea
-        className="mb-4 h-40 w-full resize-none rounded border border-gray-300 p-3 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="mb-4 h-40 w-full rounded border border-gray-300 p-3 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Write your SQL here..."
@@ -25,7 +26,7 @@ const InputQueryComponent: React.FC<{
       >
         Run Query
       </button>
-    </>
+    </div>
   );
 };
 
@@ -41,11 +42,12 @@ const QueryBuilder = () => {
 
   const { queries, addQuery, clearQueries } = useRecentQueries();
 
+  // toggle state
+  const [useCodeEditor, setUseCodeEditor] = useState(false);
+
   React.useEffect(() => {
     if (db && parQuery) {
       try {
-        console.log(parQuery);
-
         const res = db.exec(parQuery);
         setResult(res);
         setError(undefined);
@@ -80,18 +82,34 @@ const QueryBuilder = () => {
         </Link>
       </div>
       <div className="flex w-[80vw] flex-col gap-5 lg:flex-row">
-        <div className="w-full flex-1">
+        <div className="w-full">
           {db ? (
             <BuilderComponent db={db} query={query} setQuery={setQuery} />
           ) : (
             <>Loading Database...</>
           )}
 
-          <InputQueryComponent
-            query={query}
-            setQuery={setQuery}
-            executeQuery={executeQuery}
-          />
+          <button
+            onClick={() => setUseCodeEditor((prev) => !prev)}
+            className="btn btn-outline btn-info mb-4"
+          >
+            {useCodeEditor ? "Use SQL Editor" : "Use Visual Input"}
+          </button>
+
+          {useCodeEditor ? (
+            <InputQueryComponent
+              query={query}
+              setQuery={setQuery}
+              executeQuery={executeQuery}
+            />
+          ) : (
+            <CodeEditor
+              query={query}
+              setQuery={setQuery}
+              executeQuery={executeQuery}
+            />
+          )}
+
           {error && (
             <div className="mt-4 font-mono text-red-500">
               <strong>Error:</strong> {error}
