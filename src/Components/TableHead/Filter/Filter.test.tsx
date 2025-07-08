@@ -1,42 +1,46 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi, Mock } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import Filter from "./Filter";
 import { Column } from "@tanstack/react-table";
 
 describe("Filter Component", () => {
-  const mockColumn = {
-    getFilterValue: vi.fn(),
-    setFilterValue: vi.fn(),
-    //   .mockImplementation((old: [number, number]) => [value, old?.[1]]),
-    columnDef: { meta: {} },
-  } as unknown as Column<any, unknown>;
-
   it("renders default text filter and handles changes", () => {
-    (mockColumn.getFilterValue as Mock).mockReturnValue("test");
-    mockColumn.columnDef.meta = { filterVariant: undefined };
+    const setFilterValue = vi.fn();
+    const mockColumn = {
+      getFilterValue: vi.fn().mockReturnValue("test"),
+      setFilterValue,
+      columnDef: { meta: {} },
+    } as unknown as Column<any, unknown>;
 
-    render(<Filter column={mockColumn} />);
+    render(<Filter dataType="" column={mockColumn} />);
 
     const input = screen.getByPlaceholderText("Search...");
     expect(input).toBeInTheDocument();
     expect(input).toHaveValue("test");
 
     fireEvent.change(input, { target: { value: "updated" } });
-    expect(mockColumn.setFilterValue).toHaveBeenCalledWith("updated");
+    expect(setFilterValue).toHaveBeenCalledWith({
+      type: "search",
+      filterValue: "updated",
+    });
   });
 
-  it("Range Filter", () => {
-    (mockColumn.getFilterValue as Mock).mockReturnValue([10, 20]);
-    mockColumn.columnDef.meta = { filterVariant: undefined };
+  it("adds and removes Range Filter and handles min/max input changes", () => {
+    const setFilterValue = vi.fn();
+    const mockColumn = {
+      getFilterValue: vi.fn().mockReturnValue([10, 20]),
+      setFilterValue,
+      columnDef: { meta: {} },
+    } as unknown as Column<any, unknown>;
 
-    render(<Filter column={mockColumn} />);
+    render(<Filter dataType="INTEGER" column={mockColumn} />);
 
-    // add range Filer
+    // Add range filter
     const rangeFilterBtn = screen.getByLabelText("Add Range Filter Button");
     fireEvent.click(rangeFilterBtn);
     expect(screen.getByLabelText("rangeFilter")).toBeInTheDocument();
 
-    // check Range filter working.
+    // Inputs
     const minInput = screen.getByPlaceholderText("Min");
     const maxInput = screen.getByPlaceholderText("Max");
 
@@ -48,16 +52,12 @@ describe("Filter Component", () => {
     fireEvent.change(minInput, { target: { value: "15" } });
     fireEvent.change(maxInput, { target: { value: "25" } });
 
-    // Ensure setFilterValue is called with a function
-    // so that the filter is getting applied.
-    expect(mockColumn.setFilterValue).toHaveBeenCalledWith(
-      expect.any(Function),
-    );
+    // setFilterValue should be called with a function for both min/max changes
+    expect(setFilterValue).toHaveBeenCalledWith(expect.any(Function));
 
-    // remove range Filter
+    // Remove range filter
     const removeBtn = screen.getByLabelText("remove Range Filter Button");
     fireEvent.click(removeBtn);
-
     expect(screen.queryByLabelText("rangeFilter")).not.toBeInTheDocument();
   });
 });

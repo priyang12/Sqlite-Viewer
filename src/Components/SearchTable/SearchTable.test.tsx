@@ -8,7 +8,7 @@ const mockSetTables = vi.fn();
 describe("SearchTable component", () => {
   it("renders input field correctly", () => {
     const { getByPlaceholderText } = render(
-      <SearchTable DBtables={[]} setTables={mockSetTables} />,
+      <SearchTable originalTable={[]} setSearchTables={mockSetTables} />,
     );
     const inputField = getByPlaceholderText("Search Table");
     expect(inputField).toBeInTheDocument();
@@ -16,7 +16,7 @@ describe("SearchTable component", () => {
 
   it("calls onChange function when input changes", () => {
     const { getByPlaceholderText } = render(
-      <SearchTable DBtables={[]} setTables={mockSetTables} />,
+      <SearchTable originalTable={[]} setSearchTables={mockSetTables} />,
     );
     const inputField = getByPlaceholderText("Search Table");
     fireEvent.change(inputField, { target: { value: "test" } });
@@ -26,7 +26,7 @@ describe("SearchTable component", () => {
   it("filters tables correctly based on search term", () => {
     const tables = ["abc", "abcd", "xyz"] as SqlValue[];
     const { getByPlaceholderText } = render(
-      <SearchTable DBtables={tables} setTables={mockSetTables} />,
+      <SearchTable originalTable={tables} setSearchTables={mockSetTables} />,
     );
     const inputField = getByPlaceholderText("Search Table");
     fireEvent.change(inputField, { target: { value: "ab" } });

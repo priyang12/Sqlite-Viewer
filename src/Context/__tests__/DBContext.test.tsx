@@ -1,69 +1,97 @@
-import { act, render, screen } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
+import { describe, it, vi, expect, beforeEach } from "vitest";
 import { DBProvider, useGetDBContext } from "../DBContext";
-import { storeFileName, useIndexedDB } from "../../Hooks/useIndexedDB";
-import { useGetDB } from "../../Hooks/useGetDB";
-import { Mock } from "vitest";
+import { useParams } from "react-router-dom";
+import { useIndexedDBContext } from "../IndexedDBContext";
+import { loadDatabase } from "../../Hooks/useGetDB";
 
-// Mock the hooks
-vi.mock("../../Hooks/useIndexedDB");
-vi.mock("../../Hooks/useGetDB");
+vi.mock("react-router-dom", () => ({
+  useParams: vi.fn(),
+}));
 
-// Helper component to consume the context
-const ConsumerComponent = () => {
-  const { db, indexedDB, setDBFileName } = useGetDBContext();
+vi.mock("../IndexedDBContext", () => ({
+  useIndexedDBContext: vi.fn(),
+}));
 
-  return (
-    <div>
-      <button onClick={() => setDBFileName("test.db")}>Set DB File Name</button>
-      <div data-testid="db">{db ? "DB Loaded" : "No DB"}</div>
-      <div data-testid="indexedDB">
-        {indexedDB ? "IndexedDB Loaded" : "No IndexedDB"}
-      </div>
-    </div>
-  );
-};
+vi.mock("../../Hooks/useGetDB", () => ({
+  loadDatabase: vi.fn(),
+}));
 
 describe("DBProvider", () => {
-  let getMockedDB: Mock;
-  let getMockedIndexedDB: Mock;
+  // removed old test cases since we have changed the API.
+  const mockDb = { exec: vi.fn() } as any;
+  const mockIndexedDB = {
+    get: vi.fn(),
+  };
+
+  const TestConsumer = () => {
+    const { db, indexedDB } = useGetDBContext();
+    return (
+      <div>
+        <div data-testid="db">{db ? "loaded" : "undefined"}</div>
+        <div data-testid="indexedDB">
+          {indexedDB ? "available" : "undefined"}
+        </div>
+      </div>
+    );
+  };
 
   beforeEach(() => {
-    getMockedDB = vi.fn();
-    getMockedIndexedDB = vi.fn();
+    vi.resetAllMocks();
   });
 
-  test("provides default values", () => {
-    (useIndexedDB as Mock).mockReturnValue({
-      indexedDB: null,
-    });
-    (useGetDB as Mock).mockReturnValue({ db: null });
-    render(
+  it("provides default undefined values", () => {
+    (useParams as any).mockReturnValue({});
+    (useIndexedDBContext as any).mockReturnValue({ indexDB: undefined });
+
+    const { getByTestId } = render(
       <DBProvider>
-        <ConsumerComponent />
+        <TestConsumer />
       </DBProvider>,
     );
 
-    expect(screen.getByTestId("db").textContent).toBe("No DB");
-    expect(screen.getByTestId("indexedDB").textContent).toBe("No IndexedDB");
+    expect(getByTestId("db").textContent).toBe("undefined");
+    expect(getByTestId("indexedDB").textContent).toBe("undefined");
   });
 
-  test("setDBFileName updates the context state", () => {
-    (useIndexedDB as Mock).mockReturnValue({
-      indexedDB: { get: getMockedIndexedDB },
-    });
-    (useGetDB as Mock).mockReturnValue({ db: getMockedDB });
+  it("loads database and provides it via context", async () => {
+    const fakeBinaryData = new Uint8Array([1, 2, 3]);
 
-    render(
+    (useParams as any).mockReturnValue({ name: "test.db" });
+    (useIndexedDBContext as any).mockReturnValue({ indexDB: mockIndexedDB });
+    mockIndexedDB.get.mockResolvedValue(fakeBinaryData);
+    (loadDatabase as any).mockResolvedValue(mockDb);
+
+    const { getByTestId } = render(
       <DBProvider>
-        <ConsumerComponent />
+        <TestConsumer />
       </DBProvider>,
     );
 
-    act(() => {
-      const button = screen.getByText("Set DB File Name");
-      button.click();
+    // wait for async db loading
+    await waitFor(() => {
+      expect(getByTestId("db").textContent).toBe("loaded");
+      expect(getByTestId("indexedDB").textContent).toBe("available");
     });
 
-    expect(getMockedIndexedDB).toHaveBeenCalledWith(storeFileName, "test.db");
+    expect(mockIndexedDB.get).toHaveBeenCalledWith("DBFiles", "test.db");
+    expect(loadDatabase).toHaveBeenCalledWith(fakeBinaryData);
+  });
+
+  it("does not try to load database if no name param", async () => {
+    (useParams as any).mockReturnValue({});
+    (useIndexedDBContext as any).mockReturnValue({ indexDB: mockIndexedDB });
+
+    const { getByTestId } = render(
+      <DBProvider>
+        <TestConsumer />
+      </DBProvider>,
+    );
+
+    expect(mockIndexedDB.get).not.toHaveBeenCalled();
+    expect(loadDatabase).not.toHaveBeenCalled();
+
+    expect(getByTestId("db").textContent).toBe("undefined");
+    expect(getByTestId("indexedDB").textContent).toBe("available");
   });
 });

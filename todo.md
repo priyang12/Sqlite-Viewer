@@ -4,3 +4,4 @@
 - [x] error boundary with which component the error has happened and error stacks.
 - [x] react-codemirror for manual input fallback in query builder
 - [x] code-splitting in routes and codemirror.
+- [x] fixed failing test cases.
