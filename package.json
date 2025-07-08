@@ -32,6 +32,7 @@
     "sql.js": "1.8.0"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.8",
@@ -40,6 +41,7 @@
     "@types/sql.js": "^1.4.9",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.10.1",
     "eslint": "^9.30.1",

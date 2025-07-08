@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { insertDB, removeDb } from "../Utils/indexDBUtils";
-import { storedKeysType } from "./useGetUserDBs";
 import { useIndexedDBContext } from "../Context/IndexedDBContext";
 import { useErrorBoundary } from "react-error-boundary";
+
+export type storedKeysType = IDBValidKey[] | [];
 
 export const useDBStore = () => {
   const { indexDB: indexedDB } = useIndexedDBContext();
@@ -11,7 +12,6 @@ export const useDBStore = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    let isCancelled = false;
     async function getKeys() {
       if (indexedDB !== undefined) {
         const dbs = await indexedDB.getAllKeys("DBFiles");
@@ -19,9 +19,6 @@ export const useDBStore = () => {
       }
     }
     getKeys();
-    return () => {
-      isCancelled = true;
-    };
   }, [indexedDB]);
 
   const insertUserDB = useCallback(
@@ -40,7 +37,7 @@ export const useDBStore = () => {
         setIsLoading(false);
       }
     },
-    [indexedDB, setStoredDBs],
+    [indexedDB, setStoredDBs, showBoundary],
   );
 
   const removeUserDB = useCallback(
@@ -63,7 +60,7 @@ export const useDBStore = () => {
         setIsLoading(false);
       }
     },
-    [indexedDB, setStoredDBs],
+    [indexedDB, setStoredDBs, showBoundary],
   );
 
   return { isLoading, storedDBs, insertUserDB, removeUserDB };

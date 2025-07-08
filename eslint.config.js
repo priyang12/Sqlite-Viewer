@@ -4,7 +4,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import reactHooks from "eslint-plugin-react-hooks";
 
 export default defineConfig([
-  globalIgnores(["dist", "coverage"]),
+  globalIgnores(["dist", "coverage", "**/*config*.js", "**/*.d.ts"]),
   ...tseslint.configs.recommended,
   {
     languageOptions: {
@@ -27,7 +27,9 @@ export default defineConfig([
         "warn",
         { allowConstantExport: true },
       ],
-      // Add other custom rules here
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 ]);

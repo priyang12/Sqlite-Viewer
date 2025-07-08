@@ -61,7 +61,7 @@ const QueryBuilder = () => {
         setResult(undefined);
       }
     }
-  }, [db, searchParams]);
+  }, [db, parQuery]);
 
   const executeQuery = () => {
     setSearchParams({ query: encodeURIComponent(query) });

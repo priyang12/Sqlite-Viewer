@@ -8,8 +8,8 @@ const Overview = () => {
     const loadingTimer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-    () => clearTimeout(loadingTimer);
-  });
+    return () => clearTimeout(loadingTimer);
+  }, []);
 
   return (
     <div className="mx-16 box-content flex flex-col items-center gap-5">

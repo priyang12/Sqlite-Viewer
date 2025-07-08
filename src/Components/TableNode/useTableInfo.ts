@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Database } from "sql.js";
 import { queries } from "../../Utils/queriesUtils";
 import { columnData } from "../../Utils/tableUtils";
+import { useErrorBoundary } from "react-error-boundary";
 
 export type TableInfo = {
   [columnName: string]: {
@@ -12,6 +13,7 @@ export type TableInfo = {
 
 export function useTableInfo(db: Database, tableName: string) {
   const [tableInfo, setTableInfo] = useState<TableInfo>();
+  const { showBoundary } = useErrorBoundary();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +24,7 @@ export function useTableInfo(db: Database, tableName: string) {
       const info = columnData(result);
       if (mounted) setTableInfo(info);
     } catch (err) {
-      // optionally handle error
+      showBoundary(err);
     } finally {
       if (mounted) setLoading(false);
     }
@@ -31,7 +33,7 @@ export function useTableInfo(db: Database, tableName: string) {
       mounted = false;
       setTableInfo(undefined);
     };
-  }, [db, tableName]);
+  }, [db, tableName, showBoundary]);
 
   return { tableInfo, loading };
 }

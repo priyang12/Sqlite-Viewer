@@ -14,7 +14,7 @@ const CodeEditor: React.FC<{
     if (!editorRef.current) return;
 
     const view = new EditorView({
-      doc: query,
+      doc: "",
       extensions: [basicSetup, sql({ dialect: SQLite })],
       parent: editorRef.current,
     });
