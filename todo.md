@@ -3,3 +3,4 @@
 - [x] query builder: add edit and remove queries (fixed "Where" condition stacking in query).
 - [x] error boundary with which component the error has happened and error stacks.
 - [x] react-codemirror for manual input fallback in query builder
+- [x] code-splitting in routes and codemirror.

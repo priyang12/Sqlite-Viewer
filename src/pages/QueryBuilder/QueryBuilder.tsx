@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import { Link, useSearchParams } from "react-router-dom";
 import HistoryPanel, { useRecentQueries } from "./HistoryPanel";
 import { WrappedErrorBoundary } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import BuilderComponent from "../../Components/BuilderComponent";
-import CodeEditor from "./CodeEditor";
+import Loading from "../../Components/Loading";
+
+// spite codemirror import
+const CodeEditor = lazy(() => import("./CodeEditor"));
 
 const InputQueryComponent: React.FC<{
   query: string;
@@ -103,11 +106,13 @@ const QueryBuilder = () => {
               executeQuery={executeQuery}
             />
           ) : (
-            <CodeEditor
-              query={query}
-              setQuery={setQuery}
-              executeQuery={executeQuery}
-            />
+            <Suspense fallback={<Loading />}>
+              <CodeEditor
+                query={query}
+                setQuery={setQuery}
+                executeQuery={executeQuery}
+              />
+            </Suspense>
           )}
 
           {error && (
