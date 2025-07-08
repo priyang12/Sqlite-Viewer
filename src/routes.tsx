@@ -1,12 +1,22 @@
 import { Navigate, Outlet } from "react-router-dom";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import UserDataBase from "./pages/Tables";
-import Charts from "./pages/Charts";
-import Builder from "./pages/QueryBuilder";
 import SupportPage from "./pages/Support";
 import { DBProvider } from "./Context/DBContext";
-import DBHome from "./pages/DBHome";
+import { lazy, Suspense } from "react";
+import LoadingPage from "./Components/LoadingPage";
+
+// db routes
+const DBHome = lazy(() => import("./pages/DBHome"));
+const DataBaseLayout = lazy(() => import("./pages/Tables/DataBaseLayout"));
+const DatabaseTable = lazy(() => import("./pages/Tables/DatabaseTable"));
+const Overview = lazy(() => import("./pages/Tables/Overview"));
+const ChartDB = lazy(() => import("./pages/Charts"));
+const QueryBuilder = lazy(() => import("./pages/QueryBuilder"));
+
+const withSuspense = (element: React.ReactNode) => (
+  <Suspense fallback={<LoadingPage />}>{element}</Suspense>
+);
 
 function DBLayoutWrapper() {
   return (
@@ -38,29 +48,29 @@ const routes = [
     children: [
       {
         index: true,
-        element: <DBHome />,
+        element: withSuspense(<DBHome />),
       },
       {
         path: "tables",
-        element: <UserDataBase.DataBaseLayout />,
+        element: withSuspense(<DataBaseLayout />),
         children: [
           {
             index: true,
-            element: <UserDataBase.Overview />,
+            element: withSuspense(<Overview />),
           },
           {
             path: ":table",
-            element: <UserDataBase.DatabaseTable />,
+            element: withSuspense(<DatabaseTable />),
           },
         ],
       },
       {
         path: "charts",
-        element: <Charts.ChartDB />,
+        element: withSuspense(<ChartDB />),
       },
       {
         path: "queryBuilder",
-        element: <Builder.QueryBuilder />,
+        element: withSuspense(<QueryBuilder />),
       },
       {
         path: "*",
