@@ -6,6 +6,7 @@ import HistoryPanel, { useRecentQueries } from "./Components/HistoryPanel";
 import { WrappedErrorBoundary } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import BuilderComponent from "../../Components/BuilderComponent";
 import Loading from "../../Components/Loading";
+import { isSelectQuery } from "../../Utils/queriesUtils";
 
 // spite codemirror import
 const CodeEditor = lazy(() => import("./Components/CodeEditor"));
@@ -69,12 +70,19 @@ const QueryBuilder = () => {
   }, [parQuery]);
 
   const executeQuery = () => {
-    setSearchParams({ query: encodeURIComponent(query) });
-    // fn for adding it to local storage and syncing the history state.
-    addQuery({
-      query: query,
-      timestamp: new Date().toISOString(),
-    });
+    // this basic fn to make sure user don't add mutation
+    // may add more better lib like node-sql-parser but it will increase the size
+    // by significant.
+    if (isSelectQuery(query)) {
+      // fn for adding it to local storage and syncing the history state.
+      setSearchParams({ query: encodeURIComponent(query) });
+      addQuery({
+        query: query,
+        timestamp: new Date().toISOString(),
+      });
+    } else {
+      setError(`InValid Query! only "Select" queries are allowed.`);
+    }
   };
 
   return (
@@ -97,14 +105,22 @@ const QueryBuilder = () => {
             <>Loading Database...</>
           )}
 
-          <button
-            onClick={() => setUseCodeEditor((prev) => !prev)}
-            className="btn btn-outline btn-info mb-4"
-          >
-            {useCodeEditor ? "Use SQL Editor" : "Use Visual Input"}
-          </button>
+          <div className="flex flex-col lg:flex-row lg:items-center">
+            <button
+              onClick={() => setUseCodeEditor((prev) => !prev)}
+              className="btn btn-outline btn-info mb-4"
+            >
+              {useCodeEditor ? "Use Visual Input" : "Use SQL Editor"}
+            </button>
 
-          {useCodeEditor ? (
+            {error && (
+              <div className="ml-auto font-mono text-red-500">
+                <strong>Error:</strong> {error}
+              </div>
+            )}
+          </div>
+
+          {!useCodeEditor ? (
             <InputQueryComponent
               query={query}
               setQuery={setQuery}
@@ -120,11 +136,6 @@ const QueryBuilder = () => {
             </Suspense>
           )}
 
-          {error && (
-            <div className="mt-4 font-mono text-red-500">
-              <strong>Error:</strong> {error}
-            </div>
-          )}
           {result && result.length > 0 ? (
             <div className="mt-6">
               <h2 className="mb-2 text-xl font-semibold">Result</h2>

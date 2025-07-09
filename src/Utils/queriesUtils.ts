@@ -69,3 +69,24 @@ export function generateQuery(state: QueryBuilderState): string {
 
   return `SELECT ${cols} FROM ${state.table} ${whereClause} ${orderByClause} ${limitClause};`;
 }
+
+export function isSelectQuery(query: string): boolean {
+  const cleaned = query.trim().toLowerCase();
+
+  // Quick basic filter
+  const forbiddenKeywords = [
+    "insert",
+    "update",
+    "delete",
+    "drop",
+    "alter",
+    "create",
+    "replace",
+    "truncate",
+    ";",
+  ];
+  if (!cleaned.startsWith("select")) return false;
+
+  // Check for forbidden keywords anywhere in the query
+  return !forbiddenKeywords.some((kw) => cleaned.includes(kw));
+}

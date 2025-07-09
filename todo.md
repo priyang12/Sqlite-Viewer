@@ -6,3 +6,4 @@
 - [x] code-splitting in routes and codemirror.
 - [x] fixed failing test cases.
 - [x] run sql.js in web worker with caching.
+- [x] query only start with "select" in sql exe.
