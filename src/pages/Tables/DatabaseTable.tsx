@@ -328,7 +328,6 @@ const DatabaseTable = () => {
       if (workerRef?.current) {
         const result = await workerRef?.current.runDataBaseQueries(queries);
         if (result) {
-          console.log(result);
           setResult(result);
         }
       }

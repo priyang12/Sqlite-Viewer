@@ -11,7 +11,6 @@ import { Remote } from "comlink";
 import { SqlWorkerAPI } from "../workers/sqlWorker";
 
 export type DBContextType = {
-  db: Database | undefined;
   indexedDB: IDBPDatabase | undefined;
   dbLoaded: boolean;
   workerRef: React.RefObject<Remote<SqlWorkerAPI> | null> | undefined;
@@ -20,7 +19,6 @@ export type DBContextType = {
 // Create a context object for managing the database connection
 const DbContext = createContext<DBContextType>({
   dbLoaded: false, // check if db is loaded in web-worker.
-  db: undefined, // Default context value with an undefined database connection
   indexedDB: undefined, // Default value
   workerRef: undefined, // worker reference
 });
@@ -46,7 +44,6 @@ export const DBProvider: React.FC<{ children: React.ReactNode }> = ({
   const { name } = useParams();
   const { indexDB: indexedDB } = useIndexedDBContext();
   const [dbLoaded, setDBLoaded] = useState(false);
-  const [db, setDb] = useState<Database>();
   const workerRef = useSqlWorker();
 
   useEffect(() => {
@@ -58,8 +55,6 @@ export const DBProvider: React.FC<{ children: React.ReactNode }> = ({
           if (res) {
             setDBLoaded(res.result === "success");
           }
-          const db = await loadDatabase(databaseFile);
-          setDb(db);
         }
       };
       getDBFile();
@@ -67,7 +62,7 @@ export const DBProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [indexedDB, name, workerRef.current]);
 
   return (
-    <DbContext.Provider value={{ db, indexedDB, dbLoaded, workerRef }}>
+    <DbContext.Provider value={{ indexedDB, dbLoaded, workerRef }}>
       {children}
     </DbContext.Provider>
   );
