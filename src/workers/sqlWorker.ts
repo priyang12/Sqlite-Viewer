@@ -11,7 +11,7 @@ export interface SqlWorkerAPI {
   db: Database | undefined;
   loadDatabase: (file: File) => Promise<{ result: string }>;
   exeQuery: (query: string) => QueryResponse;
-  getAllTables: () => QueryResponse;
+  getAllTables: () => string[] | undefined;
   getTableProperties: (tableName: string) => QueryResponse;
   getForeignKeys: (tableName: string) => QueryResponse;
   getTableColumns: (tableName: string) => QueryResponse;
@@ -38,8 +38,11 @@ const api: SqlWorkerAPI = {
     }
   },
   getAllTables() {
-    const result = this.db?.exec(queries.table.allTables);
-    return result;
+    if (this.db) {
+      const result = this.db?.exec(queries.table.allTables);
+      const tables = result[0].values.map((r) => (r[0] ? r[0].toString() : ""));
+      return tables;
+    }
   },
   getTableProperties(tableName) {
     const result = this.db?.exec(queries.table.properties(tableName));

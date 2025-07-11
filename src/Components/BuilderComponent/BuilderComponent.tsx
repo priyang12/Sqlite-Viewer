@@ -24,9 +24,7 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
         try {
           const result = await workerRef.current.getAllTables();
           if (result) {
-            const tableNames =
-              result?.[0]?.values.map((row) => row[0] as string) || [];
-            setTables(tableNames);
+            setTables(result);
           }
         } catch (err) {
           console.error("Failed to load tables", err);

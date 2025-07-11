@@ -24,9 +24,9 @@ function QueryLayout() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const fetchTables = async (): Promise<string[]> => {
+  const fetchTables = async (): Promise<string[] | undefined> => {
     const result = await workerRef.current?.getAllTables();
-    return result?.[0]?.values.map((r) => r[0]?.toString() || "") || [];
+    if (result) return result;
   };
 
   const fetchForeignKeys = async (
@@ -80,15 +80,14 @@ function QueryLayout() {
   useEffect(() => {
     const loadChart = async () => {
       if (!workerRef.current) return;
-
       const tables = await fetchTables();
-      const foreignData = await fetchForeignKeys(tables);
-      const newNodes = buildNodes(tables);
-
-      const newEdges = buildEdges(foreignData, tables);
-
-      setNodes(newNodes as any);
-      setEdges(newEdges as any);
+      if (tables) {
+        const foreignData = await fetchForeignKeys(tables);
+        const newNodes = buildNodes(tables);
+        const newEdges = buildEdges(foreignData, tables);
+        setNodes(newNodes as any);
+        setEdges(newEdges as any);
+      }
     };
 
     loadChart();

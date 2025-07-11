@@ -1,12 +1,11 @@
-import { SqlValue } from "sql.js";
 import Skeleton from "../Skeleton";
 
 const SearchTable = ({
   originalTable,
   setSearchTables,
 }: {
-  originalTable: SqlValue[] | undefined;
-  setSearchTables: React.Dispatch<React.SetStateAction<SqlValue[]>>;
+  originalTable: string[] | undefined;
+  setSearchTables: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value.toLowerCase(); // Get the search term

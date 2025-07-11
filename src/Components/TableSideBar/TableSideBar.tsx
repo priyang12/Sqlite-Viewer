@@ -1,21 +1,38 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Database } from "sql.js";
 import SearchTable from "../SearchTable";
 import Skeleton from "../Skeleton";
-import { queries } from "../../Utils/queriesUtils";
+import { useGetDBContext } from "../../Context/DBContext";
 
-function TableSideBar({ db }: { db: Database }) {
-  const tables = useMemo(() => {
-    const queryResult = db.exec(queries.table.allTables);
-    const rows = queryResult[0].values.map((r) => r[0]);
-    return rows;
-  }, [db]);
+function TableSideBar() {
+  const { workerRef } = useGetDBContext();
+  const [isLoading, setIsLoading] = useState(false);
+  const [tables, setTables] = useState<string[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      if (workerRef?.current) {
+        setIsLoading(true);
+        try {
+          const result = await workerRef.current.getAllTables();
+          if (result) {
+            setTables(result);
+            setSearchTables(result);
+          }
+        } catch (err) {
+          console.error("Failed to load tables", err);
+          throw Error("Error While Fetching Table Data");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    })();
+  }, [workerRef?.current]);
 
   const [searchTables, setSearchTables] = useState(tables);
 
   return (
-    <section className="flex flex-col gap-5 rounded bg-base-300 pb-5">
+    <section className="flex h-[100vh] flex-col gap-5 rounded bg-base-300 pb-5">
       <div className="mx-6 mt-6 flex justify-between">
         <h2 className="text-xl font-bold">Tables</h2>
         <Link className="link link-info" to=".." relative="route">
@@ -24,7 +41,7 @@ function TableSideBar({ db }: { db: Database }) {
       </div>
 
       <SearchTable originalTable={tables} setSearchTables={setSearchTables} />
-      {typeof tables === "undefined" ? (
+      {isLoading ? (
         <div
           className="flex w-full flex-col items-center gap-5"
           data-testid="loading-spinner"
@@ -32,7 +49,7 @@ function TableSideBar({ db }: { db: Database }) {
           <Skeleton className="mx-5" width={"200px"} height={20} count={7} />
         </div>
       ) : (
-        <ul className="mx-5 rounded-lg bg-base-200 py-5 text-base-content shadow-lg">
+        <ul className="mx-5 h-[80vh] overflow-auto rounded-lg bg-base-200 py-5 text-base-content shadow-lg">
           {searchTables ? (
             searchTables.length > 0 ? (
               searchTables.map((item, index) => (

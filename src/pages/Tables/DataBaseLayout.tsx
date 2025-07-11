@@ -33,7 +33,7 @@ const DataBaseLayout = () => {
               </div>
             )}
           >
-            <TableSideBar db={db} />
+            <TableSideBar />
           </ErrorBoundary>
         )}
 
