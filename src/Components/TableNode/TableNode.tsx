@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import { Position } from "@xyflow/react";
-import { Database } from "sql.js";
 import { useTableInfo } from "./useTableInfo";
 import {
   Table,
@@ -71,13 +70,12 @@ const MemoedTableComponent = memo(TableComponent);
 type Props = {
   id: string;
   data: {
-    db: Database;
     tableName: string;
   };
 };
 
-const TableNode: React.FC<Props> = ({ data: { db, tableName } }) => {
-  const { loading, tableInfo } = useTableInfo(db, tableName);
+const TableNode: React.FC<Props> = ({ data: { tableName } }) => {
+  const { loading, tableInfo } = useTableInfo(tableName);
 
   return (
     <div className="bg-card text-card-foreground hover:ring-1border-gray-300 relative rounded-md border bg-base-200 p-2 text-base-content">

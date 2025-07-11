@@ -1,8 +1,7 @@
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useGetDBContext } from "../../Context/DBContext";
+import { useSqlWorker } from "../../Hooks/useSqlWorker";
 import { Link, useParams } from "react-router-dom";
-import { queries } from "../../Utils/queriesUtils";
-import { Database } from "sql.js";
 import {
   Background,
   Controls,
@@ -20,39 +19,52 @@ const nodeTypes = {
   tableNode: TableNode,
 };
 
-function QueryLayout({ db }: { db: Database }) {
-  const tables = useMemo(() => {
-    const result = db.exec(queries.table.allTables);
-    return result[0]?.values.map((r) => r[0]?.toString() || "") || [];
-  }, [db]);
+function QueryLayout() {
+  const workerRef = useSqlWorker();
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const initialNodes: Node[] = useMemo(() => {
+  const fetchTables = async (): Promise<string[]> => {
+    const result = await workerRef.current?.getAllTables();
+    return result?.[0]?.values.map((r) => r[0]?.toString() || "") || [];
+  };
+
+  const fetchForeignKeys = async (
+    tables: string[],
+  ): Promise<{ source: string; foreignKeys: any[] }[]> => {
+    return await Promise.all(
+      tables.map(async (tableName) => {
+        const foreignKeys = await workerRef.current?.getForeignKeys(tableName);
+        const rows = foreignKeys?.[0]?.values || [];
+        return { source: tableName, foreignKeys: rows };
+      }),
+    );
+  };
+
+  const buildNodes = (tables: string[]): Node[] => {
     return tables.map((tableName, index) => ({
       id: tableName,
       type: "tableNode",
       position: { x: index * 250, y: 100 },
-      data: { db, tableName },
+      data: { tableName },
     }));
-  }, [tables, db]);
+  };
 
-  const initialEdges: Edge[] = useMemo(() => {
-    const result: Edge[] = [];
-
-    tables.forEach((tableName) => {
-      const foreignKeys = db.exec(`PRAGMA foreign_key_list(${tableName});`);
-
-      if (foreignKeys.length === 0) return;
-
-      const rows = foreignKeys[0].values;
-      rows.forEach((fk, idx) => {
+  const buildEdges = (
+    foreignData: { source: string; foreignKeys: any[] }[],
+    tables: string[],
+  ): Edge[] => {
+    const edges: Edge[] = [];
+    foreignData.forEach((table) => {
+      if (table.foreignKeys.length === 0) return;
+      table.foreignKeys.forEach((fk, idx) => {
         const referencedTable = fk[2]; // column index 2 is the referenced table name
         const fromColumn = fk[3]; // column in this (source) table
         const toColumn = fk[4]; // column in the referenced (target) table
-
         if (referencedTable && tables.includes(referencedTable?.toString())) {
-          result.push({
-            id: `edge-${tableName}-${referencedTable}-${idx}`,
-            source: tableName,
+          edges.push({
+            id: `edge-${table.source}-${referencedTable}-${idx}`,
+            source: table.source,
             target: referencedTable?.toString() || "",
             sourceHandle: `source-${fromColumn}`,
             targetHandle: `target-${toColumn}`,
@@ -62,12 +74,25 @@ function QueryLayout({ db }: { db: Database }) {
         }
       });
     });
+    return edges;
+  };
 
-    return result;
-  }, [tables, db]);
+  useEffect(() => {
+    const loadChart = async () => {
+      if (!workerRef.current) return;
 
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
-  const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+      const tables = await fetchTables();
+      const foreignData = await fetchForeignKeys(tables);
+      const newNodes = buildNodes(tables);
+
+      const newEdges = buildEdges(foreignData, tables);
+
+      setNodes(newNodes as any);
+      setEdges(newEdges as any);
+    };
+
+    loadChart();
+  }, [workerRef]);
 
   return (
     <div style={{ width: "100%", height: "90vh" }}>
@@ -89,7 +114,7 @@ function QueryLayout({ db }: { db: Database }) {
 
 function ChartDB() {
   const { name } = useParams();
-  const { db } = useGetDBContext();
+  const { dbLoaded } = useGetDBContext();
 
   return (
     <div className="flex h-full flex-col bg-base-200 p-6">
@@ -107,7 +132,7 @@ function ChartDB() {
       </div>
 
       <div className="card min-h-0 flex-1 overflow-hidden bg-base-100 shadow-lg">
-        {typeof db !== "undefined" ? <QueryLayout db={db} /> : <Loading />}
+        {dbLoaded ? <QueryLayout /> : <Loading />}
       </div>
     </div>
   );

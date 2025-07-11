@@ -1,26 +1,24 @@
 import * as Comlink from "comlink";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { SqlWorkerAPI } from "../workers/sqlWorker";
+import { getSqlWorker } from "../workers/sqlWorkerClient";
 
 export const useSqlWorker = () => {
-  const workerRef = useRef<Comlink.Remote<SqlWorkerAPI> | null>(null);
+  const workerRef = useRef<Comlink.Remote<SqlWorkerAPI> | null>(getSqlWorker());
 
-  useEffect(() => {
-    const worker = new Worker(
-      new URL("../workers/sqlWorker.ts", import.meta.url),
-      {
-        type: "module",
-      },
-    );
+  // replaced for with singleton fn due to Comlink.wrap causing race issue.
 
-    const proxy = Comlink.wrap<SqlWorkerAPI>(worker);
-    workerRef.current = proxy;
+  // useEffect(() => {
+  //   const worker = new Worker(
+  //     new URL("../workers/sqlWorker.ts", import.meta.url),
+  //     {
+  //       type: "module",
+  //     },
+  //   );
 
-    return () => {
-      proxy.clean?.(); //  clean up sql.js memory
-      worker.terminate(); // stop the worker thread
-    };
-  }, []);
+  //   const proxy = Comlink.wrap<SqlWorkerAPI>(worker);
+  //   workerRef.current = proxy;
+  // }, []);
 
   return workerRef;
 };

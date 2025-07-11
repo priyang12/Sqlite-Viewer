@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Database } from "sql.js";
-import { queries } from "../../Utils/queriesUtils";
 import { columnData } from "../../Utils/tableUtils";
 import { useErrorBoundary } from "react-error-boundary";
+import { useSqlWorker } from "../../Hooks/useSqlWorker";
 
 export type TableInfo = {
   [columnName: string]: {
@@ -11,29 +10,36 @@ export type TableInfo = {
   };
 };
 
-export function useTableInfo(db: Database, tableName: string) {
+export function useTableInfo(tableName: string) {
+  const workerRef = useSqlWorker();
   const [tableInfo, setTableInfo] = useState<TableInfo>();
   const { showBoundary } = useErrorBoundary();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
-    try {
-      const result = db.exec(queries.table.properties(tableName));
-      const info = columnData(result);
-      if (mounted) setTableInfo(info);
-    } catch (err) {
-      showBoundary(err);
-    } finally {
-      if (mounted) setLoading(false);
-    }
+    (async () => {
+      setLoading(true);
+      try {
+        if (mounted) {
+          const result = await workerRef.current?.getTableProperties(tableName);
+          if (result) {
+            const info = columnData(result);
+            setTableInfo(info);
+          }
+        }
+      } catch (err) {
+        showBoundary(err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
 
     return () => {
       mounted = false;
       setTableInfo(undefined);
     };
-  }, [db, tableName, showBoundary]);
+  }, [tableName, showBoundary]);
 
   return { tableInfo, loading };
 }

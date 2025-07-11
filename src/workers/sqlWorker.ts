@@ -1,38 +1,58 @@
 import * as Comlink from "comlink";
 import initSqlJs from "sql.js";
-import type { Database, SqlJsStatic } from "sql.js";
+import type { Database, QueryExecResult, SqlJsStatic } from "sql.js";
 
 import sqlWasm from "sql.js/dist/sql-wasm.wasm?url";
+import { queries } from "../Utils/queriesUtils";
 
+type QueryResponse = QueryExecResult[] | undefined;
 export interface SqlWorkerAPI {
+  SQL: SqlJsStatic | undefined;
+  db: Database | undefined;
   loadDatabase: (file: File) => Promise<{ result: string }>;
+  exeQuery: (query: string) => QueryResponse;
+  getAllTables: () => QueryResponse;
+  getTableProperties: (tableName: string) => QueryResponse;
+  getForeignKeys: (tableName: string) => QueryResponse;
   clean: () => void;
 }
 
-let SQL: SqlJsStatic | undefined;
-let db: Database | undefined;
-
 const api: SqlWorkerAPI = {
+  db: undefined,
+  SQL: undefined,
   async loadDatabase(file: File) {
     try {
       const arrayBuffer = await file.arrayBuffer();
       // Initialize SQL.js if not already
-      if (!SQL) {
-        SQL = await initSqlJs({
+      if (!this.SQL) {
+        this.SQL = await initSqlJs({
           locateFile: () => sqlWasm,
         });
       }
-
-      db = new SQL.Database(new Uint8Array(arrayBuffer));
+      this.db = new this.SQL.Database(new Uint8Array(arrayBuffer));
       return { result: "success" };
     } catch (error) {
       console.error("Failed to load DB in worker:", error);
-
       return { result: "failure" };
     }
   },
+  getAllTables() {
+    const result = this.db?.exec(queries.table.allTables);
+    return result;
+  },
+  getTableProperties(tableName) {
+    const result = this.db?.exec(queries.table.properties(tableName));
+    return result;
+  },
+  getForeignKeys(tableName) {
+    const result = this.db?.exec(`PRAGMA foreign_key_list(${tableName});`);
+    return result;
+  },
+  exeQuery(query) {
+    return this.db?.exec(query);
+  },
   clean() {
-    db?.close();
+    this.db?.close();
   },
 };
 
