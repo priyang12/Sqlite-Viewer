@@ -5,7 +5,7 @@ import type { Database, QueryExecResult, SqlJsStatic } from "sql.js";
 import sqlWasm from "sql.js/dist/sql-wasm.wasm?url";
 import { queries } from "../Utils/queriesUtils";
 
-type QueryResponse = QueryExecResult[] | undefined;
+export type QueryResponse = QueryExecResult[] | undefined;
 export interface SqlWorkerAPI {
   SQL: SqlJsStatic | undefined;
   db: Database | undefined;
@@ -15,6 +15,7 @@ export interface SqlWorkerAPI {
   getTableProperties: (tableName: string) => QueryResponse;
   getForeignKeys: (tableName: string) => QueryResponse;
   getTableColumns: (tableName: string) => QueryResponse;
+  runDataBaseQueries: (queries: string[]) => Promise<[QueryExecResult[]]>;
   clean: () => void;
 }
 
@@ -55,6 +56,18 @@ const api: SqlWorkerAPI = {
   getTableColumns(tableName) {
     const result = this.db?.exec(`PRAGMA table_info(${tableName});`);
     return result;
+  },
+  async runDataBaseQueries(queries) {
+    const results = (await Promise.all(
+      queries.map(
+        (query) =>
+          new Promise((resolve) => {
+            const result = this.db?.exec(query);
+            resolve(result);
+          }),
+      ),
+    )) as [QueryExecResult[]];
+    return results;
   },
   exeQuery(query) {
     return this.db?.exec(query);

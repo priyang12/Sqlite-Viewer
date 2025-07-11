@@ -8,9 +8,10 @@ import ErrorFallbackComponent, {
 } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import { ErrorBoundary } from "react-error-boundary";
 
+// fix loading layouts.
 const DataBaseLayout = () => {
   const { name } = useParams();
-  const { db } = useGetDBContext();
+  const { dbLoaded } = useGetDBContext();
 
   return (
     <div className="bg-base-100">
@@ -18,7 +19,7 @@ const DataBaseLayout = () => {
         <h1 className="text-5xl font-thin">DataBase : {name}</h1>
       </header>
       <main className="mx-16 mb-10 min-h-[100vh] overflow-hidden bg-base-200 md:flex">
-        {typeof db === "undefined" ? (
+        {!dbLoaded ? (
           <div
             className="flex w-full flex-col items-center gap-5"
             data-testid="loading-spinner"
@@ -39,15 +40,7 @@ const DataBaseLayout = () => {
 
         <section className="sm:w-3/4">
           <WrappedErrorBoundary>
-            {typeof db === "undefined" ? (
-              <Loading />
-            ) : (
-              <Outlet
-                context={{
-                  db,
-                }}
-              />
-            )}
+            {!dbLoaded ? <Loading /> : <Outlet />}
           </WrappedErrorBoundary>
         </section>
       </main>

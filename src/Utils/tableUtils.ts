@@ -1,7 +1,8 @@
 import type { SqlValue } from "sql.js";
-import { queryType } from "../Hooks/useSqlQueries";
+
 import { CSSProperties } from "react";
 import { Column } from "@tanstack/react-table";
+import { queryType } from "../pages/Tables/DatabaseTable";
 
 /**
  * Function to create objects with properties from tableHead.

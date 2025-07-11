@@ -15,36 +15,38 @@ import { SqlValue } from "sql.js";
  * // 'loading' indicates whether the data is currently being fetched
  */
 export const useGetTableData = (query: string | undefined) => {
-  const { db } = useGetDBContext();
+  const { workerRef } = useGetDBContext();
   const [loading, setLoading] = useState(false);
   const [columns, setColumns] = useState<string[]>();
   const [row, setRow] = useState<SqlValue[][]>();
 
   useEffect(() => {
-    if (db && query) {
-      try {
-        setLoading(true);
-        const result = db.exec(query);
-        if (result.length > 0) {
-          const columns = result[0].columns;
-          const rows = result[0].values;
-          setColumns(columns);
-          setRow(rows);
+    (async () => {
+      if (workerRef?.current && query) {
+        try {
+          setLoading(true);
+          const result = await workerRef?.current.exeQuery(query);
+          if (result && result.length > 0) {
+            const columns = result[0].columns;
+            const rows = result[0].values;
+            setColumns(columns);
+            setRow(rows);
+          }
+        } catch (error) {
+          throw error;
+        } finally {
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
         }
-      } catch (error) {
-        throw error;
-      } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
       }
-    }
+    })();
     return () => {
       console.log("Clean up");
       setColumns(undefined);
       setRow(undefined);
     };
-  }, [db, query]);
+  }, [query]);
 
   return {
     row,

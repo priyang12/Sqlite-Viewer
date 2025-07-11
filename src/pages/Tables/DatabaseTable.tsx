@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   useReactTable,
   getCoreRowModel,
@@ -26,9 +26,10 @@ import TableBody from "../../Components/TableBody";
 import TableFoot from "../../Components/TableFoot";
 import Skeleton from "../../Components/Skeleton";
 import IconComponent from "../../Components/IconComponent";
-import type { Database, QueryExecResult } from "sql.js";
+import { useGetDBContext } from "../../Context/DBContext";
+import type { QueryExecResult } from "sql.js";
 
-type queryType = QueryExecResult[];
+export type queryType = QueryExecResult[];
 
 const pageSizes = [10, 20, 30, 40, 50];
 
@@ -304,34 +305,51 @@ function Table({
 
 const DatabaseTable = () => {
   const { table: tableName } = useParams();
-  const { db } = useOutletContext<{ db: Database }>();
+  if (!tableName) return null;
+
+  const { workerRef } = useGetDBContext();
+  const [result, setResult] = useState<QueryExecResult[][] | undefined>();
+
+  const tableInfoResult = result ? result[0] : [];
+  const foreignKeyResult = result ? result[1] : [];
 
   // Memoize the queries array to prevent infinite re-renders
   const queries = useMemo(
     () => [
       `PRAGMA table_info(${tableName});`,
       `PRAGMA foreign_key_list(${tableName});`,
-      tableName ? getTableQuery(tableName) : "",
+      getTableQuery(tableName),
     ],
     [tableName],
   );
 
-  const results = useMemo(() => {
-    return queries.map((item) => db.exec(item));
-  }, [db, queries]);
+  useEffect(() => {
+    (async () => {
+      if (workerRef?.current) {
+        const result = await workerRef?.current.runDataBaseQueries(queries);
+        if (result) {
+          console.log(result);
+          setResult(result);
+        }
+      }
+    })();
+    return () => {
+      setResult(undefined);
+    };
+  }, [workerRef?.current]);
 
   return (
     <div className="mx-5 h-full">
-      {results.length > 0 && tableName ? (
+      {result ? (
         <Table
           tableName={tableName}
           querySubstr={
-            results[2]
-              ? `${results[2][0].values[0][0]} FROM ${tableName};`
+            result[2]
+              ? `${result[2][0].values[0][0]} FROM ${tableName};`
               : undefined
           }
-          tableInfoResult={results[0]}
-          foreignKeyResult={results.length > 1 ? results[1] : []}
+          tableInfoResult={tableInfoResult}
+          foreignKeyResult={foreignKeyResult}
         />
       ) : null}
     </div>
