@@ -14,6 +14,7 @@ export interface SqlWorkerAPI {
   getAllTables: () => QueryResponse;
   getTableProperties: (tableName: string) => QueryResponse;
   getForeignKeys: (tableName: string) => QueryResponse;
+  getTableColumns: (tableName: string) => QueryResponse;
   clean: () => void;
 }
 
@@ -46,6 +47,10 @@ const api: SqlWorkerAPI = {
   },
   getForeignKeys(tableName) {
     const result = this.db?.exec(`PRAGMA foreign_key_list(${tableName});`);
+    return result;
+  },
+  getTableColumns(tableName) {
+    const result = this.db?.exec(`PRAGMA table_info(${tableName});`);
     return result;
   },
   exeQuery(query) {

@@ -1,48 +1,55 @@
 import React from "react";
-import { Database } from "sql.js";
-import { queries } from "../../Utils/queriesUtils";
 import ConditionFilter from "./ConditionFilter";
+import { useGetDBContext } from "../../Context/DBContext";
 
 // Current ability to build query.
 // column selection, select table, where Condition.
 // ex: SELECT col1, col2 FROM table_name WHERE search_condition;
 
 type BuilderComponentType = {
-  db: Database;
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
 };
-const BuilderComponent: React.FC<BuilderComponentType> = ({ db, setQuery }) => {
+const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
+  const { workerRef } = useGetDBContext();
   const [tables, setTables] = React.useState<string[]>([]);
   const [selectedTable, setSelectedTable] = React.useState<string>();
   const [columns, setColumns] = React.useState<string[]>([]);
   const [selectedCols, setSelectedCols] = React.useState<string[]>([]);
   const [whereConditions, setWhereConditions] = React.useState<string[]>();
 
-  console.log(whereConditions);
-
   React.useEffect(() => {
-    try {
-      const result = db.exec(queries.table.allTables);
-      const tableNames =
-        result?.[0]?.values.map((row) => row[0] as string) || [];
-      setTables(tableNames);
-    } catch (err) {
-      console.error("Failed to load tables", err);
-    }
-  }, [db]);
+    (async () => {
+      if (workerRef?.current) {
+        try {
+          const result = await workerRef.current.getAllTables();
+          if (result) {
+            const tableNames =
+              result?.[0]?.values.map((row) => row[0] as string) || [];
+            setTables(tableNames);
+          }
+        } catch (err) {
+          console.error("Failed to load tables", err);
+        }
+      }
+    })();
+  }, [workerRef?.current]);
 
   React.useEffect(() => {
     if (!selectedTable) return;
-    try {
-      const result = db.exec(`PRAGMA table_info(${selectedTable})`);
-      const columnNames =
-        result?.[0]?.values.map((row) => row[1] as string) || [];
-      setColumns(columnNames);
-    } catch (err) {
-      console.error(`Failed to get columns for ${selectedTable}`, err);
-    }
-  }, [selectedTable, db]);
+    (async () => {
+      try {
+        if (workerRef?.current) {
+          const result = await workerRef.current.getTableColumns(selectedTable);
+          const columnNames =
+            result?.[0]?.values.map((row) => row[1] as string) || [];
+          setColumns(columnNames);
+        }
+      } catch (err) {
+        console.error(`Failed to get columns for ${selectedTable}`, err);
+      }
+    })();
+  }, [selectedTable]);
 
   React.useEffect(() => {
     if (selectedCols.length === 0) {

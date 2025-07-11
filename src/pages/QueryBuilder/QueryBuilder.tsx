@@ -34,7 +34,8 @@ const InputQueryComponent: React.FC<{
 };
 
 const QueryBuilder = () => {
-  const { db } = useGetDBContext();
+  const { workerRef, dbLoaded } = useGetDBContext();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const parQuery = decodeURIComponent(searchParams.get("query") ?? "");
   const [query, setQuery] = React.useState(
@@ -49,19 +50,23 @@ const QueryBuilder = () => {
   const [useCodeEditor, setUseCodeEditor] = useState(false);
 
   React.useEffect(() => {
-    if (db && parQuery) {
-      try {
-        const res = db.exec(parQuery);
-        setResult(res);
-        setError(undefined);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
+    (async () => {
+      if (workerRef?.current && parQuery) {
+        try {
+          const res = await workerRef.current.exeQuery(parQuery);
+          if (res) {
+            setResult(res);
+            setError(undefined);
+          }
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            setError(err.message);
+          }
+          setResult(undefined);
         }
-        setResult(undefined);
       }
-    }
-  }, [db, parQuery]);
+    })();
+  }, [parQuery]);
 
   const executeQuery = () => {
     setSearchParams({ query: encodeURIComponent(query) });
@@ -86,8 +91,8 @@ const QueryBuilder = () => {
       </div>
       <div className="flex w-[80vw] flex-col gap-5 lg:flex-row">
         <div className="w-full">
-          {db ? (
-            <BuilderComponent db={db} query={query} setQuery={setQuery} />
+          {dbLoaded ? (
+            <BuilderComponent query={query} setQuery={setQuery} />
           ) : (
             <>Loading Database...</>
           )}
