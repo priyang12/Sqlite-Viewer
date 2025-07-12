@@ -335,7 +335,7 @@ const DatabaseTable = () => {
     return () => {
       setResult(undefined);
     };
-  }, [workerRef?.current]);
+  }, [workerRef?.current, queries]);
 
   return (
     <div className="mx-5 h-full">

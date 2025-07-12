@@ -5,3 +5,4 @@
 - [x] react-codemirror for manual input fallback in query builder
 - [x] code-splitting in routes and codemirror.
 - [x] fixed failing test cases.
+- [x] run sql.js in web worker with caching.
