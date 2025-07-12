@@ -2,13 +2,13 @@ import React, { lazy, Suspense, useState } from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import { Link, useSearchParams } from "react-router-dom";
-import HistoryPanel, { useRecentQueries } from "./HistoryPanel";
+import HistoryPanel, { useRecentQueries } from "./Components/HistoryPanel";
 import { WrappedErrorBoundary } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import BuilderComponent from "../../Components/BuilderComponent";
 import Loading from "../../Components/Loading";
 
 // spite codemirror import
-const CodeEditor = lazy(() => import("./CodeEditor"));
+const CodeEditor = lazy(() => import("./Components/CodeEditor"));
 
 const InputQueryComponent: React.FC<{
   query: string;
