@@ -83,7 +83,6 @@ export function isSelectQuery(query: string): boolean {
     "create",
     "replace",
     "truncate",
-    ";",
   ];
   if (!cleaned.startsWith("select")) return false;
 
