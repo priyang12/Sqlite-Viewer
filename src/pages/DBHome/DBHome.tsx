@@ -3,6 +3,7 @@ import {
   TableCellsIcon,
   ChartBarIcon,
   WrenchScrewdriverIcon,
+  HomeIcon,
 } from "@heroicons/react/24/outline";
 
 export default function DBHome() {
@@ -11,38 +12,52 @@ export default function DBHome() {
   const tools = [
     {
       label: "Tables",
-      icon: <TableCellsIcon className="h-28 w-28 text-primary" />,
+      icon: (
+        <TableCellsIcon className="h-10 w-10 text-primary md:h-28 md:w-28" />
+      ),
       link: `/db/${name}/tables`,
     },
     {
       label: "Charts",
-      icon: <ChartBarIcon className="h-28 w-28 text-secondary" />,
+      icon: (
+        <ChartBarIcon className="h-10 w-10 text-secondary md:h-28 md:w-28" />
+      ),
       link: `/db/${name}/charts`,
     },
     {
       label: "Query Builder",
-      icon: <WrenchScrewdriverIcon className="h-28 w-28 text-accent" />,
+      icon: (
+        <WrenchScrewdriverIcon className="h-10 w-10 text-accent md:h-28 md:w-28" />
+      ),
       link: `/db/${name}/queryBuilder`,
     },
   ];
 
   return (
     <div className="mx-auto h-full max-w-6xl space-y-6 p-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-primary">Database: {name}</h1>
-        <p className="mt-1 text-sm text-base-content">
+      <div className="space-y-2 text-center">
+        <h1 className="text-4xl font-bold text-primary">Database: {name}</h1>
+        <p className="text-base text-base-content">
           Choose a tool to explore your data
         </p>
       </div>
-      <div className="flex h-3/4 justify-center bg-base-200">
-        <div className="grid grid-cols-1 gap-6 self-center sm:grid-cols-3">
+      <div className="flex h-3/4 flex-col justify-evenly overflow-scroll bg-base-200 md:overflow-auto">
+        <div className="mt-4 flex h-fit justify-center gap-4">
+          <Link to="/" className="btn btn-outline btn-primary btn-sm md:btn-md">
+            Go to Home
+            <span>
+              <HomeIcon className="h-5 w-5 text-primary md:h-10 md:w-10" />
+            </span>
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-6 self-center p-2 md:grid-cols-3">
           {tools.map((tool) => (
             <Link
               to={tool.link}
               key={tool.label}
               className="card bg-base-100 shadow-md transition hover:scale-[1.02] hover:shadow-xl"
             >
-              <div className="card-body items-center text-center">
+              <div className="card-body  items-center text-center">
                 <div className="mb-4">{tool.icon}</div>
                 <h2 className="card-title">{tool.label}</h2>
               </div>
