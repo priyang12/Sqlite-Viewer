@@ -5,6 +5,7 @@ import SupportPage from "./pages/Support";
 import { DBProvider } from "./Context/DBContext";
 import { lazy, Suspense } from "react";
 import LoadingPage from "./Components/LoadingPage";
+import BuilderTable from "./pages/QueryBuilder/BuilderTable";
 
 // db routes
 const DBHome = lazy(() => import("./pages/DBHome"));
@@ -71,6 +72,10 @@ const routes = [
       {
         path: "queryBuilder",
         element: withSuspense(<QueryBuilder />),
+      },
+      {
+        path: "queryBuilder/table",
+        element: withSuspense(<BuilderTable />),
       },
       {
         path: "*",

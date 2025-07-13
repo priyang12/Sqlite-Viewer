@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import { createContext, useContext } from "react";
 import { storeFileName } from "../Hooks/useIndexedDB";
 import { useSqlWorker } from "../Hooks/useSqlWorker";
-import type { Database } from "sql.js";
 import type { IDBPDatabase } from "idb";
 import { useIndexedDBContext } from "./IndexedDBContext";
 import { useParams } from "react-router-dom";
-import { loadDatabase } from "../Hooks/useGetDB";
 import { Remote } from "comlink";
 import { SqlWorkerAPI } from "../workers/sqlWorker";
 

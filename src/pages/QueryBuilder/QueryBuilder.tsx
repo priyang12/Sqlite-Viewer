@@ -38,7 +38,13 @@ const InputQueryComponent: React.FC<{
 const shortTable = 5;
 const MAX_LENGTH = 50; // max string length before truncation
 
-function ShortTable({ result }: { result: QueryExecResult[] }) {
+function ShortTable({
+  result,
+  query,
+}: {
+  result: QueryExecResult[];
+  query: string;
+}) {
   const truncate = (value: any) => {
     if (typeof value === "string" && value.length > MAX_LENGTH) {
       return value.substring(0, MAX_LENGTH) + "...";
@@ -60,7 +66,7 @@ function ShortTable({ result }: { result: QueryExecResult[] }) {
         <h2 className="text-xl font-bold">
           Resulted Short Table : Limited {shortTable}
         </h2>
-        <Link to="/">
+        <Link to={`table?query=${query}`}>
           <button className="btn btn-primary btn-sm">Run Full Query</button>
         </Link>
       </div>
@@ -99,7 +105,6 @@ const QueryBuilder = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const parQuery = decodeURIComponent(searchParams.get("query") ?? "");
   const [query, setQuery] = React.useState("SELECT * FROM (TableName);");
-  // const parQuery = query
   const [result, setResult] = React.useState<QueryExecResult[]>();
   const [error, setError] = React.useState<string>();
 
@@ -111,8 +116,9 @@ const QueryBuilder = () => {
   React.useEffect(() => {
     (async () => {
       if (workerRef?.current && parQuery) {
+        const shorterQuery = parQuery.replace(";", ` Limit ${shortTable};`);
         try {
-          const res = await workerRef.current.exeQuery(parQuery);
+          const res = await workerRef.current.exeQuery(shorterQuery);
           if (res) {
             setResult(res);
             setError(undefined);
@@ -197,7 +203,10 @@ const QueryBuilder = () => {
             </Suspense>
           )}
 
-          {result && result.length > 0 ? <ShortTable result={result} /> : null}
+          {result && result.length > 0 ? (
+            // replace parQuery to query once populating the data is done.
+            <ShortTable result={result} query={parQuery} />
+          ) : null}
         </div>
         <div className="h-fit rounded border border-base-300 bg-base-200 p-4 shadow-sm">
           <WrappedErrorBoundary>

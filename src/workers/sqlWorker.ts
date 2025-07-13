@@ -46,7 +46,6 @@ const api: SqlWorkerAPI = {
   async preFetchData() {
     const tables = this.getAllTables();
     if (!tables || !Array.isArray(tables)) return;
-    console.log("Preloading schema for tables:", tables);
 
     await Promise.all(
       tables.map(async (table) => {
@@ -55,7 +54,6 @@ const api: SqlWorkerAPI = {
         this.getTableColumns(table); // optional: also preload columns
       }),
     );
-    console.log("Prefetch complete.");
   },
   exeQuery(query) {
     // this similar may in future we can add specific keys for each queries.
