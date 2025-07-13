@@ -73,10 +73,8 @@ const emptyCondition = {
 
 const ConditionFilter: React.FC<{
   columns: string[];
-  setWhereConditions: React.Dispatch<
-    React.SetStateAction<string[] | undefined>
-  >;
-}> = ({ columns, setWhereConditions }) => {
+  insertWhereConditions: (conditions: string[]) => void;
+}> = ({ columns, insertWhereConditions }) => {
   const [conditions, setConditions] = React.useState<string[]>();
   const [currentCondition, setCurrentCondition] =
     React.useState<Condition>(emptyCondition);
@@ -191,7 +189,7 @@ const ConditionFilter: React.FC<{
           <div>
             <button
               className="btn"
-              onClick={() => setWhereConditions(conditions)}
+              onClick={() => insertWhereConditions(conditions)}
             >
               Insert Conditions
             </button>

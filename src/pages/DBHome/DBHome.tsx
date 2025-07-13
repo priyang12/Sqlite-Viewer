@@ -46,7 +46,7 @@ export default function DBHome() {
           <Link to="/" className="btn btn-outline btn-primary btn-sm md:btn-md">
             Go to Home
             <span>
-              <HomeIcon className="h-5 w-5 text-primary md:h-10 md:w-10" />
+              <HomeIcon className="h-5 w-5 text-primary hover:text-base-200 md:h-10 md:w-10" />
             </span>
           </Link>
         </div>

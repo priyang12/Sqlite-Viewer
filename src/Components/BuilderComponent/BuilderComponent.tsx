@@ -16,7 +16,6 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
   const [selectedTable, setSelectedTable] = React.useState<string>();
   const [columns, setColumns] = React.useState<string[]>([]);
   const [selectedCols, setSelectedCols] = React.useState<string[]>([]);
-  const [whereConditions, setWhereConditions] = React.useState<string[]>();
 
   React.useEffect(() => {
     (async () => {
@@ -60,8 +59,23 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
     }
   }, [selectedTable, selectedCols]);
 
-  React.useEffect(() => {
-    if (whereConditions && whereConditions.length > 0) {
+  const tableOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const cols = Array.from(e.target.selectedOptions).map((opt) => opt.value);
+    setSelectedCols(cols);
+
+    // Update query immediately as part of the event
+    if (!selectedTable) return; // guard clause
+
+    const query =
+      cols.length === 0
+        ? `SELECT * FROM ${selectedTable};`
+        : `SELECT ${cols.join(", ")} FROM ${selectedTable};`;
+
+    setQuery(query);
+  };
+
+  const insertWhereConditions = (conditions: string[]) => {
+    if (conditions && conditions.length > 0) {
       setQuery((prevQuery) => {
         const semicolonIndex = prevQuery.lastIndexOf(";");
         const baseQuery =
@@ -75,11 +89,13 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
         const queryWithoutWhere = baseQuery.replace(whereRegex, "");
 
         // Append new WHERE clause
-        const newWhereClause = ` WHERE ${whereConditions.join(" AND ")}`;
+        const newWhereClause = ` WHERE ${conditions.join(" AND ")}`;
         return `${queryWithoutWhere}${newWhereClause};`;
       });
+    } else {
+      // remove where form query.
     }
-  }, [whereConditions]);
+  };
 
   return (
     <div>
@@ -90,11 +106,7 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
             multiple={!!selectedTable}
             size={Math.min(columns.length, 6)}
             disabled={!columns.length}
-            onChange={(e) =>
-              setSelectedCols(
-                Array.from(e.target.selectedOptions).map((opt) => opt.value),
-              )
-            }
+            onChange={tableOnChange}
             className="select select-bordered my-2 h-auto min-h-[8rem] w-full p-2 text-sm focus:outline-none focus:ring focus:ring-primary/50 disabled:opacity-50"
           >
             {columns.map((col, index) => (
@@ -126,7 +138,7 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
           <span>{`)`}</span>
         </div>
         <ConditionFilter
-          setWhereConditions={setWhereConditions}
+          insertWhereConditions={insertWhereConditions}
           columns={columns}
         />
       </div>

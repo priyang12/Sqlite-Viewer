@@ -1,7 +1,6 @@
 import InputDB from "../Components/InputDB/InputDB";
 import { Link } from "react-router-dom";
-import type { storedKeysType } from "../Hooks/useGetUserDBs";
-import { useDBStore } from "../Hooks/useDBStore";
+import { storedKeysType, useDBStore } from "../Hooks/useDBStore";
 import ErrorFallbackComponent, {
   WrappedErrorBoundary,
 } from "../Components/ErrorFallbackComponent/ErrorFallbackComponent";
