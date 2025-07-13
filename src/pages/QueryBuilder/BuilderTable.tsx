@@ -1,11 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Link,
-  useNavigate,
-  Navigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import {
@@ -13,9 +7,10 @@ import {
   getCoreRowModel,
   flexRender,
   ColumnDef,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 
-const useFetchData = (parQuery: string) => {
+const useFetchData = (parQuery: string | null) => {
   const { workerRef, dbLoaded } = useGetDBContext();
   const [result, setResult] = useState<QueryExecResult[]>();
   const [error, setError] = useState<string>();
@@ -50,11 +45,17 @@ const useFetchData = (parQuery: string) => {
 };
 
 const BuilderTable = () => {
-  const [searchParams] = useSearchParams();
-  const { name } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const parQuery = decodeURIComponent(searchParams.get("query") ?? "");
+  const searchParams = new URLSearchParams(location.search);
+  const parQuery = searchParams.get("query");
+
   const { result, error, isLoading } = useFetchData(parQuery);
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10, // change as needed
+  });
 
   // Extract table data and column definitions
   const tableData = useMemo(() => {
@@ -86,15 +87,21 @@ const BuilderTable = () => {
   const table = useReactTable({
     data: tableData,
     columns,
-    getCoreRowModel: getCoreRowModel(),
     filterFns: {
       // @ts-ignore
       multipleFilter: undefined,
     },
+    state: {
+      pagination,
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
   });
 
   if (!parQuery) {
-    return <Navigate to={`/db/${name}/queryBuilder`} replace={true} />;
+    const pathWithoutTable = location.pathname.replace(/\/table\/?$/, "");
+    return <Navigate to={pathWithoutTable} replace={true} />;
   }
 
   return (
@@ -130,7 +137,7 @@ const BuilderTable = () => {
       ) : null}
 
       {!error && tableData.length > 0 ? (
-        <div className="overflow-x-auto rounded border shadow">
+        <div className="h-[80vh] overflow-x-auto rounded border shadow">
           <table className="table table-zebra table-sm">
             <thead className="bg-base-200">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -147,7 +154,7 @@ const BuilderTable = () => {
               ))}
             </thead>
             <tbody>
-              {table.getRowModel().rows.map((row) => (
+              {table.getPaginationRowModel().rows.map((row) => (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-2">
@@ -163,6 +170,28 @@ const BuilderTable = () => {
           </table>
         </div>
       ) : null}
+      <div className="mt-4 flex items-center justify-between">
+        <div>
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}
+        </div>
+        <div className="flex gap-2">
+          <button
+            className="btn btn-sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </button>
+          <button
+            className="btn btn-sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

@@ -66,7 +66,7 @@ function ShortTable({
         <h2 className="text-xl font-bold">
           Resulted Short Table : Limited {shortTable}
         </h2>
-        <Link to={`table?query=${query}`}>
+        <Link to={`table?query=${query}`} tabIndex={-1}>
           <button className="btn btn-primary btn-sm">Run Full Query</button>
         </Link>
       </div>
