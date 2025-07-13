@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  Navigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import {
@@ -14,14 +20,13 @@ const useFetchData = (parQuery: string) => {
   const [result, setResult] = useState<QueryExecResult[]>();
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     (async () => {
       setIsLoading(true);
       if (parQuery && workerRef?.current && dbLoaded) {
         try {
-          const res = await workerRef.current.exeQuery(
-            "SELECT id, name FROM Tag;",
-          );
+          const res = await workerRef.current.exeQuery(parQuery);
           setResult(res);
           setError(undefined);
         } catch (err: unknown) {
@@ -46,6 +51,8 @@ const useFetchData = (parQuery: string) => {
 
 const BuilderTable = () => {
   const [searchParams] = useSearchParams();
+  const { name } = useParams();
+  const navigate = useNavigate();
   const parQuery = decodeURIComponent(searchParams.get("query") ?? "");
   const { result, error, isLoading } = useFetchData(parQuery);
 
@@ -86,9 +93,23 @@ const BuilderTable = () => {
     },
   });
 
+  if (!parQuery) {
+    return <Navigate to={`/db/${name}/queryBuilder`} replace={true} />;
+  }
+
   return (
     <div className="p-4">
-      <h1 className="mb-4 text-2xl font-semibold">Query: {parQuery}</h1>
+      <div className="flex w-[80vw] justify-between">
+        <h1 className="mb-4 text-2xl font-semibold">Query: {parQuery}</h1>
+        <Link
+          to=".."
+          relative="route"
+          className="btn btn-info btn-sm text-white"
+          onClick={() => navigate(-1)}
+        >
+          ← Go Back
+        </Link>
+      </div>
 
       {isLoading && (
         <div className="alert alert-info mb-4 shadow">

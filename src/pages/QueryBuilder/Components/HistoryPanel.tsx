@@ -79,6 +79,13 @@ const HistoryPanel: React.FC<{
   clearHistory: () => void;
   executeQuery: (query: string) => void;
 }> = ({ queries, clearHistory, executeQuery }) => {
+  const scrollToPageBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <section className="h-full w-full rounded-lg border-2 border-solid border-primary bg-base-100 p-4 shadow-md">
       <div className="flex justify-between">
@@ -126,7 +133,10 @@ const HistoryPanel: React.FC<{
                   <div className="divider divider-horizontal" />
                   <button
                     className="h-[30px] rounded border border-blue-600 px-2 py-1 text-sm text-blue-600 hover:bg-red-50"
-                    onClick={() => executeQuery(item.query)}
+                    onClick={() => {
+                      scrollToPageBottom();
+                      executeQuery(item.query);
+                    }}
                   >
                     Run
                   </button>
