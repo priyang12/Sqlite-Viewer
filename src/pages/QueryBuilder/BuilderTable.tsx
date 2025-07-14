@@ -8,6 +8,7 @@ import {
   flexRender,
   ColumnDef,
   getPaginationRowModel,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 
 const useFetchData = (parQuery: string | null) => {
@@ -52,6 +53,7 @@ const BuilderTable = () => {
 
   const { result, error, isLoading } = useFetchData(parQuery);
 
+  const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10, // change as needed
@@ -92,11 +94,14 @@ const BuilderTable = () => {
       multipleFilter: undefined,
     },
     state: {
+      globalFilter,
       pagination,
     },
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   if (!parQuery) {
@@ -136,8 +141,20 @@ const BuilderTable = () => {
         </div>
       ) : null}
 
+      <label htmlFor="Search" className="label label-text">
+        Global Search
+      </label>
+      <input
+        id="Search"
+        type="text"
+        placeholder="Search all columns..."
+        value={globalFilter}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        className="input input-primary mb-10"
+      />
+
       {!error && tableData.length > 0 ? (
-        <div className="h-[80vh] overflow-x-auto rounded border shadow">
+        <div className="h-[60vh] overflow-x-auto rounded border shadow">
           <table className="table table-zebra table-sm">
             <thead className="bg-base-200">
               {table.getHeaderGroups().map((headerGroup) => (
