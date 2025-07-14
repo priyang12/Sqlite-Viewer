@@ -18,7 +18,7 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({
   const {
     tableName,
     selectedCols: populatedSelectedCols,
-    whereConditions: populatedWhereConditions,
+    whereConditions: _,
   } = getDataFromQuery(query);
   const { workerRef } = useGetDBContext();
   const [tables, setTables] = React.useState<string[]>([]);
@@ -28,10 +28,6 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({
   const [columns, setColumns] = React.useState<string[]>([]);
   const [selectedCols, setSelectedCols] = React.useState<string[]>(
     populatedSelectedCols,
-  );
-
-  const [whereConditions, setWhereConditions] = React.useState<string[]>(
-    populatedWhereConditions,
   );
 
   React.useEffect(() => {
@@ -65,17 +61,6 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({
     })();
   }, [selectedTable]);
 
-  React.useEffect(() => {
-    if (selectedCols.length === 0 && selectedTable) {
-      const query = `SELECT * FROM ${selectedTable};`;
-      setQuery(query);
-    }
-    if (selectedTable && selectedCols.length > 0) {
-      const query = `SELECT ${selectedCols.join(", ")} FROM ${selectedTable};`;
-      setQuery(query);
-    }
-  }, [selectedTable, selectedCols]);
-
   const tableOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const cols = Array.from(e.target.selectedOptions).map((opt) => opt.value);
     setSelectedCols(cols);
@@ -106,7 +91,7 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({
         const queryWithoutWhere = baseQuery.replace(whereRegex, "");
 
         // Append new WHERE clause
-        const newWhereClause = ` WHERE ${whereConditions.join(" AND ")}`;
+        const newWhereClause = ` WHERE ${conditions.join(" AND ")}`;
         return `${queryWithoutWhere}${newWhereClause}`;
       });
     } else {
@@ -123,12 +108,8 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({
             multiple={!!selectedTable}
             size={Math.min(columns.length, 6)}
             disabled={!columns.length}
-            value={populatedSelectedCols}
-            onChange={(e) =>
-              setSelectedCols(
-                Array.from(e.target.selectedOptions).map((opt) => opt.value),
-              )
-            }
+            value={selectedCols}
+            onChange={tableOnChange}
             className="select select-bordered my-2 h-auto min-h-[8rem] w-full p-2 text-sm focus:outline-none focus:ring focus:ring-primary/50 disabled:opacity-50"
           >
             {columns.map((col, index) => (
