@@ -8,4 +8,4 @@
 - [x] run sql.js in web worker with caching.
 - [x] query only start with "select" in sql exe.
 - [x] Builder table page and shorter table on main.
-- [] populate Data in Builder form URL.
+- [x] populate Data in Builder form URL.

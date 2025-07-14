@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState } from "react";
+import React, { lazy, memo, Suspense, useEffect, useState } from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
 import { Link, useSearchParams } from "react-router-dom";
@@ -99,24 +99,32 @@ function ShortTable({
   );
 }
 
+const MemoBuilderComponent = memo(BuilderComponent);
+
 const QueryBuilder = () => {
   const { workerRef, dbLoaded } = useGetDBContext();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const parQuery = decodeURIComponent(searchParams.get("query") ?? "");
-  const [query, setQuery] = React.useState("SELECT * FROM (TableName);");
-  const [result, setResult] = React.useState<QueryExecResult[]>();
-  const [error, setError] = React.useState<string>();
+  const [query, setQuery] = useState(parQuery);
+  const [result, setResult] = useState<QueryExecResult[]>();
+  const [error, setError] = useState<string>();
 
   const { queries, addQuery, clearQueries } = useRecentQueries();
 
   // toggle state
   const [useCodeEditor, setUseCodeEditor] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       if (workerRef?.current && parQuery) {
-        const shorterQuery = parQuery.replace(";", ` Limit ${shortTable};`);
+        let shorterQuery = "";
+        const index = parQuery.indexOf(";");
+        if (index > 0) {
+          shorterQuery = parQuery.replace(";", ` Limit ${shortTable};`);
+        } else {
+          shorterQuery = parQuery + ` Limit ${shortTable}`;
+        }
         try {
           const res = await workerRef.current.exeQuery(shorterQuery);
           if (res) {
@@ -167,7 +175,7 @@ const QueryBuilder = () => {
       <div className="flex w-[80vw] flex-col gap-5 lg:flex-row">
         <div className="w-full">
           {dbLoaded ? (
-            <BuilderComponent query={query} setQuery={setQuery} />
+            <MemoBuilderComponent query={query} setQuery={setQuery} />
           ) : (
             <>Loading Database...</>
           )}

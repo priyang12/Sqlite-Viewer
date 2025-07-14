@@ -1,6 +1,7 @@
 import React from "react";
 import ConditionFilter from "./ConditionFilter";
 import { useGetDBContext } from "../../Context/DBContext";
+import { getDataFromQuery } from "../../Utils/queriesUtils";
 
 // Current ability to build query.
 // column selection, select table, where Condition.
@@ -10,12 +11,28 @@ type BuilderComponentType = {
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
 };
-const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
+const BuilderComponent: React.FC<BuilderComponentType> = ({
+  query,
+  setQuery,
+}) => {
+  const {
+    tableName,
+    selectedCols: populatedSelectedCols,
+    whereConditions: populatedWhereConditions,
+  } = getDataFromQuery(query);
   const { workerRef } = useGetDBContext();
   const [tables, setTables] = React.useState<string[]>([]);
-  const [selectedTable, setSelectedTable] = React.useState<string>();
+  const [selectedTable, setSelectedTable] = React.useState<string | undefined>(
+    tableName,
+  );
   const [columns, setColumns] = React.useState<string[]>([]);
-  const [selectedCols, setSelectedCols] = React.useState<string[]>([]);
+  const [selectedCols, setSelectedCols] = React.useState<string[]>(
+    populatedSelectedCols,
+  );
+
+  const [whereConditions, setWhereConditions] = React.useState<string[]>(
+    populatedWhereConditions,
+  );
 
   React.useEffect(() => {
     (async () => {
@@ -49,7 +66,7 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
   }, [selectedTable]);
 
   React.useEffect(() => {
-    if (selectedCols.length === 0) {
+    if (selectedCols.length === 0 && selectedTable) {
       const query = `SELECT * FROM ${selectedTable};`;
       setQuery(query);
     }
@@ -89,8 +106,8 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
         const queryWithoutWhere = baseQuery.replace(whereRegex, "");
 
         // Append new WHERE clause
-        const newWhereClause = ` WHERE ${conditions.join(" AND ")}`;
-        return `${queryWithoutWhere}${newWhereClause};`;
+        const newWhereClause = ` WHERE ${whereConditions.join(" AND ")}`;
+        return `${queryWithoutWhere}${newWhereClause}`;
       });
     } else {
       // remove where form query.
@@ -106,7 +123,12 @@ const BuilderComponent: React.FC<BuilderComponentType> = ({ setQuery }) => {
             multiple={!!selectedTable}
             size={Math.min(columns.length, 6)}
             disabled={!columns.length}
-            onChange={tableOnChange}
+            value={populatedSelectedCols}
+            onChange={(e) =>
+              setSelectedCols(
+                Array.from(e.target.selectedOptions).map((opt) => opt.value),
+              )
+            }
             className="select select-bordered my-2 h-auto min-h-[8rem] w-full p-2 text-sm focus:outline-none focus:ring focus:ring-primary/50 disabled:opacity-50"
           >
             {columns.map((col, index) => (

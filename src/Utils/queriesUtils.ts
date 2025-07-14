@@ -89,3 +89,54 @@ export function isSelectQuery(query: string): boolean {
   // Check for forbidden keywords anywhere in the query
   return !forbiddenKeywords.some((kw) => cleaned.includes(kw));
 }
+
+type ParsedQuery = {
+  tableName?: string;
+  selectedCols: string[];
+  whereConditions: string[];
+};
+
+// fn to extract populate data from query
+// need to change the condition data structure later
+// currently this setup don't work for ConditionFilter UI since the
+// data structure is quite different.
+export function getDataFromQuery(query: string): ParsedQuery {
+  const cleanedQuery = query.trim().replace(/\s+/g, " ");
+  const selectedCols: string[] = [];
+  let tableName: string | undefined;
+  let whereConditions: string[] = [];
+
+  // Extract SELECT columns
+  const selectMatch = cleanedQuery.match(/SELECT (.+?) FROM/i);
+  if (selectMatch) {
+    const cols = selectMatch[1].trim();
+    selectedCols.push(
+      ...(cols === "*" ? ["*"] : cols.split(",").map((col) => col.trim())),
+    );
+  }
+
+  // Extract table name
+  const fromMatch = cleanedQuery.match(/FROM\s+([^\s;]+)/i);
+  if (fromMatch) {
+    tableName = fromMatch[1];
+  }
+
+  // Extract WHERE conditions
+  const whereMatch = cleanedQuery.match(
+    /WHERE\s+(.+?)(ORDER BY|GROUP BY|LIMIT|$)/i,
+  );
+  if (whereMatch) {
+    const conditions = whereMatch[1].trim();
+    // Split by AND/OR while keeping conditions clean
+    whereConditions = conditions
+      .split(/(?:\s+AND\s+|\s+OR\s+)/i)
+      .map((c) => c.trim())
+      .filter(Boolean);
+  }
+
+  return {
+    tableName,
+    selectedCols,
+    whereConditions,
+  };
+}
