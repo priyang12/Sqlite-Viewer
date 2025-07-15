@@ -10,6 +10,129 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  profile   Profile?
+  posts     Post[]
+  comments  Comment[]
+  messages  Message[]
+  memberships Membership[]
+  projects  Project[] @relation("ProjectOwners")
+  tasks     Task[]    @relation("TaskAssignees")
+  createdAt DateTime  @default(now())
+
+  Chat Chat[] @relation("ChatMembers")
+  
+}
+
+model Profile {
+  id        Int     @id @default(autoincrement())
+  bio       String?
+  avatarUrl String?
+  userId    Int     @unique
+  user      User    @relation(fields: [userId], references: [id])
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String
+  authorId  Int
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  tags      Tag[]     @relation("PostTags")
+  createdAt DateTime  @default(now())
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  content   String
+  postId    Int
+  authorId  Int
+  post      Post      @relation(fields: [postId], references: [id])
+  author    User      @relation(fields: [authorId], references: [id])
+  parentId  Int?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  createdAt DateTime  @default(now())
+}
+
+model Tag {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  posts Post[]  @relation("PostTags")
+}
+
+model Team {
+  id      Int     @id @default(autoincrement())
+  name    String
+  projects Project[]
+  memberships Membership[]
+
+}
+
+model Membership {
+  userId  Int
+  teamId  Int
+  role    String
+  joinedAt DateTime @default(now())
+
+  user    User @relation(fields: [userId], references: [id])
+  team    Team @relation(fields: [teamId], references: [id])
+
+  @@id([userId, teamId])
+}
+
+
+model Project {
+  id         Int       @id @default(autoincrement())
+  name       String
+  ownerId    Int
+  owner      User      @relation("ProjectOwners", fields: [ownerId], references: [id])
+  teamId     Int?
+  team       Team?     @relation(fields: [teamId], references: [id])
+  tasks      Task[]
+  createdAt  DateTime  @default(now())
+}
+
+model Task {
+  id         Int       @id @default(autoincrement())
+  title      String
+  description String
+  projectId  Int
+  project    Project   @relation(fields: [projectId], references: [id])
+  assignees  User[]    @relation("TaskAssignees")
+  dueDate    DateTime
+  status     TaskStatus
+  createdAt  DateTime  @default(now())
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String
+  senderId   Int
+  chatId     Int
+  sender     User     @relation(fields: [senderId], references: [id])
+  chat       Chat     @relation(fields: [chatId], references: [id])
+  sentAt     DateTime @default(now())
+}
+
+model Chat {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  messages  Message[]
+  members   User[]   @relation("ChatMembers")
+}
+
