@@ -111,29 +111,51 @@ function QueryLayout() {
   );
 }
 
+function Meta() {
+  const { name } = useParams();
+
+  const readableTitle = name
+    ? `Schema Chart for "${name}" | Your Databases`
+    : "Database Schema Chart | Your Databases";
+
+  const description = name
+    ? `Visualize the relationships between tables in the "${name}" database. This interactive chart helps you understand table connections via foreign keys.`
+    : "View an interactive schema chart to explore table relationships in your database.";
+
+  return (
+    <>
+      <title>{readableTitle}</title>
+      <meta name="description" content={description} />
+    </>
+  );
+}
+
 function ChartDB() {
   const { name } = useParams();
   const { dbLoaded } = useGetDBContext();
 
   return (
-    <div className="flex h-full flex-col bg-base-200 p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-base-content">
-          Chart: <span className="font-mono text-info">{name}</span>
-        </h1>
-        <Link
-          to=".."
-          relative="route"
-          className="btn btn-info btn-sm text-white"
-        >
-          ← Go Back
-        </Link>
-      </div>
+    <>
+      <Meta />
+      <div className="flex h-full flex-col bg-base-200 p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-base-content">
+            Chart: <span className="font-mono text-info">{name}</span>
+          </h1>
+          <Link
+            to=".."
+            relative="route"
+            className="btn btn-info btn-sm text-white"
+          >
+            ← Go Back
+          </Link>
+        </div>
 
-      <div className="card min-h-0 flex-1 overflow-hidden bg-base-100 shadow-lg">
-        {dbLoaded ? <QueryLayout /> : <Loading />}
+        <div className="card min-h-0 flex-1 overflow-hidden bg-base-100 shadow-lg">
+          {dbLoaded ? <QueryLayout /> : <Loading />}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

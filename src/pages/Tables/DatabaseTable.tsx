@@ -303,6 +303,25 @@ function Table({
   );
 }
 
+function Meta() {
+  const { name, table } = useParams();
+
+  const readableTitle = table
+    ? `Table: ${table} | ${name}`
+    : `Table View | ${name}`;
+
+  const description = table
+    ? `Explore the structure and contents of the "${table}" table. View columns, data types, and entries.`
+    : "Inspect the structure and data of a selected database table.";
+
+  return (
+    <>
+      <title>{readableTitle}</title>
+      <meta name="description" content={description} />
+    </>
+  );
+}
+
 const DatabaseTable = () => {
   const { table: tableName } = useParams();
   if (!tableName) return null;
@@ -338,20 +357,23 @@ const DatabaseTable = () => {
   }, [workerRef?.current, queries]);
 
   return (
-    <div className="mx-5 h-full">
-      {result ? (
-        <Table
-          tableName={tableName}
-          querySubstr={
-            result[2]
-              ? `${result[2][0].values[0][0]} FROM ${tableName};`
-              : undefined
-          }
-          tableInfoResult={tableInfoResult}
-          foreignKeyResult={foreignKeyResult}
-        />
-      ) : null}
-    </div>
+    <>
+      <Meta />
+      <div className="mx-5 h-full">
+        {result ? (
+          <Table
+            tableName={tableName}
+            querySubstr={
+              result[2]
+                ? `${result[2][0].values[0][0]} FROM ${tableName};`
+                : undefined
+            }
+            tableInfoResult={tableInfoResult}
+            foreignKeyResult={foreignKeyResult}
+          />
+        ) : null}
+      </div>
+    </>
   );
 };
 

@@ -45,6 +45,27 @@ const useFetchData = (parQuery: string | null) => {
   };
 };
 
+function Meta() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const query = decodeURIComponent(searchParams.get("query") || "");
+
+  const renderTitle = query
+    ? `Query Result | ${query.slice(0, 30)}${query.length > 30 ? "..." : ""}`
+    : "Query Results | Your Databases";
+
+  const renderDescription = query
+    ? `View paginated and searchable results for your custom SQL query: "${query}". This table helps you explore and analyze your database output.`
+    : "Browse the full results of your SQL query in a searchable, paginated table view.";
+
+  return (
+    <>
+      <title>{renderTitle}</title>
+      <meta name="description" content={renderDescription} />
+    </>
+  );
+}
+
 const BuilderTable = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -110,106 +131,109 @@ const BuilderTable = () => {
   }
 
   return (
-    <div className="p-4">
-      <div className="flex w-[80vw] justify-between">
-        <h1 className="mb-4 text-2xl font-semibold">Query: {parQuery}</h1>
-        <Link
-          to=".."
-          relative="route"
-          className="btn btn-info btn-sm text-white"
-          onClick={() => navigate(-1)}
-        >
-          ← Go Back
-        </Link>
-      </div>
-
-      {isLoading && (
-        <div className="alert alert-info mb-4 shadow">
-          <span>Running query...</span>
-        </div>
-      )}
-
-      {error && (
-        <div className="alert alert-error mb-4 shadow-lg">
-          <span>{error}</span>
-        </div>
-      )}
-
-      {!error && !isLoading && tableData.length === 0 ? (
-        <div className="alert alert-info mb-4 shadow">
-          <span>No results returned.</span>
-        </div>
-      ) : null}
-
-      <label htmlFor="Search" className="label label-text">
-        Global Search
-      </label>
-      <input
-        id="Search"
-        type="text"
-        placeholder="Search all columns..."
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        className="input input-primary mb-10"
-      />
-
-      {!error && tableData.length > 0 ? (
-        <div className="h-[60vh] overflow-x-auto rounded border shadow">
-          <table className="table table-zebra table-sm">
-            <thead className="bg-base-200">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id} className="px-4 py-2">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getPaginationRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-2">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-      <div className="mt-4 flex items-center justify-between">
-        <div>
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </div>
-        <div className="flex gap-2">
-          <button
-            className="btn btn-sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+    <>
+      <Meta />
+      <div className="p-4">
+        <div className="flex w-[80vw] justify-between">
+          <h1 className="mb-4 text-2xl font-semibold">Query: {parQuery}</h1>
+          <Link
+            to=".."
+            relative="route"
+            className="btn btn-info btn-sm text-white"
+            onClick={() => navigate(-1)}
           >
-            Previous
-          </button>
-          <button
-            className="btn btn-sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </button>
+            ← Go Back
+          </Link>
+        </div>
+
+        {isLoading && (
+          <div className="alert alert-info mb-4 shadow">
+            <span>Running query...</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="alert alert-error mb-4 shadow-lg">
+            <span>{error}</span>
+          </div>
+        )}
+
+        {!error && !isLoading && tableData.length === 0 ? (
+          <div className="alert alert-info mb-4 shadow">
+            <span>No results returned.</span>
+          </div>
+        ) : null}
+
+        <label htmlFor="Search" className="label label-text">
+          Global Search
+        </label>
+        <input
+          id="Search"
+          type="text"
+          placeholder="Search all columns..."
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="input input-primary mb-10"
+        />
+
+        {!error && tableData.length > 0 ? (
+          <div className="h-[60vh] overflow-x-auto rounded border shadow">
+            <table className="table table-zebra table-sm">
+              <thead className="bg-base-200">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th key={header.id} className="px-4 py-2">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getPaginationRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-4 py-2">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+        <div className="mt-4 flex items-center justify-between">
+          <div>
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </div>
+          <div className="flex gap-2">
+            <button
+              className="btn btn-sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </button>
+            <button
+              className="btn btn-sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

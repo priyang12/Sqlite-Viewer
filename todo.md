@@ -9,3 +9,5 @@
 - [x] query only start with "select" in sql exe.
 - [x] Builder table page and shorter table on main.
 - [x] populate Data in Builder form URL.
+- [x] PWA.
+- [x] Meta Data

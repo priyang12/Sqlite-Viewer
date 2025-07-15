@@ -1,7 +1,7 @@
 import React, { lazy, memo, Suspense, useEffect, useState } from "react";
 import { useGetDBContext } from "../../Context/DBContext";
 import { QueryExecResult } from "sql.js";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import HistoryPanel, { useRecentQueries } from "./Components/HistoryPanel";
 import { WrappedErrorBoundary } from "../../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import BuilderComponent from "../../Components/BuilderComponent";
@@ -99,6 +99,24 @@ function ShortTable({
   );
 }
 
+function Meta() {
+  const { name } = useParams();
+
+  const readableTitle = name
+    ? `Query Builder | ${name}`
+    : "Query Builder | Database";
+
+  return (
+    <>
+      <title>{readableTitle}</title>
+      <meta
+        name="description"
+        content="Write and run SELECT SQL queries using a visual or code-based interface. Browse results and manage your recent query history."
+      />
+    </>
+  );
+}
+
 const MemoBuilderComponent = memo(BuilderComponent);
 
 const QueryBuilder = () => {
@@ -161,74 +179,77 @@ const QueryBuilder = () => {
   };
 
   return (
-    <div className="flex flex-col items-center p-6">
-      <div className="flex w-[80vw] justify-between">
-        <h1 className="mb-4 text-2xl font-semibold">Query</h1>
-        <Link
-          to=".."
-          relative="route"
-          className="btn btn-info btn-sm text-white"
-        >
-          ← Go Back
-        </Link>
-      </div>
-      <div className="flex w-[80vw] flex-col gap-5 lg:flex-row">
-        <div className="w-full">
-          {dbLoaded ? (
-            <MemoBuilderComponent query={query} setQuery={setQuery} />
-          ) : (
-            <>Loading Database...</>
-          )}
-
-          <div className="flex flex-col lg:flex-row lg:items-center">
-            <button
-              onClick={() => setUseCodeEditor((prev) => !prev)}
-              className="btn btn-outline btn-info mb-4"
-            >
-              {useCodeEditor ? "Use Visual Input" : "Use SQL Editor"}
-            </button>
-
-            {error && (
-              <div className="ml-auto font-mono text-red-500">
-                <strong>Error:</strong> {error}
-              </div>
+    <>
+      <Meta />
+      <div className="flex flex-col items-center p-6">
+        <div className="flex w-[80vw] justify-between">
+          <h1 className="mb-4 text-2xl font-semibold">Query</h1>
+          <Link
+            to=".."
+            relative="route"
+            className="btn btn-info btn-sm text-white"
+          >
+            ← Go Back
+          </Link>
+        </div>
+        <div className="flex w-[80vw] flex-col gap-5 lg:flex-row">
+          <div className="w-full">
+            {dbLoaded ? (
+              <MemoBuilderComponent query={query} setQuery={setQuery} />
+            ) : (
+              <>Loading Database...</>
             )}
-          </div>
 
-          {!useCodeEditor ? (
-            <InputQueryComponent
-              query={query}
-              setQuery={setQuery}
-              executeQuery={executeQuery}
-            />
-          ) : (
-            <Suspense fallback={<Loading />}>
-              <CodeEditor
+            <div className="flex flex-col lg:flex-row lg:items-center">
+              <button
+                onClick={() => setUseCodeEditor((prev) => !prev)}
+                className="btn btn-outline btn-info mb-4"
+              >
+                {useCodeEditor ? "Use Visual Input" : "Use SQL Editor"}
+              </button>
+
+              {error && (
+                <div className="ml-auto font-mono text-red-500">
+                  <strong>Error:</strong> {error}
+                </div>
+              )}
+            </div>
+
+            {!useCodeEditor ? (
+              <InputQueryComponent
                 query={query}
                 setQuery={setQuery}
                 executeQuery={executeQuery}
               />
-            </Suspense>
-          )}
+            ) : (
+              <Suspense fallback={<Loading />}>
+                <CodeEditor
+                  query={query}
+                  setQuery={setQuery}
+                  executeQuery={executeQuery}
+                />
+              </Suspense>
+            )}
 
-          {result && result.length > 0 ? (
-            // replace parQuery to query once populating the data is done.
-            <ShortTable result={result} query={parQuery} />
-          ) : null}
-        </div>
-        <div className="h-fit rounded border border-base-300 bg-base-200 p-4 shadow-sm">
-          <WrappedErrorBoundary>
-            <HistoryPanel
-              executeQuery={(query) =>
-                setSearchParams({ query: encodeURIComponent(query) })
-              }
-              queries={queries}
-              clearHistory={clearQueries}
-            />
-          </WrappedErrorBoundary>
+            {result && result.length > 0 ? (
+              // replace parQuery to query once populating the data is done.
+              <ShortTable result={result} query={parQuery} />
+            ) : null}
+          </div>
+          <div className="h-fit rounded border border-base-300 bg-base-200 p-4 shadow-sm">
+            <WrappedErrorBoundary>
+              <HistoryPanel
+                executeQuery={(query) =>
+                  setSearchParams({ query: encodeURIComponent(query) })
+                }
+                queries={queries}
+                clearHistory={clearQueries}
+              />
+            </WrappedErrorBoundary>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

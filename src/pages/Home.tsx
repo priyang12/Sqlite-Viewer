@@ -5,7 +5,9 @@ import ErrorFallbackComponent, {
   WrappedErrorBoundary,
 } from "../Components/ErrorFallbackComponent/ErrorFallbackComponent";
 import { ErrorBoundary } from "react-error-boundary";
+import { memo } from "react";
 
+// add support link at bottom.
 function UsersDBList({
   storedDBs,
   removeUserDB,
@@ -73,6 +75,20 @@ function NoDBList() {
   );
 }
 
+function Meta({ title }: { title: string }) {
+  return (
+    <>
+      <title>{title}</title>
+      <meta
+        name="description"
+        content="View and manage your uploaded databases on the home page."
+      />
+    </>
+  );
+}
+
+const MemoMeta = memo(Meta);
+
 const Home = () => {
   const {
     isLoading: Loading,
@@ -95,32 +111,38 @@ const Home = () => {
     );
 
   return (
-    <div className="box-border flex min-h-lvh w-full justify-center">
-      <div className="h-screen w-full pt-5">
-        <h1 className="text-center text-4xl font-bold">Your Databases</h1>
-        <div className="my-5 flex h-[80vh] w-full flex-col justify-evenly gap-5 bg-base-300 p-5 sm:flex-row">
-          <div className="h-full sm:w-[40%]">
-            <WrappedErrorBoundary>
-              <InputDB onFileSelect={onSelectFile} />
-            </WrappedErrorBoundary>
-          </div>
+    <>
+      <MemoMeta title={storedDBs.length > 0 ? "Your Databases" : "Home Page"} />
+      <div className="box-border flex min-h-lvh w-full justify-center">
+        <div className="h-screen w-full pt-5">
+          <h1 className="text-center text-4xl font-bold">Your Databases</h1>
+          <div className="my-5 flex h-[80vh] w-full flex-col justify-evenly gap-5 bg-base-300 p-5 sm:flex-row">
+            <div className="h-full sm:w-[40%]">
+              <WrappedErrorBoundary>
+                <InputDB onFileSelect={onSelectFile} />
+              </WrappedErrorBoundary>
+            </div>
 
-          <ErrorBoundary
-            fallbackRender={(props) => (
-              <div className="flex h-full flex-col items-center gap-5 overflow-y-scroll rounded-lg bg-base-200 p-5 sm:w-[60%]">
-                <ErrorFallbackComponent {...props} />
-              </div>
-            )}
-          >
-            {storedDBs.length > 0 ? (
-              <UsersDBList storedDBs={storedDBs} removeUserDB={removeUserDB} />
-            ) : (
-              <NoDBList />
-            )}
-          </ErrorBoundary>
+            <ErrorBoundary
+              fallbackRender={(props) => (
+                <div className="flex h-full flex-col items-center gap-5 overflow-y-scroll rounded-lg bg-base-200 p-5 sm:w-[60%]">
+                  <ErrorFallbackComponent {...props} />
+                </div>
+              )}
+            >
+              {storedDBs.length > 0 ? (
+                <UsersDBList
+                  storedDBs={storedDBs}
+                  removeUserDB={removeUserDB}
+                />
+              ) : (
+                <NoDBList />
+              )}
+            </ErrorBoundary>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

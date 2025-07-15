@@ -1,7 +1,21 @@
 import { useEffect, useState } from "react";
 import Skeleton from "../../Components/Skeleton";
+import { useParams } from "react-router-dom";
+
+function Meta() {
+  return (
+    <>
+      <title>Overview</title>
+      <meta
+        name="description"
+        content="Get a quick summary of your database. Search, view, and prepare to edit your tables as needed."
+      />
+    </>
+  );
+}
 
 const Overview = () => {
+  const { name } = useParams();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -12,34 +26,52 @@ const Overview = () => {
   }, []);
 
   return (
-    <div className="mx-16 box-content flex flex-col items-center gap-5">
-      {isLoading ? (
-        <Skeleton className="my-5 text-4xl" width={"50%"} height={50} />
-      ) : (
-        <h2 className="my-5 text-4xl">Overview</h2>
-      )}
+    <>
+      <Meta />
+      <div className="mx-16 box-content flex flex-col items-center gap-5">
+        {isLoading ? (
+          <Skeleton className="my-5 text-4xl" width={"50%"} height={50} />
+        ) : (
+          <h2 className="my-5 text-4xl">Overview</h2>
+        )}
 
-      {isLoading ? (
-        <Skeleton width={"70%"} height={30} />
-      ) : (
-        <h3 className="text-2xl text-info">
-          Serach for your Tables in DB and change at your need.
-        </h3>
-      )}
+        {isLoading ? (
+          <Skeleton width={"70%"} height={30} />
+        ) : (
+          <h3 className="text-2xl text-info">Look into {name} tables.</h3>
+        )}
 
-      {isLoading ? (
-        <Skeleton width={"90%"} height={15} count={5} />
-      ) : (
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur
-          recusandae deleniti, blanditiis totam dolorem suscipit cupiditate
-          dignissimos! Modi sequi saepe hic praesentium quos repellendus sint
-          similique consectetur necessitatibus repudiandae neque cumque totam in
-          ducimus a, ipsum nam reprehenderit maiores sit rem ad quam eum
-          consequatur minima? Ipsa deserunt ipsam nihil.
-        </p>
-      )}
-    </div>
+        {isLoading ? (
+          <Skeleton width={"90%"} height={15} count={5} />
+        ) : (
+          <div className="mx-auto max-w-4xl space-y-6 px-4 py-6 text-base-content">
+            <p className="text-lg leading-relaxed md:text-xl">
+              This overview provides a high-level summary of your database
+              contents. You can browse available tables, check their structure,
+              and prepare to run queries or make updates. Use the tools provided
+              to navigate and manage your data efficiently.
+            </p>
+            <p className="text-lg leading-relaxed md:text-xl">
+              Use the navigation tools to view individual tables, inspect
+              columns, types, and relationships. This helps you prepare for
+              queries or transformations you may need to perform later using the
+              query builder or chart tools.
+            </p>
+            <p className="text-lg leading-relaxed md:text-xl">
+              If you're just getting started, take a moment to explore how your
+              data is laid out. Knowing your schema makes it easier to craft
+              efficient queries and build useful visualizations. Everything you
+              need is just a click away.
+            </p>
+            <p className="text-lg leading-relaxed md:text-xl">
+              Ready to dive deeper? Head over to the <strong>Charts</strong> or{" "}
+              <strong>Query Builder</strong> sections to begin working with your
+              data directly.
+            </p>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

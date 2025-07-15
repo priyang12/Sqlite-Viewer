@@ -109,6 +109,7 @@ npm run build
 - [x] Add support to remove databases from IndexedDB
 - [x] Setup testing environment with Vitest
 - [x] Write and run tests for context and custom hooks
+- [x] PWA and Meta Data.
 
 ### UI & Layout
 
