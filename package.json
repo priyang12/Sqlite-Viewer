@@ -11,7 +11,8 @@
     "component": "sh makeComponent.sh",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier --write . ",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed": "tsx demoDb/script.ts"
   },
   "dependencies": {
     "@codemirror/lang-sql": "^6.9.0",
@@ -33,6 +34,7 @@
     "sql.js": "1.8.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
     "@prisma/client": "^6.11.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

@@ -30,3 +30,6 @@ __snapshots__
 note.md
 
 dev-dist
+
+generated
+migrations
