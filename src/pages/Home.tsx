@@ -60,8 +60,8 @@ function NoDBList() {
         or click the upload button to get started.
       </p>
       <div className="my-4 self-end">
-        <Link to="/help" className="btn btn-info">
-          How to Add a Database
+        <Link to="/demo" className="btn btn-info">
+          Load Demo.db
         </Link>
       </div>
       <p className="text-sm">

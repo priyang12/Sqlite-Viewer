@@ -6,6 +6,7 @@ import { DBProvider } from "./Context/DBContext";
 import { lazy, Suspense } from "react";
 import LoadingPage from "./Components/LoadingPage";
 import BuilderTable from "./pages/QueryBuilder/BuilderTable";
+import Demo from "./pages/Demo";
 
 // db routes
 const DBHome = lazy(() => import("./pages/DBHome"));
@@ -31,6 +32,10 @@ const routes = [
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/demo",
+    element: <Demo />,
   },
 
   {
